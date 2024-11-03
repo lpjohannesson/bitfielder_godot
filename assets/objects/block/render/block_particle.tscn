@@ -1,12 +1,15 @@
 [gd_scene load_steps=3 format=3 uid="uid://qnuf5qyuxwxp"]
 
-[ext_resource type="Texture2D" uid="uid://coiww15bo3bl2" path="res://assets/textures/blocks/particles/dirt.png" id="1_788n6"]
+[ext_resource type="Script" path="res://assets/objects/shadowed_sprite.gd" id="2_8h8u7"]
 [ext_resource type="Script" path="res://assets/objects/block/render/block_particle.gd" id="2_lb80w"]
 
-[node name="BlockParticle" type="Sprite2D"]
-texture = ExtResource("1_788n6")
-hframes = 3
+[node name="BlockParticle" type="Node2D" node_paths=PackedStringArray("sprite")]
 script = ExtResource("2_lb80w")
+sprite = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+hframes = 3
+script = ExtResource("2_8h8u7")
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
 position = Vector2(2.08616e-07, 2.98023e-08)

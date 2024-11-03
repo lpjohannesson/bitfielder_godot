@@ -1,8 +1,7 @@
-[gd_scene load_steps=23 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=19 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Script" path="res://assets/objects/block/block_world.gd" id="2_3ahac"]
-[ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="2_d1sjh"]
 [ext_resource type="Script" path="res://assets/objects/block/block_type.gd" id="3_g8yh0"]
 [ext_resource type="Texture2D" uid="uid://coiww15bo3bl2" path="res://assets/textures/blocks/particles/dirt.png" id="4_pglwv"]
 [ext_resource type="Script" path="res://assets/objects/block/render/basic_block_renderer.gd" id="4_v3r6d"]
@@ -13,11 +12,6 @@
 [ext_resource type="Script" path="res://assets/objects/block/block_generator.gd" id="8_isevc"]
 [ext_resource type="PackedScene" uid="uid://qhbwwmg422j6" path="res://assets/objects/player.tscn" id="9_x3p4l"]
 [ext_resource type="PackedScene" uid="uid://qnuf5qyuxwxp" path="res://assets/objects/block/render/block_particle.tscn" id="10_23lyr"]
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_hm8g0"]
-shader = ExtResource("2_d1sjh")
-shader_parameter/back_shade = 0.2
-shader_parameter/shadow_shade = 0.3
 
 [sub_resource type="Resource" id="Resource_kkgt4"]
 script = ExtResource("3_g8yh0")
@@ -49,21 +43,10 @@ script = ExtResource("3_g8yh0")
 block_name = "stone"
 renderer = SubResource("Resource_7f7sc")
 
-[sub_resource type="Gradient" id="Gradient_7u5hj"]
-offsets = PackedFloat32Array(0.2, 0.4, 0.6, 0.8)
-colors = PackedColorArray(0.13583, 0.0257736, 0.20906, 1, 0.18053, 0.321128, 0.573004, 1, 0, 0.705882, 0.811765, 1, 0.6, 1, 0.966667, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_uk2xc"]
-gradient = SubResource("Gradient_7u5hj")
-width = 1
-fill_from = Vector2(0, 1)
-fill_to = Vector2(0, 0)
-
 [node name="GameScene" type="Node2D" node_paths=PackedStringArray("block_world", "shadow_viewport")]
 script = ExtResource("1_jdhth")
 block_world = NodePath("BlockWorld")
-shadow_viewport = NodePath("ShadowViewport")
-shadow_shader = SubResource("ShaderMaterial_hm8g0")
+shadow_viewport = NodePath("SubViewportContainer/ShadowViewport")
 
 [node name="BlockWorld" type="Node2D" parent="." node_paths=PackedStringArray("chunks", "particles", "generator")]
 scale = Vector2(16, 16)
@@ -86,21 +69,10 @@ script = ExtResource("8_isevc")
 [node name="Player" parent="." instance=ExtResource("9_x3p4l")]
 position = Vector2(10, -10)
 
-[node name="ShadowViewport" type="SubViewport" parent="."]
-transparent_bg = true
-handle_input_locally = false
-canvas_item_default_texture_filter = 0
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+stretch = true
+
+[node name="ShadowViewport" type="SubViewport" parent="SubViewportContainer"]
 size = Vector2i(40, 40)
-render_target_update_mode = 4
-
-[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
-
-[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
-motion_scale = Vector2(0, 0.5)
-
-[node name="TextureRect" type="TextureRect" parent="ParallaxBackground/ParallaxLayer"]
-offset_top = -128.0
-offset_right = 512.0
-offset_bottom = 896.0
-texture = SubResource("GradientTexture2D_uk2xc")
-expand_mode = 2

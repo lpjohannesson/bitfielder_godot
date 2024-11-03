@@ -1,9 +1,36 @@
-[gd_scene load_steps=2 format=3 uid="uid://omkj7o5gbs7m"]
+[gd_scene load_steps=4 format=3 uid="uid://omkj7o5gbs7m"]
 
 [ext_resource type="Script" path="res://assets/objects/block/block_chunk.gd" id="1_wkhqk"]
 
-[node name="BlockChunk" type="Node2D" node_paths=PackedStringArray("colliders")]
+[sub_resource type="Shader" id="Shader_mw7mf"]
+code = "shader_type canvas_item;
+
+void vertex() {
+	// Called for every vertex the material is visible on.
+}
+
+void fragment() {
+	COLOR = vec4(1.0);
+}
+
+//void light() {
+	// Called for every pixel for every light affecting the CanvasItem.
+	// Uncomment to replace the default light processing function with this one.
+//}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_m7v7p"]
+shader = SubResource("Shader_mw7mf")
+
+[node name="BlockChunk" type="Node2D" node_paths=PackedStringArray("front_layer", "back_layer", "colliders")]
+material = SubResource("ShaderMaterial_m7v7p")
 script = ExtResource("1_wkhqk")
+front_layer = NodePath("FrontLayer")
+back_layer = NodePath("BackLayer")
 colliders = NodePath("Colliders")
+
+[node name="BackLayer" type="Node2D" parent="."]
+
+[node name="FrontLayer" type="Node2D" parent="."]
 
 [node name="Colliders" type="StaticBody2D" parent="."]

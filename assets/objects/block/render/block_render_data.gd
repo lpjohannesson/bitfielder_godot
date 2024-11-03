@@ -1,5 +1,4 @@
 class_name BlockRenderData
 
-var chunk: BlockChunk
+var layer: Node2D
 var chunk_position: Vector2i
-var color: Color

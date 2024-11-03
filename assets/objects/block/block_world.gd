@@ -82,9 +82,9 @@ func draw_block(block_id: int, render_data: BlockRenderData) -> void:
 	
 	block.renderer.draw_block(render_data)
 
-func draw_chunk(chunk: BlockChunk) -> void:
+func draw_chunk(block_ids: PackedInt32Array, layer: Node2D) -> void:
 	var render_data := BlockRenderData.new()
-	render_data.chunk = chunk
+	render_data.layer = layer
 	
 	for y in range(BlockChunk.CHUNK_SIZE.y):
 		for x in range(BlockChunk.CHUNK_SIZE.x):
@@ -92,29 +92,50 @@ func draw_chunk(chunk: BlockChunk) -> void:
 			var block_index := \
 				BlockChunk.get_block_index(render_data.chunk_position)
 			
-			var front_id := chunk.front_ids[block_index]
-			var back_id := chunk.back_ids[block_index]
+			draw_block(block_ids[block_index], render_data)
+
+func draw_chunk_front(chunk: BlockChunk) -> void:
+	draw_chunk(chunk.front_ids, chunk.front_layer)
+
+func draw_chunk_back(chunk: BlockChunk) -> void:
+	draw_chunk(chunk.back_ids, chunk.back_layer)
+
+func draw_chunk_shadow(chunk: BlockChunk) -> void:
+	var render_data := BlockRenderData.new()
+	render_data.layer = chunk.shadow_layer
+	
+	for y in range(BlockChunk.CHUNK_SIZE.y):
+		for x in range(BlockChunk.CHUNK_SIZE.x):
+			render_data.chunk_position = Vector2i(x, y)
+			var block_index := \
+				BlockChunk.get_block_index(render_data.chunk_position)
 			
-			render_data.color = Color.DARK_GRAY
-			draw_block(back_id, render_data)
+			var block_id := chunk.front_ids[block_index]
+			var block := block_types[block_id]
 			
-			render_data.color = Color.WHITE
-			draw_block(front_id, render_data)
+			if block.renderer == null:
+				continue
+			
+			var block_rect := Rect2(render_data.chunk_position, Vector2.ONE)
+			render_data.layer.draw_rect(block_rect, Color.WHITE)
 
 func create_chunk(chunk_position: Vector2i) -> void:
 	var chunk: BlockChunk = chunk_scene.instantiate()
+	
+	chunk.position = chunk_position * BlockChunk.CHUNK_SIZE
 	chunks.add_child(chunk)
 	
 	chunk_map[chunk_position] = chunk
-	chunk.position = chunk_position * BlockChunk.CHUNK_SIZE
 	
 	generator.generate_chunk(chunk)
 	create_colliders(chunk)
 	
-	chunk.draw.connect(func() -> void: draw_chunk(chunk))
+	chunk.front_layer.draw.connect(func() -> void: draw_chunk_front(chunk))
+	chunk.back_layer.draw.connect(func() -> void: draw_chunk_back(chunk))
+	chunk.shadow_layer.draw.connect(func() -> void: draw_chunk_shadow(chunk))
 
 func update_chunk(chunk: BlockChunk) -> void:
-	chunk.queue_redraw()
+	chunk.redraw_chunk()
 	
 	for collider in chunk.colliders.get_children():
 		collider.free()
@@ -139,7 +160,7 @@ func create_particles(block_id: int, block_position: Vector2i):
 		particles.add_child(particle)
 		
 		particle.global_position = particle_position
-		particle.texture = particle_texture
+		particle.sprite.texture = particle_texture
 
 func _ready() -> void:
 	for y in range(2):
