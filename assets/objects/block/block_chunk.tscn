@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://omkj7o5gbs7m"]
+
+[ext_resource type="Script" path="res://assets/objects/block/block_chunk.gd" id="1_wkhqk"]
+
+[node name="BlockChunk" type="Node2D" node_paths=PackedStringArray("colliders")]
+script = ExtResource("1_wkhqk")
+colliders = NodePath("Colliders")
+
+[node name="Colliders" type="StaticBody2D" parent="."]

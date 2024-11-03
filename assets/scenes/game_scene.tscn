@@ -1,0 +1,69 @@
+[gd_scene load_steps=19 format=3 uid="uid://dofu8ik7dtua1"]
+
+[ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
+[ext_resource type="Script" path="res://assets/objects/block/block_world.gd" id="2_3ahac"]
+[ext_resource type="Script" path="res://assets/objects/block/block_type.gd" id="3_g8yh0"]
+[ext_resource type="Texture2D" uid="uid://coiww15bo3bl2" path="res://assets/textures/blocks/particles/dirt.png" id="4_pglwv"]
+[ext_resource type="Script" path="res://assets/objects/block/render/basic_block_renderer.gd" id="4_v3r6d"]
+[ext_resource type="Texture2D" uid="uid://6s4623p6j6v6" path="res://assets/textures/blocks/dirt.png" id="5_6axv7"]
+[ext_resource type="Texture2D" uid="uid://cfourn88clrqw" path="res://assets/textures/blocks/stone.png" id="6_vg04p"]
+[ext_resource type="PackedScene" uid="uid://omkj7o5gbs7m" path="res://assets/objects/block/block_chunk.tscn" id="7_ngtea"]
+[ext_resource type="Texture2D" uid="uid://eer33eptpvf7" path="res://assets/textures/blocks/particles/stone.png" id="7_qopnm"]
+[ext_resource type="Script" path="res://assets/objects/block/block_generator.gd" id="8_isevc"]
+[ext_resource type="PackedScene" uid="uid://qhbwwmg422j6" path="res://assets/objects/player.tscn" id="9_x3p4l"]
+[ext_resource type="PackedScene" uid="uid://qnuf5qyuxwxp" path="res://assets/objects/block/render/block_particle.tscn" id="10_23lyr"]
+
+[sub_resource type="Resource" id="Resource_kkgt4"]
+script = ExtResource("3_g8yh0")
+block_name = "air"
+
+[sub_resource type="Resource" id="Resource_xvgoc"]
+script = ExtResource("4_v3r6d")
+texture = ExtResource("5_6axv7")
+particle_texture = ExtResource("4_pglwv")
+
+[sub_resource type="Resource" id="Resource_qm0y7"]
+script = ExtResource("3_g8yh0")
+block_name = "dirt"
+renderer = SubResource("Resource_xvgoc")
+
+[sub_resource type="AnimatedTexture" id="AnimatedTexture_hla5r"]
+frames = 2
+frame_0/texture = ExtResource("6_vg04p")
+frame_1/texture = ExtResource("6_vg04p")
+frame_1/duration = 1.0
+
+[sub_resource type="Resource" id="Resource_7f7sc"]
+script = ExtResource("4_v3r6d")
+texture = SubResource("AnimatedTexture_hla5r")
+particle_texture = ExtResource("7_qopnm")
+
+[sub_resource type="Resource" id="Resource_6xmik"]
+script = ExtResource("3_g8yh0")
+block_name = "stone"
+renderer = SubResource("Resource_7f7sc")
+
+[node name="GameScene" type="Node2D" node_paths=PackedStringArray("block_world")]
+script = ExtResource("1_jdhth")
+block_world = NodePath("BlockWorld")
+
+[node name="BlockWorld" type="Node2D" parent="." node_paths=PackedStringArray("chunks", "particles", "generator")]
+scale = Vector2(16, 16)
+script = ExtResource("2_3ahac")
+block_types = Array[ExtResource("3_g8yh0")]([SubResource("Resource_kkgt4"), SubResource("Resource_qm0y7"), SubResource("Resource_6xmik")])
+chunk_scene = ExtResource("7_ngtea")
+particle_scene = ExtResource("10_23lyr")
+chunks = NodePath("Chunks")
+particles = NodePath("Particles")
+generator = NodePath("Generator")
+
+[node name="Chunks" type="Node2D" parent="BlockWorld"]
+
+[node name="Particles" type="Node2D" parent="BlockWorld"]
+scale = Vector2(0.0625, 0.0625)
+
+[node name="Generator" type="Node" parent="BlockWorld"]
+script = ExtResource("8_isevc")
+
+[node name="Player" parent="." instance=ExtResource("9_x3p4l")]
+position = Vector2(10, -10)

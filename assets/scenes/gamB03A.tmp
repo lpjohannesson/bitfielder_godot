@@ -1,0 +1,37 @@
+[gd_scene load_steps=9 format=3 uid="uid://dofu8ik7dtua1"]
+
+[ext_resource type="Script" path="res://assets/objects/block/block_world.gd" id="1_ejeij"]
+[ext_resource type="Script" path="res://assets/objects/block/block_type.gd" id="2_ug5dd"]
+[ext_resource type="Script" path="res://assets/objects/block/block_generator.gd" id="4_np6ic"]
+[ext_resource type="Script" path="res://assets/objects/block/render/basic_block_renderer.gd" id="5_eei3c"]
+[ext_resource type="Texture2D" uid="uid://d0a4a344pcxg8" path="res://icon.svg" id="6_r4hhj"]
+
+[sub_resource type="Resource" id="Resource_kkgt4"]
+script = ExtResource("2_ug5dd")
+block_name = "air"
+
+[sub_resource type="Resource" id="Resource_xvgoc"]
+script = ExtResource("5_eei3c")
+texture = ExtResource("6_r4hhj")
+
+[sub_resource type="Resource" id="Resource_qm0y7"]
+script = ExtResource("2_ug5dd")
+block_name = "test"
+renderer = SubResource("Resource_xvgoc")
+
+[node name="Game" type="Node2D"]
+
+[node name="BlockWorld" type="Node2D" parent="." node_paths=PackedStringArray("chunks", "generator")]
+script = ExtResource("1_ejeij")
+block_types = Array[ExtResource("2_ug5dd")]([SubResource("Resource_kkgt4"), SubResource("Resource_qm0y7")])
+chunks = NodePath("Chunks")
+generator = NodePath("Generator")
+
+[node name="Chunks" type="Node2D" parent="BlockWorld"]
+
+[node name="Generator" type="Node" parent="BlockWorld"]
+script = ExtResource("4_np6ic")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(7, 9)
+zoom = Vector2(32, 32)
