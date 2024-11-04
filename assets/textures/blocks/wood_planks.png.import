@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://duli3c05kcek2"
-path="res://.godot/imported/dirt.png-7acc9491ccfc1eb025cbaeb3c2739baf.ctex"
+uid="uid://c1b17f11sambd"
+path="res://.godot/imported/wood_planks.png-110e1c6e395dd92000d2d9a2cf2890f6.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/textures/blocks/dirt.png"
-dest_files=["res://.godot/imported/dirt.png-7acc9491ccfc1eb025cbaeb3c2739baf.ctex"]
+source_file="res://assets/textures/blocks/wood_planks.png"
+dest_files=["res://.godot/imported/wood_planks.png-110e1c6e395dd92000d2d9a2cf2890f6.ctex"]
 
 [params]
 

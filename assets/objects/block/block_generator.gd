@@ -7,5 +7,5 @@ func generate_chunk(chunk: BlockChunk) -> void:
 			var chunk_position := Vector2i(x, y)
 			var block_index := BlockChunk.get_block_index(chunk_position)
 			
-			chunk.front_ids[block_index] = max(0, randi() % 4 - 1)
-			chunk.back_ids[block_index] = randi() % 3
+			chunk.front_ids[block_index] = max(0, randi() % 9 - 2)
+			chunk.back_ids[block_index] = randi() % 7

@@ -13,6 +13,8 @@ var shadow_layer: Node2D
 var front_ids: PackedInt32Array
 var back_ids: PackedInt32Array
 
+var chunk_index: Vector2i
+
 static func get_block_index(chunk_position: Vector2i) -> int:
 	return chunk_position.y * CHUNK_SIZE.x + chunk_position.x
 

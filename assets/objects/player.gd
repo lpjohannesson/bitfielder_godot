@@ -164,7 +164,7 @@ func modify_block() -> bool:
 			block_ids[address.block_index], block_position)
 		
 		block_ids[address.block_index] = 0
-		block_world.update_chunk(address.chunk)
+		block_world.update_block(block_position)
 		
 		effect_sprite.play("break")
 		effect_sprite.global_position = \
@@ -178,7 +178,7 @@ func modify_block() -> bool:
 			block_ids = center_address.chunk.back_ids
 		
 		block_ids[center_address.block_index] = 1
-		block_world.update_chunk(center_address.chunk)
+		block_world.update_block(center_block_position)
 		
 		effect_sprite.play("place")
 		effect_sprite.global_position = \

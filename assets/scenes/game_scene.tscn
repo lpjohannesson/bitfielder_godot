@@ -1,18 +1,24 @@
-[gd_scene load_steps=23 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=36 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Script" path="res://assets/objects/block/block_world.gd" id="2_3ahac"]
 [ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="2_d1sjh"]
 [ext_resource type="Script" path="res://assets/objects/block/block_type.gd" id="3_g8yh0"]
-[ext_resource type="Texture2D" uid="uid://coiww15bo3bl2" path="res://assets/textures/blocks/particles/dirt.png" id="4_pglwv"]
-[ext_resource type="Script" path="res://assets/objects/block/render/basic_block_renderer.gd" id="4_v3r6d"]
-[ext_resource type="Texture2D" uid="uid://6s4623p6j6v6" path="res://assets/textures/blocks/dirt.png" id="5_6axv7"]
-[ext_resource type="Texture2D" uid="uid://cfourn88clrqw" path="res://assets/textures/blocks/stone.png" id="6_vg04p"]
+[ext_resource type="Script" path="res://assets/objects/block/render/auto_block_renderer.gd" id="5_gkvnp"]
+[ext_resource type="Texture2D" uid="uid://coiww15bo3bl2" path="res://assets/textures/blocks/particles/dirt.png" id="5_gqgo5"]
+[ext_resource type="Texture2D" uid="uid://duli3c05kcek2" path="res://assets/textures/blocks/dirt.png" id="6_nqvwl"]
+[ext_resource type="Texture2D" uid="uid://c26yxs3na7guy" path="res://assets/textures/blocks/stone.png" id="6_vg04p"]
 [ext_resource type="PackedScene" uid="uid://omkj7o5gbs7m" path="res://assets/objects/block/block_chunk.tscn" id="7_ngtea"]
 [ext_resource type="Texture2D" uid="uid://eer33eptpvf7" path="res://assets/textures/blocks/particles/stone.png" id="7_qopnm"]
 [ext_resource type="Script" path="res://assets/objects/block/block_generator.gd" id="8_isevc"]
+[ext_resource type="Texture2D" uid="uid://c7ai3koyxbi1o" path="res://assets/textures/blocks/grass.png" id="8_ql2sl"]
 [ext_resource type="PackedScene" uid="uid://qhbwwmg422j6" path="res://assets/objects/player.tscn" id="9_x3p4l"]
 [ext_resource type="PackedScene" uid="uid://qnuf5qyuxwxp" path="res://assets/objects/block/render/block_particle.tscn" id="10_23lyr"]
+[ext_resource type="Texture2D" uid="uid://dtr4vbkje7np6" path="res://assets/textures/blocks/particles/wood.png" id="11_do6fe"]
+[ext_resource type="Texture2D" uid="uid://bix3avmlaqday" path="res://assets/textures/blocks/wood_log.png" id="12_1m4gx"]
+[ext_resource type="Texture2D" uid="uid://c1b17f11sambd" path="res://assets/textures/blocks/wood_planks.png" id="13_bl4s3"]
+[ext_resource type="Texture2D" uid="uid://3y74r12ljned" path="res://assets/textures/blocks/particles/leaves.png" id="14_17ee4"]
+[ext_resource type="Texture2D" uid="uid://elh7ruh3dmor" path="res://assets/textures/blocks/leaves.png" id="15_o2avx"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hm8g0"]
 shader = ExtResource("2_d1sjh")
@@ -23,31 +29,65 @@ shader_parameter/shadow_shade = 0.3
 script = ExtResource("3_g8yh0")
 block_name = "air"
 
-[sub_resource type="Resource" id="Resource_xvgoc"]
-script = ExtResource("4_v3r6d")
-texture = ExtResource("5_6axv7")
-particle_texture = ExtResource("4_pglwv")
+[sub_resource type="Resource" id="Resource_0f5wa"]
+script = ExtResource("5_gkvnp")
+texture = ExtResource("6_nqvwl")
+particle_texture = ExtResource("5_gqgo5")
 
 [sub_resource type="Resource" id="Resource_qm0y7"]
 script = ExtResource("3_g8yh0")
 block_name = "dirt"
-renderer = SubResource("Resource_xvgoc")
+renderer = SubResource("Resource_0f5wa")
 
-[sub_resource type="AnimatedTexture" id="AnimatedTexture_hla5r"]
-frames = 2
-frame_0/texture = ExtResource("6_vg04p")
-frame_1/texture = ExtResource("6_vg04p")
-frame_1/duration = 1.0
+[sub_resource type="Resource" id="Resource_cgdcr"]
+script = ExtResource("5_gkvnp")
+texture = ExtResource("8_ql2sl")
+particle_texture = ExtResource("5_gqgo5")
 
-[sub_resource type="Resource" id="Resource_7f7sc"]
-script = ExtResource("4_v3r6d")
-texture = SubResource("AnimatedTexture_hla5r")
+[sub_resource type="Resource" id="Resource_4kr1q"]
+script = ExtResource("3_g8yh0")
+block_name = "grass"
+renderer = SubResource("Resource_cgdcr")
+
+[sub_resource type="Resource" id="Resource_7eae8"]
+script = ExtResource("5_gkvnp")
+texture = ExtResource("6_vg04p")
 particle_texture = ExtResource("7_qopnm")
 
 [sub_resource type="Resource" id="Resource_6xmik"]
 script = ExtResource("3_g8yh0")
 block_name = "stone"
-renderer = SubResource("Resource_7f7sc")
+renderer = SubResource("Resource_7eae8")
+
+[sub_resource type="Resource" id="Resource_cxod0"]
+script = ExtResource("5_gkvnp")
+texture = ExtResource("12_1m4gx")
+particle_texture = ExtResource("11_do6fe")
+
+[sub_resource type="Resource" id="Resource_noqob"]
+script = ExtResource("3_g8yh0")
+block_name = "wood_log"
+renderer = SubResource("Resource_cxod0")
+
+[sub_resource type="Resource" id="Resource_ufgfi"]
+script = ExtResource("5_gkvnp")
+texture = ExtResource("13_bl4s3")
+particle_texture = ExtResource("11_do6fe")
+
+[sub_resource type="Resource" id="Resource_bmvjm"]
+script = ExtResource("3_g8yh0")
+block_name = "wood_planks"
+renderer = SubResource("Resource_ufgfi")
+
+[sub_resource type="Resource" id="Resource_5gejc"]
+script = ExtResource("5_gkvnp")
+texture = ExtResource("15_o2avx")
+particle_texture = ExtResource("14_17ee4")
+
+[sub_resource type="Resource" id="Resource_o7m25"]
+script = ExtResource("3_g8yh0")
+block_name = "leaves"
+renderer = SubResource("Resource_5gejc")
 
 [sub_resource type="Gradient" id="Gradient_7u5hj"]
 offsets = PackedFloat32Array(0.2, 0.4, 0.6, 0.8)
@@ -68,7 +108,7 @@ shadow_shader = SubResource("ShaderMaterial_hm8g0")
 [node name="BlockWorld" type="Node2D" parent="." node_paths=PackedStringArray("chunks", "particles", "generator")]
 scale = Vector2(16, 16)
 script = ExtResource("2_3ahac")
-block_types = Array[ExtResource("3_g8yh0")]([SubResource("Resource_kkgt4"), SubResource("Resource_qm0y7"), SubResource("Resource_6xmik")])
+block_types = Array[ExtResource("3_g8yh0")]([SubResource("Resource_kkgt4"), SubResource("Resource_qm0y7"), SubResource("Resource_4kr1q"), SubResource("Resource_6xmik"), SubResource("Resource_noqob"), SubResource("Resource_bmvjm"), SubResource("Resource_o7m25")])
 chunk_scene = ExtResource("7_ngtea")
 particle_scene = ExtResource("10_23lyr")
 chunks = NodePath("Chunks")
