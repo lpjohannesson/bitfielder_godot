@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="BlockType" load_steps=10 format=3 uid="uid://b3n0tjfrhx877"]
+
+[ext_resource type="Texture2D" uid="uid://3y74r12ljned" path="res://assets/textures/blocks/particles/leaves.png" id="1_lo3b8"]
+[ext_resource type="Script" path="res://assets/objects/block/block_properties.gd" id="2_fiv6v"]
+[ext_resource type="Script" path="res://assets/objects/block/render/basic_block_renderer.gd" id="2_icq2v"]
+[ext_resource type="Texture2D" uid="uid://ccqxd3u7mbj30" path="res://assets/textures/blocks/wheat.png" id="3_4vqka"]
+[ext_resource type="Script" path="res://assets/objects/block/render/block_renderer_properties.gd" id="3_d68se"]
+[ext_resource type="Script" path="res://assets/objects/block/block_type.gd" id="4_bri87"]
+
+[sub_resource type="Resource" id="Resource_xh3iw"]
+script = ExtResource("2_fiv6v")
+is_solid = false
+
+[sub_resource type="Resource" id="Resource_h7uof"]
+script = ExtResource("2_icq2v")
+texture = ExtResource("3_4vqka")
+
+[sub_resource type="Resource" id="Resource_t4khe"]
+script = ExtResource("3_d68se")
+is_partial = true
+casts_shadow = true
+
+[resource]
+script = ExtResource("4_bri87")
+block_name = "wheat"
+properties = SubResource("Resource_xh3iw")
+renderer = SubResource("Resource_h7uof")
+renderer_properties = SubResource("Resource_t4khe")
+particle_texture = ExtResource("1_lo3b8")

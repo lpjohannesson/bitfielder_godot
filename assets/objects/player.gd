@@ -137,7 +137,10 @@ func modify_block() -> bool:
 		# Check for blocks in front
 		if forward_address != null:
 			var forward_front_ids := forward_address.chunk.front_ids
-			if forward_front_ids[forward_address.block_index] != 0:
+			var forward_front_id := forward_front_ids[forward_address.block_index]
+			var forward_front_block := block_world.block_types[forward_front_id]
+			
+			if forward_front_block.properties.is_solid:
 				return false
 		
 		breaking = is_back_block_breakable(center_address)

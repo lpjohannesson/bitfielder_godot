@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="BlockType" load_steps=14 format=3 uid="uid://7n2ngwx0enf7"]
+
+[ext_resource type="Texture2D" uid="uid://c7j0mohutqrgm" path="res://assets/textures/blocks/particles/wool.png" id="1_8bniy"]
+[ext_resource type="Script" path="res://assets/objects/block/render/basic_block_renderer.gd" id="2_7wrau"]
+[ext_resource type="Script" path="res://assets/objects/block/block_properties.gd" id="2_olm3e"]
+[ext_resource type="Texture2D" uid="uid://bwfic1idywgn5" path="res://assets/textures/blocks/water1.png" id="3_0l6xj"]
+[ext_resource type="Script" path="res://assets/objects/block/block_type.gd" id="4_81lat"]
+[ext_resource type="Texture2D" uid="uid://biijynwundait" path="res://assets/textures/blocks/water2.png" id="4_focds"]
+[ext_resource type="Texture2D" uid="uid://cxrmxtylltkfg" path="res://assets/textures/blocks/water3.png" id="5_l1owm"]
+[ext_resource type="Script" path="res://assets/objects/block/render/block_renderer_properties.gd" id="6_5a673"]
+[ext_resource type="Texture2D" uid="uid://c6bt1ruq7ry6v" path="res://assets/textures/blocks/water4.png" id="6_ansfs"]
+
+[sub_resource type="Resource" id="Resource_mn6ki"]
+script = ExtResource("2_olm3e")
+is_solid = false
+
+[sub_resource type="AnimatedTexture" id="AnimatedTexture_ytxea"]
+frames = 4
+speed_scale = 5.0
+frame_0/texture = ExtResource("3_0l6xj")
+frame_1/texture = ExtResource("4_focds")
+frame_1/duration = 1.0
+frame_2/texture = ExtResource("5_l1owm")
+frame_2/duration = 1.0
+frame_3/texture = ExtResource("6_ansfs")
+frame_3/duration = 1.0
+
+[sub_resource type="Resource" id="Resource_k7p3y"]
+script = ExtResource("2_7wrau")
+texture = SubResource("AnimatedTexture_ytxea")
+
+[sub_resource type="Resource" id="Resource_mm2lx"]
+script = ExtResource("6_5a673")
+is_partial = true
+casts_shadow = false
+
+[resource]
+script = ExtResource("4_81lat")
+block_name = "water"
+properties = SubResource("Resource_mn6ki")
+renderer = SubResource("Resource_k7p3y")
+renderer_properties = SubResource("Resource_mm2lx")
+particle_texture = ExtResource("1_8bniy")
