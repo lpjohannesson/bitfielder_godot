@@ -80,27 +80,38 @@ func create_colliders(chunk: BlockChunk) -> void:
 			collider.position = Vector2(chunk_position) + Vector2.ONE * 0.5
 			collider.shape = RectangleShape2D.new()
 			collider.shape.size = Vector2.ONE
+			
+			collider.one_way_collision = block.properties.is_one_way
 
-func draw_chunk(
+func create_render_data(
 	chunk: BlockChunk,
 	block_ids: PackedInt32Array,
 	layer: Node2D,
-	on_front_layer: bool) -> void:
+	on_front_layer: bool) -> BlockRenderData:
 	
 	var render_data := BlockRenderData.new()
+	render_data.block_world = self
+	
 	render_data.chunk = chunk
+	render_data.block_ids = block_ids
+	
 	render_data.layer = layer
 	render_data.on_front_layer = on_front_layer
 	
+	return render_data
+
+func get_render_block(render_data: BlockRenderData) -> BlockType:
+	var block_index := \
+		BlockChunk.get_block_index(render_data.chunk_position)
+	
+	render_data.block_id = render_data.block_ids[block_index]
+	return block_types[render_data.block_id]
+
+func draw_chunk(render_data: BlockRenderData) -> void:
 	for y in range(BlockChunk.CHUNK_SIZE.y):
 		for x in range(BlockChunk.CHUNK_SIZE.x):
 			render_data.chunk_position = Vector2i(x, y)
-			
-			var block_index := \
-				BlockChunk.get_block_index(render_data.chunk_position)
-			
-			var block_id := block_ids[block_index]
-			var block := block_types[block_id]
+			var block := get_render_block(render_data)
 			
 			if block.renderer == null:
 				continue
@@ -108,25 +119,25 @@ func draw_chunk(
 			block.renderer.draw_block(render_data)
 
 func draw_chunk_front(chunk: BlockChunk) -> void:
-	draw_chunk(chunk, chunk.front_ids, chunk.front_layer, true)
+	var render_data := \
+		create_render_data(chunk, chunk.front_ids, chunk.front_layer, true)
+	
+	draw_chunk(render_data)
 
 func draw_chunk_back(chunk: BlockChunk) -> void:
-	draw_chunk(chunk, chunk.back_ids, chunk.back_layer, false)
+	var render_data := \
+		create_render_data(chunk, chunk.back_ids, chunk.back_layer, false)
+	
+	draw_chunk(render_data)
 
 func draw_chunk_shadow(chunk: BlockChunk) -> void:
-	var render_data := BlockRenderData.new()
-	render_data.chunk = chunk
-	render_data.layer = chunk.shadow_layer
-	render_data.on_front_layer = true
+	var render_data := \
+		create_render_data(chunk, chunk.front_ids, chunk.shadow_layer, true)
 	
 	for y in range(BlockChunk.CHUNK_SIZE.y):
 		for x in range(BlockChunk.CHUNK_SIZE.x):
 			render_data.chunk_position = Vector2i(x, y)
-			var block_index := \
-				BlockChunk.get_block_index(render_data.chunk_position)
-			
-			var block_id := chunk.front_ids[block_index]
-			var block := block_types[block_id]
+			var block := get_render_block(render_data)
 			
 			if block.renderer == null:
 				continue
