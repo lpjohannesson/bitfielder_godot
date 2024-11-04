@@ -207,6 +207,6 @@ func create_particles(block_id: int, block_position: Vector2i):
 		particle.sprite.texture = block.particle_texture
 
 func _ready() -> void:
-	for y in range(4):
-		for x in range(4):
+	for y in range(8):
+		for x in range(8):
 			create_chunk(Vector2i(x, y))

@@ -1,7 +1,7 @@
 extends Node2D
 class_name BlockChunk
 
-const CHUNK_SIZE := Vector2i(16, 16)
+const CHUNK_SIZE := Vector2i(8, 8)
 const BLOCK_COUNT := CHUNK_SIZE.x * CHUNK_SIZE.y
 
 @export var front_layer: Node2D
