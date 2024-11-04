@@ -10,6 +10,7 @@
 [sub_resource type="Resource" id="Resource_f4806"]
 script = ExtResource("2_3iqeh")
 is_solid = false
+is_one_way = false
 
 [sub_resource type="Resource" id="Resource_h7uof"]
 script = ExtResource("2_mm8d0")

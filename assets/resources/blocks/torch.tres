@@ -13,6 +13,7 @@
 [sub_resource type="Resource" id="Resource_r47fy"]
 script = ExtResource("2_n5wyv")
 is_solid = false
+is_one_way = false
 
 [sub_resource type="AnimatedTexture" id="AnimatedTexture_3otmv"]
 frames = 4

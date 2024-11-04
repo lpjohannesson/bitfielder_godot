@@ -31,19 +31,6 @@ func get_neighbor_mask(
 	if neighbor_address == null:
 		return 0
 	
-	# Check same block on same layer
-	var neighbor_block_ids: PackedInt32Array
-	
-	if render_data.on_front_layer:
-		neighbor_block_ids = neighbor_address.chunk.front_ids
-	else:
-		neighbor_block_ids = neighbor_address.chunk.back_ids
-	
-	var neighbor_block_id := neighbor_block_ids[neighbor_address.block_index]
-	
-	if render_data.block_id == neighbor_block_id:
-		return 1
-	
 	# Check front
 	var neighbor_front_id := \
 		neighbor_address.chunk.front_ids[neighbor_address.block_index]
@@ -58,6 +45,19 @@ func get_neighbor_mask(
 		
 		if not is_neighbor_partial(render_data, neighbor_back_id):
 			return 1
+	
+	# Check same block on same layer
+	var neighbor_block_ids: PackedInt32Array
+	
+	if render_data.on_front_layer:
+		neighbor_block_ids = neighbor_address.chunk.front_ids
+	else:
+		neighbor_block_ids = neighbor_address.chunk.back_ids
+	
+	var neighbor_block_id := neighbor_block_ids[neighbor_address.block_index]
+	
+	if render_data.block_id == neighbor_block_id:
+		return 1
 	
 	return 0
 
