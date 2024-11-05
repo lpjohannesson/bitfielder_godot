@@ -163,8 +163,9 @@ func modify_block() -> bool:
 			block_ids = center_address.chunk.back_ids
 			block_position = center_block_position
 		
-		block_world.create_particles(
-			block_ids[address.block_index], block_position)
+		var block_id := block_ids[address.block_index]
+		
+		block_world.create_particles(block_id, block_position)
 		
 		block_ids[address.block_index] = 0
 		block_world.update_block(block_position)
@@ -180,7 +181,7 @@ func modify_block() -> bool:
 		else:
 			block_ids = center_address.chunk.back_ids
 		
-		block_ids[center_address.block_index] = 1
+		block_ids[center_address.block_index] = block_world.get_block_id("leaves")
 		block_world.update_block(center_block_position)
 		
 		effect_sprite.play("place")

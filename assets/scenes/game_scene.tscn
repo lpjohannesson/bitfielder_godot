@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=28 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="2_d1sjh"]
@@ -28,6 +28,9 @@
 shader = ExtResource("2_d1sjh")
 shader_parameter/back_shade = 0.2
 shader_parameter/shadow_shade = 0.3
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_fjqqn"]
+frequency = 0.1
 
 [sub_resource type="Gradient" id="Gradient_7u5hj"]
 offsets = PackedFloat32Array(0.2, 0.4, 0.6, 0.8)
@@ -60,8 +63,10 @@ generator = NodePath("Generator")
 [node name="Particles" type="Node2D" parent="BlockWorld"]
 scale = Vector2(0.0625, 0.0625)
 
-[node name="Generator" type="Node" parent="BlockWorld"]
+[node name="Generator" type="Node" parent="BlockWorld" node_paths=PackedStringArray("block_world")]
 script = ExtResource("8_isevc")
+block_world = NodePath("..")
+noise = SubResource("FastNoiseLite_fjqqn")
 
 [node name="Player" parent="." instance=ExtResource("9_x3p4l")]
 position = Vector2(10, -10)

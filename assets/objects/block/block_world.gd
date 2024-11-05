@@ -1,6 +1,8 @@
 extends Node2D
 class_name BlockWorld
 
+const WORLD_CHUNK_HEIGHT = 8
+
 @export var block_types: Array[BlockType]
 @export var chunk_scene: PackedScene
 @export var particle_scene: PackedScene
@@ -10,6 +12,7 @@ class_name BlockWorld
 @export var generator: BlockGenerator
 
 var chunk_map := {}
+var block_type_map := {}
 
 static func get_chunk_index(block_position: Vector2i) -> Vector2i:
 	return floor(Vector2(block_position) / Vector2(BlockChunk.CHUNK_SIZE))
@@ -151,7 +154,7 @@ func draw_chunk_shadow(chunk: BlockChunk) -> void:
 				var block_rect := Rect2(render_data.chunk_position, Vector2.ONE)
 				render_data.layer.draw_rect(block_rect, Color.WHITE)
 
-func create_chunk(chunk_index: Vector2i) -> void:
+func create_chunk(chunk_index: Vector2i) -> BlockChunk:
 	var chunk: BlockChunk = chunk_scene.instantiate()
 	
 	chunk.chunk_index = chunk_index
@@ -159,13 +162,13 @@ func create_chunk(chunk_index: Vector2i) -> void:
 	chunks.add_child(chunk)
 	
 	chunk_map[chunk_index] = chunk
-	
-	generator.generate_chunk(chunk)
 	create_colliders(chunk)
 	
 	chunk.front_layer.draw.connect(func() -> void: draw_chunk_front(chunk))
 	chunk.back_layer.draw.connect(func() -> void: draw_chunk_back(chunk))
 	chunk.shadow_layer.draw.connect(func() -> void: draw_chunk_shadow(chunk))
+	
+	return chunk
 
 func update_chunk(chunk: BlockChunk) -> void:
 	chunk.redraw_chunk()
@@ -206,7 +209,16 @@ func create_particles(block_id: int, block_position: Vector2i):
 		particle.global_position = particle_position
 		particle.sprite.texture = block.particle_texture
 
+func get_block_id(block_name: String) -> int:
+	return block_type_map[block_name]
+
 func _ready() -> void:
-	for y in range(8):
-		for x in range(8):
-			create_chunk(Vector2i(x, y))
+	# Create block types
+	for i in range(block_types.size()):
+		var block_type := block_types[i]
+		
+		assert(not block_type_map.has(block_type.block_name))
+		block_type_map[block_type.block_name] = i
+	
+	generator.noise.seed = randi()
+	generator.generate_area(0, 8)

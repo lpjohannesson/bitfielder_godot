@@ -23,7 +23,7 @@ casts_shadow = true
 
 [resource]
 script = ExtResource("6_4m2gl")
-block_name = "wheat"
+block_name = "wool"
 properties = SubResource("Resource_xh3iw")
 renderer = SubResource("Resource_ob85e")
 renderer_properties = SubResource("Resource_t4khe")
