@@ -41,13 +41,14 @@ func jump() -> void:
 	if Input.is_action_just_pressed("jump"):
 		jump_timer.start()
 	
-	if not jump_timer.is_stopped() and \
-		not coyote_timer.is_stopped():
-		
-		jump_timer.stop()
-		coyote_timer.stop()
-		
-		velocity.y = -JUMP_VELOCITY
+	if jump_timer.is_stopped() or coyote_timer.is_stopped():
+		return
+	
+	jump_timer.stop()
+	coyote_timer.stop()
+	
+	velocity.y = -JUMP_VELOCITY
+	midstopped = false
 
 func midstop_jump():
 	if not midstopped and \
@@ -228,7 +229,6 @@ func controls(delta: float) -> void:
 	
 	if is_on_floor():
 		coyote_timer.start()
-		midstopped = false
 	else:
 		midstop_jump()
 	
