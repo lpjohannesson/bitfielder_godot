@@ -202,17 +202,12 @@ position = Vector2(0, -1)
 texture = ExtResource("1_dqdrb")
 hframes = 4
 vframes = 4
-frame = 14
+frame = 2
 script = ExtResource("4_faxp7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, -0.5)
 shape = SubResource("RectangleShape2D_i4kni")
-
-[node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(4, 4)
-process_callback = 0
-position_smoothing_enabled = true
 
 [node name="CoyoteTimer" type="Timer" parent="."]
 wait_time = 0.1

@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=28 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="2_d1sjh"]
@@ -8,7 +8,7 @@
 [ext_resource type="Resource" uid="uid://ds7x6qly7xj3f" path="res://assets/resources/blocks/dirt.tres" id="6_8bsq4"]
 [ext_resource type="PackedScene" uid="uid://omkj7o5gbs7m" path="res://assets/objects/block/block_chunk.tscn" id="7_ngtea"]
 [ext_resource type="Resource" uid="uid://mw5um37l7kdl" path="res://assets/resources/blocks/grass.tres" id="7_wba84"]
-[ext_resource type="Script" path="res://assets/objects/block/generator/block_generator.gd" id="8_isevc"]
+[ext_resource type="Script" path="res://assets/objects/block/block_generator.gd" id="8_isevc"]
 [ext_resource type="Resource" uid="uid://c5ng4qxptscuu" path="res://assets/resources/blocks/stone.tres" id="8_ra63o"]
 [ext_resource type="Resource" uid="uid://lon2d5qckn1k" path="res://assets/resources/blocks/wood_log.tres" id="9_5cj7q"]
 [ext_resource type="Resource" uid="uid://bxbdoq7jf6a38" path="res://assets/resources/blocks/ore_coal.tres" id="9_8q8b7"]
@@ -23,46 +23,14 @@
 [ext_resource type="Resource" uid="uid://uuieiq6nosiq" path="res://assets/resources/blocks/wood_planks.tres" id="15_4ehpt"]
 [ext_resource type="Resource" uid="uid://7n2ngwx0enf7" path="res://assets/resources/blocks/water.tres" id="16_6c2a7"]
 [ext_resource type="Resource" uid="uid://dg6mhdsulrrt0" path="res://assets/resources/blocks/wool.tres" id="19_t05lu"]
-[ext_resource type="Script" path="res://assets/objects/block/generator/block_generator_layer.gd" id="23_qo1vv"]
-[ext_resource type="Script" path="res://assets/objects/block/generator/biome.gd" id="23_wmhqu"]
-[ext_resource type="Script" path="res://assets/objects/block/generator/block_generator_ground_layer.gd" id="24_5xaca"]
-[ext_resource type="Script" path="res://assets/objects/player_camera.gd" id="24_vgm8j"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hm8g0"]
 shader = ExtResource("2_d1sjh")
 shader_parameter/back_shade = 0.2
 shader_parameter/shadow_shade = 0.3
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_1ra31"]
-seed = 100
-frequency = 0.05
-
-[sub_resource type="Resource" id="Resource_yfbrk"]
-script = ExtResource("24_5xaca")
-top_block_name = "grass"
-bottom_block_name = "dirt"
-noise = SubResource("FastNoiseLite_1ra31")
-height = 12
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_y5bjj"]
-noise_type = 2
-seed = 50
-frequency = 0.8
-fractal_octaves = 1
-cellular_return_type = 0
-
-[sub_resource type="Resource" id="Resource_avykv"]
-script = ExtResource("24_5xaca")
-top_block_name = "grass"
-bottom_block_name = "dirt"
-noise = SubResource("FastNoiseLite_y5bjj")
-height = 3
-
-[sub_resource type="Resource" id="Resource_tegh3"]
-script = ExtResource("23_wmhqu")
-bottom_y = 64
-front_layers = Array[ExtResource("23_qo1vv")]([SubResource("Resource_avykv")])
-back_layers = Array[ExtResource("23_qo1vv")]([SubResource("Resource_yfbrk")])
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_fjqqn"]
+frequency = 0.1
 
 [sub_resource type="Gradient" id="Gradient_7u5hj"]
 offsets = PackedFloat32Array(0.2, 0.4, 0.6, 0.8)
@@ -98,10 +66,10 @@ scale = Vector2(0.0625, 0.0625)
 [node name="Generator" type="Node" parent="BlockWorld" node_paths=PackedStringArray("block_world")]
 script = ExtResource("8_isevc")
 block_world = NodePath("..")
-biome = SubResource("Resource_tegh3")
+noise = SubResource("FastNoiseLite_fjqqn")
 
 [node name="Player" parent="." instance=ExtResource("9_x3p4l")]
-position = Vector2(476, 375)
+position = Vector2(492, 595)
 
 [node name="ShadowViewport" type="SubViewport" parent="."]
 transparent_bg = true
@@ -121,10 +89,3 @@ offset_right = 512.0
 offset_bottom = 896.0
 texture = SubResource("GradientTexture2D_uk2xc")
 expand_mode = 2
-
-[node name="Camera2D" type="Camera2D" parent="." node_paths=PackedStringArray("player")]
-zoom = Vector2(3, 3)
-process_callback = 0
-position_smoothing_enabled = true
-script = ExtResource("24_vgm8j")
-player = NodePath("../Player")

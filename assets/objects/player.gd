@@ -182,7 +182,7 @@ func modify_block() -> bool:
 		else:
 			block_ids = center_address.chunk.back_ids
 		
-		block_ids[center_address.block_index] = block_world.get_block_id("leaves")
+		block_ids[center_address.block_index] = block_world.get_block_id("wood_planks")
 		block_world.update_block(center_block_position)
 		
 		effect_sprite.play("place")

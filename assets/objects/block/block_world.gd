@@ -1,7 +1,7 @@
 extends Node2D
 class_name BlockWorld
 
-const WORLD_CHUNK_HEIGHT = 8
+const WORLD_CHUNK_HEIGHT = 16
 
 @export var block_types: Array[BlockType]
 @export var chunk_scene: PackedScene
@@ -87,10 +87,10 @@ func create_colliders(chunk: BlockChunk) -> void:
 			collider.one_way_collision = block.properties.is_one_way
 
 func create_render_data(
-	chunk: BlockChunk,
-	block_ids: PackedInt32Array,
-	layer: Node2D,
-	on_front_layer: bool) -> BlockRenderData:
+		chunk: BlockChunk,
+		block_ids: PackedInt32Array,
+		layer: Node2D,
+		on_front_layer: bool) -> BlockRenderData:
 	
 	var render_data := BlockRenderData.new()
 	render_data.block_world = self
@@ -220,5 +220,5 @@ func _ready() -> void:
 		assert(not block_type_map.has(block_type.block_name))
 		block_type_map[block_type.block_name] = i
 	
-	generator.noise.seed = randi()
-	generator.generate_area(0, 8)
+	generator.start_generator()
+	generator.generate_area(0, 16)

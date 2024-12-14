@@ -20,9 +20,9 @@ func is_neighbor_partial(render_data: BlockRenderData, block_id: int):
 	return block.renderer_properties.is_partial
 
 func get_neighbor_mask(
-	render_data: BlockRenderData,
-	block_position: Vector2i,
-	offset: Vector2i) -> int:
+		render_data: BlockRenderData,
+		block_position: Vector2i,
+		offset: Vector2i) -> int:
 	
 	# Get address
 	var neighbor_address := \
