@@ -88,7 +88,7 @@ animations = [{
 
 [node name="EffectSprite" type="AnimatedSprite2D"]
 sprite_frames = SubResource("SpriteFrames_2qh1e")
-animation = &"place"
+animation = &"ground"
 script = ExtResource("4_wr8tn")
 
 [connection signal="animation_finished" from="." to="." method="_on_animation_finished"]

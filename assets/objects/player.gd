@@ -14,11 +14,12 @@ const JUMP_MIDSTOP = 0.5
 @export var coyote_timer: Timer
 @export var jump_timer: Timer
 @export var modify_block_timer: Timer
-@export var effect_sprite_scene: PackedScene
 
 var move_direction := 0.0
 var look_direction := 0.0
 var midstopped := false
+
+var last_on_surface := false
 
 func get_facing_sign():
 	return -1 if sprite.flip_h else 1
@@ -147,8 +148,7 @@ func modify_block() -> bool:
 		breaking = is_back_block_breakable(center_address)
 	
 	# Place or break
-	var effect_sprite: EffectSprite = effect_sprite_scene.instantiate()
-	block_world.particles.add_child(effect_sprite)
+	var effect_sprite := GameScene.scene.spawn_effect_sprite()
 	
 	if breaking:
 		var address: BlockAddress
@@ -234,6 +234,28 @@ func controls(delta: float) -> void:
 	
 	move_and_slide()
 	animate()
+	
+	var on_surface := false
+	
+	for i in range(get_slide_collision_count()):
+		var collision := get_slide_collision(i)
+		
+		if collision.get_normal().y == 0.0:
+			continue
+		
+		on_surface = true
+		
+		if last_on_surface:
+			break
+		
+		var effect_sprite := GameScene.scene.spawn_effect_sprite()
+		
+		effect_sprite.play("ground")
+		effect_sprite.global_position = Vector2(global_position.x, collision.get_position().y)
+		
+		break
+	
+	last_on_surface = on_surface
 
 func _physics_process(delta: float) -> void:
 	if modify_block_timer.is_stopped():

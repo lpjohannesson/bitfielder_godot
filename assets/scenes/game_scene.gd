@@ -9,7 +9,15 @@ static var scene: GameScene
 @export var shadow_viewport: SubViewport
 @export var shadow_shader: ShaderMaterial
 
+@export var effect_sprite_scene: PackedScene
+
 @onready var viewport := get_viewport()
+
+func spawn_effect_sprite() -> EffectSprite:
+	var effect_sprite: EffectSprite = effect_sprite_scene.instantiate()
+	block_world.particles.add_child(effect_sprite)
+	
+	return effect_sprite
 
 func resize() -> void:
 	shadow_viewport.size = viewport.size

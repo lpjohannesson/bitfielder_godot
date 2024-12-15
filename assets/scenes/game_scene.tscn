@@ -1,9 +1,10 @@
-[gd_scene load_steps=41 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=42 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="2_d1sjh"]
 [ext_resource type="Script" path="res://assets/objects/block/block_world.gd" id="3_d5c5g"]
 [ext_resource type="Script" path="res://assets/objects/block/block_type.gd" id="3_g8yh0"]
+[ext_resource type="PackedScene" uid="uid://dpmf4snl7yob2" path="res://assets/objects/effects/effect_sprite.tscn" id="3_k32od"]
 [ext_resource type="Resource" uid="uid://dpvrrnogs311x" path="res://assets/resources/blocks/air.tres" id="5_0hxew"]
 [ext_resource type="Resource" uid="uid://ds7x6qly7xj3f" path="res://assets/resources/blocks/dirt.tres" id="6_8bsq4"]
 [ext_resource type="PackedScene" uid="uid://omkj7o5gbs7m" path="res://assets/objects/block/block_chunk.tscn" id="7_ngtea"]
@@ -97,6 +98,7 @@ script = ExtResource("1_jdhth")
 block_world = NodePath("BlockWorld")
 shadow_viewport = NodePath("ShadowViewport")
 shadow_shader = SubResource("ShaderMaterial_hm8g0")
+effect_sprite_scene = ExtResource("3_k32od")
 
 [node name="BlockWorld" type="Node2D" parent="." node_paths=PackedStringArray("chunks", "particles", "generator")]
 scale = Vector2(16, 16)
@@ -119,7 +121,7 @@ block_world = NodePath("..")
 biome = SubResource("Resource_tegh3")
 
 [node name="Player" parent="." instance=ExtResource("9_x3p4l")]
-position = Vector2(476, 375)
+position = Vector2(483, 362)
 
 [node name="ShadowViewport" type="SubViewport" parent="."]
 transparent_bg = true
