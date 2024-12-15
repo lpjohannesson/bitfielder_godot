@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=41 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="2_d1sjh"]
@@ -26,12 +26,30 @@
 [ext_resource type="Script" path="res://assets/objects/block/generator/block_generator_layer.gd" id="23_qo1vv"]
 [ext_resource type="Script" path="res://assets/objects/block/generator/biome.gd" id="23_wmhqu"]
 [ext_resource type="Script" path="res://assets/objects/block/generator/block_generator_ground_layer.gd" id="24_5xaca"]
+[ext_resource type="Script" path="res://assets/objects/block/generator/block_generator_noise_layer.gd" id="24_nglkt"]
+[ext_resource type="Script" path="res://assets/objects/block/generator/block_generator_fill_layer.gd" id="24_t76ij"]
 [ext_resource type="Script" path="res://assets/objects/player_camera.gd" id="24_vgm8j"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hm8g0"]
 shader = ExtResource("2_d1sjh")
 shader_parameter/back_shade = 0.2
 shader_parameter/shadow_shade = 0.3
+
+[sub_resource type="Resource" id="Resource_6yimt"]
+script = ExtResource("24_t76ij")
+block_name = "stone"
+height = 16
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_1wwu2"]
+seed = 20
+frequency = 0.1
+
+[sub_resource type="Resource" id="Resource_5nbqo"]
+script = ExtResource("24_nglkt")
+top_block_name = "dirt"
+bottom_block_name = "stone"
+noise = SubResource("FastNoiseLite_1wwu2")
+height = 10
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_1ra31"]
 seed = 100
@@ -42,7 +60,7 @@ script = ExtResource("24_5xaca")
 top_block_name = "grass"
 bottom_block_name = "dirt"
 noise = SubResource("FastNoiseLite_1ra31")
-height = 12
+height = 10
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_y5bjj"]
 noise_type = 2
@@ -61,8 +79,8 @@ height = 3
 [sub_resource type="Resource" id="Resource_tegh3"]
 script = ExtResource("23_wmhqu")
 bottom_y = 64
-front_layers = Array[ExtResource("23_qo1vv")]([SubResource("Resource_avykv")])
-back_layers = Array[ExtResource("23_qo1vv")]([SubResource("Resource_yfbrk")])
+front_layers = Array[ExtResource("23_qo1vv")]([SubResource("Resource_6yimt"), SubResource("Resource_5nbqo"), SubResource("Resource_avykv")])
+back_layers = Array[ExtResource("23_qo1vv")]([SubResource("Resource_6yimt"), SubResource("Resource_5nbqo"), SubResource("Resource_yfbrk")])
 
 [sub_resource type="Gradient" id="Gradient_7u5hj"]
 offsets = PackedFloat32Array(0.2, 0.4, 0.6, 0.8)
