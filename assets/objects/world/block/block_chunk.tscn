@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://omkj7o5gbs7m"]
 
-[ext_resource type="Script" path="res://assets/objects/block/block_chunk.gd" id="1_wkhqk"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_chunk.gd" id="1_wkhqk"]
 
 [sub_resource type="Shader" id="Shader_mw7mf"]
 code = "shader_type canvas_item;

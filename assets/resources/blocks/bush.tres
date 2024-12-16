@@ -1,11 +1,11 @@
 [gd_resource type="Resource" script_class="BlockType" load_steps=10 format=3 uid="uid://bbv4vutd5bnrl"]
 
 [ext_resource type="Texture2D" uid="uid://3y74r12ljned" path="res://assets/textures/blocks/particles/leaves.png" id="1_me480"]
-[ext_resource type="Script" path="res://assets/objects/block/block_properties.gd" id="2_lm7f3"]
-[ext_resource type="Script" path="res://assets/objects/block/render/basic_block_renderer.gd" id="2_uxy03"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_lm7f3"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="2_uxy03"]
 [ext_resource type="Texture2D" uid="uid://dck6lqh1cp6ya" path="res://assets/textures/blocks/bush.png" id="3_yhl64"]
-[ext_resource type="Script" path="res://assets/objects/block/render/block_renderer_properties.gd" id="4_1cc63"]
-[ext_resource type="Script" path="res://assets/objects/block/block_type.gd" id="4_v1503"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/block_renderer_properties.gd" id="4_1cc63"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="4_v1503"]
 
 [sub_resource type="Resource" id="Resource_fjn6q"]
 script = ExtResource("2_lm7f3")

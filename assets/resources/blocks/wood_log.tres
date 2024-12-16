@@ -1,11 +1,11 @@
 [gd_resource type="Resource" script_class="BlockType" load_steps=10 format=3 uid="uid://lon2d5qckn1k"]
 
 [ext_resource type="Texture2D" uid="uid://dtr4vbkje7np6" path="res://assets/textures/blocks/particles/wood.png" id="1_eiwq3"]
-[ext_resource type="Script" path="res://assets/objects/block/render/auto_block_renderer.gd" id="2_2ogwv"]
-[ext_resource type="Script" path="res://assets/objects/block/block_properties.gd" id="2_7oc3s"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="2_2ogwv"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_7oc3s"]
 [ext_resource type="Texture2D" uid="uid://bix3avmlaqday" path="res://assets/textures/blocks/wood_log.png" id="3_aqpb0"]
-[ext_resource type="Script" path="res://assets/objects/block/render/block_renderer_properties.gd" id="3_pncqd"]
-[ext_resource type="Script" path="res://assets/objects/block/block_type.gd" id="4_4u247"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/block_renderer_properties.gd" id="3_pncqd"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="4_4u247"]
 
 [sub_resource type="Resource" id="Resource_hvpmr"]
 script = ExtResource("2_7oc3s")

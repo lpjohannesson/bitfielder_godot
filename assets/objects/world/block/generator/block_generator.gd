@@ -1,10 +1,12 @@
 extends Node
 class_name BlockGenerator
 
-@export var block_world: BlockWorld
+@export var world: GameWorld
 @export var biome: Biome
 
 func generate_area(chunk_start_x: int, chunk_end_x: int) -> void:
+	var block_world: BlockWorld = world.block_world
+	
 	# Create chunks
 	var chunks: Array[BlockChunk] = []
 	
@@ -28,4 +30,4 @@ func generate_area(chunk_start_x: int, chunk_end_x: int) -> void:
 		block_world.update_chunk(chunk)
 
 func start_generator() -> void:
-	biome.start_biome(block_world)
+	biome.start_biome(world.block_world)

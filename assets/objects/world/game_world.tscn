@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://celyk57ifua4f"]
+
+[ext_resource type="PackedScene" uid="uid://skq7ko7cqtj1" path="res://assets/objects/world/block/block_world.tscn" id="1_5y2sb"]
+[ext_resource type="Script" path="res://assets/objects/world/game_world.gd" id="1_waysh"]
+
+[node name="GameWorld" type="Node2D" node_paths=PackedStringArray("block_world")]
+script = ExtResource("1_waysh")
+block_world = NodePath("BlockWorld")
+
+[node name="BlockWorld" parent="." instance=ExtResource("1_5y2sb")]

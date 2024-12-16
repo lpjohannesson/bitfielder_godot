@@ -1,0 +1,54 @@
+[gd_resource type="Resource" script_class="Biome" load_steps=13 format=3 uid="uid://3geq4dw1tlva"]
+
+[ext_resource type="Script" path="res://assets/objects/world/block/generator/block_generator_layer.gd" id="1_e3u26"]
+[ext_resource type="Script" path="res://assets/objects/world/block/generator/block_generator_fill_layer.gd" id="2_ouqgi"]
+[ext_resource type="Script" path="res://assets/objects/world/block/generator/block_generator_noise_layer.gd" id="3_fus8c"]
+[ext_resource type="Script" path="res://assets/objects/world/block/generator/block_generator_ground_layer.gd" id="4_e3u02"]
+[ext_resource type="Script" path="res://assets/objects/world/block/generator/biome.gd" id="5_j13wk"]
+
+[sub_resource type="Resource" id="Resource_6yimt"]
+script = ExtResource("2_ouqgi")
+block_name = "stone"
+height = 16
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_1wwu2"]
+seed = 20
+frequency = 0.1
+
+[sub_resource type="Resource" id="Resource_5nbqo"]
+script = ExtResource("3_fus8c")
+top_block_name = "dirt"
+bottom_block_name = "stone"
+noise = SubResource("FastNoiseLite_1wwu2")
+height = 10
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_1ra31"]
+seed = 100
+frequency = 0.05
+
+[sub_resource type="Resource" id="Resource_yfbrk"]
+script = ExtResource("4_e3u02")
+top_block_name = "grass"
+bottom_block_name = "dirt"
+noise = SubResource("FastNoiseLite_1ra31")
+height = 8
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_y5bjj"]
+noise_type = 2
+seed = 50
+frequency = 0.8
+fractal_octaves = 1
+cellular_return_type = 0
+
+[sub_resource type="Resource" id="Resource_avykv"]
+script = ExtResource("4_e3u02")
+top_block_name = "grass"
+bottom_block_name = "dirt"
+noise = SubResource("FastNoiseLite_y5bjj")
+height = 3
+
+[resource]
+script = ExtResource("5_j13wk")
+bottom_y = 64
+front_layers = Array[ExtResource("1_e3u26")]([SubResource("Resource_6yimt"), SubResource("Resource_5nbqo"), SubResource("Resource_avykv")])
+back_layers = Array[ExtResource("1_e3u26")]([SubResource("Resource_6yimt"), SubResource("Resource_5nbqo"), SubResource("Resource_yfbrk")])

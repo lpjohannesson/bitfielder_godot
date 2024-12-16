@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://ksyixh0m4vfx"]
+
+[ext_resource type="PackedScene" uid="uid://dofu8ik7dtua1" path="res://assets/scenes/game_scene.tscn" id="1_rbb3k"]
+[ext_resource type="Script" path="res://assets/scenes/local_game_scene.gd" id="1_tbd82"]
+[ext_resource type="PackedScene" uid="uid://dabfu1b4js5p2" path="res://assets/objects/game_server.tscn" id="2_xjlhy"]
+
+[node name="LocalGameScene" type="Node2D" node_paths=PackedStringArray("server")]
+script = ExtResource("1_tbd82")
+server = NodePath("ServerContainer/GameServer")
+
+[node name="GameScene" parent="." instance=ExtResource("1_rbb3k")]
+
+[node name="ServerContainer" type="SubViewport" parent="."]
+size = Vector2i(2, 2)
+render_target_clear_mode = 1
+render_target_update_mode = 4
+
+[node name="GameServer" parent="ServerContainer" instance=ExtResource("2_xjlhy")]

@@ -103,7 +103,9 @@ func modify_block() -> bool:
 		return false
 	
 	# Get block position
-	var block_world := GameScene.scene.block_world
+	var block_world := GameScene.scene.world.block_world
+	var block_world_renderer := GameScene.scene.block_world_renderer
+	
 	var center_block_position := block_world.world_to_block(global_position)
 	var forward_block_position := center_block_position
 	
@@ -166,10 +168,10 @@ func modify_block() -> bool:
 		
 		var block_id := block_ids[address.block_index]
 		
-		block_world.create_particles(block_id, block_position)
+		block_world_renderer.create_particles(block_id, block_position)
 		
 		block_ids[address.block_index] = 0
-		block_world.update_block(block_position)
+		GameScene.scene.update_block(block_position)
 		
 		effect_sprite.play("break")
 		effect_sprite.global_position = \
@@ -183,7 +185,7 @@ func modify_block() -> bool:
 			block_ids = center_address.chunk.back_ids
 		
 		block_ids[center_address.block_index] = block_world.get_block_id("wood_planks")
-		block_world.update_block(center_block_position)
+		GameScene.scene.update_block(center_block_position)
 		
 		effect_sprite.play("place")
 		effect_sprite.global_position = \

@@ -1,0 +1,24 @@
+[gd_scene format=3 uid="uid://bgj63tpb1tesm"]
+
+[node name="MenuScene" type="Node2D"]
+
+[node name="Button" type="Button" parent="."]
+offset_left = 287.0
+offset_top = 89.0
+offset_right = 390.0
+offset_bottom = 120.0
+text = "Singleplayer"
+
+[node name="Button2" type="Button" parent="."]
+offset_left = 285.0
+offset_top = 129.0
+offset_right = 388.0
+offset_bottom = 160.0
+text = "Multiplayer"
+
+[node name="LineEdit" type="LineEdit" parent="."]
+offset_left = 96.0
+offset_top = 127.0
+offset_right = 278.0
+offset_bottom = 158.0
+text = "localhost"

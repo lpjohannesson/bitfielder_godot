@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://qnuf5qyuxwxp"]
 
-[ext_resource type="Script" path="res://assets/objects/shadowed_sprite.gd" id="2_8h8u7"]
-[ext_resource type="Script" path="res://assets/objects/block/render/block_particle.gd" id="2_lb80w"]
+[ext_resource type="Script" path="res://assets/objects/world/shadowed_sprite.gd" id="2_8h8u7"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/block_particle.gd" id="2_lb80w"]
 
 [node name="BlockParticle" type="Node2D" node_paths=PackedStringArray("sprite")]
 script = ExtResource("2_lb80w")

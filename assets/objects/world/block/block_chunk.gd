@@ -26,13 +26,3 @@ func redraw_chunk() -> void:
 func _enter_tree() -> void:
 	front_ids.resize(BLOCK_COUNT)
 	back_ids.resize(BLOCK_COUNT)
-	
-	back_layer.material = GameScene.scene.shadow_shader
-	
-	# Create shadow
-	shadow_layer = Node2D.new()
-	GameScene.scene.shadow_viewport.add_child(shadow_layer)
-	shadow_layer.global_transform = global_transform
-
-func _exit_tree() -> void:
-	shadow_layer.queue_free()
