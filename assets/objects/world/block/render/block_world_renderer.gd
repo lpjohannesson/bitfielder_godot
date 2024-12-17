@@ -88,7 +88,7 @@ func start_chunk(chunk: BlockChunk) -> void:
 	
 	chunk.tree_exited.connect(chunk.shadow_layer.queue_free)
 
-func create_particles(block_id: int, block_position: Vector2i):
+func spawn_particles(block_id: int, block_position: Vector2i):
 	var block_world := world.block_world
 	
 	var block := block_world.block_types[block_id]

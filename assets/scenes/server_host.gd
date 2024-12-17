@@ -11,8 +11,6 @@ var connection := ENetConnection.new()
 var peer_clients := {}
 
 func _ready():
-	GameWorld.instance = server.world
-	
 	connection.create_host_bound("*", PORT, 32)
 
 func _process(_delta: float) -> void:

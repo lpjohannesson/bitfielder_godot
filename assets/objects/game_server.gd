@@ -51,6 +51,7 @@ func connect_client(client: ClientConnection) -> void:
 	add_child(player)
 	
 	client.player = player
+	player.entity.on_server = true
 	
 	for chunk in world.block_world.chunk_map.values():
 		var packet := GamePacket.create_packet(

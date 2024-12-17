@@ -1,0 +1,228 @@
+[gd_scene load_steps=16 format=3 uid="uid://qhbwwmg422j6"]
+
+[ext_resource type="Script" path="res://assets/objects/world/entity/player/player.gd" id="1_7uomn"]
+[ext_resource type="Texture2D" uid="uid://dbtonbihnosbj" path="res://assets/textures/player.png" id="1_dqdrb"]
+[ext_resource type="Script" path="res://assets/objects/world/shadowed_sprite.gd" id="4_faxp7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_i4kni"]
+size = Vector2(8, 13)
+
+[sub_resource type="Animation" id="Animation_t7vn5"]
+resource_name = "fall"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [2]
+}
+
+[sub_resource type="Animation" id="Animation_1032r"]
+resource_name = "idle"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_p1jpt"]
+resource_name = "jump"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+
+[sub_resource type="Animation" id="Animation_omo4f"]
+resource_name = "look_down"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [9]
+}
+
+[sub_resource type="Animation" id="Animation_ikka8"]
+resource_name = "look_up"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [8]
+}
+
+[sub_resource type="Animation" id="Animation_les6d"]
+resource_name = "punch_down"
+length = 0.3
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [14, 15, 2]
+}
+
+[sub_resource type="Animation" id="Animation_nf7j3"]
+resource_name = "punch_forward"
+length = 0.3
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [10, 11, 2]
+}
+
+[sub_resource type="Animation" id="Animation_voj85"]
+resource_name = "punch_up"
+length = 0.3
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 1,
+"values": [12, 13, 2]
+}
+
+[sub_resource type="Animation" id="Animation_viv5v"]
+resource_name = "slide"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [3]
+}
+
+[sub_resource type="Animation" id="Animation_bdjc4"]
+resource_name = "walk"
+length = 0.4
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [4, 5, 6, 7]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_whnse"]
+_data = {
+"fall": SubResource("Animation_t7vn5"),
+"idle": SubResource("Animation_1032r"),
+"jump": SubResource("Animation_p1jpt"),
+"look_down": SubResource("Animation_omo4f"),
+"look_up": SubResource("Animation_ikka8"),
+"punch_down": SubResource("Animation_les6d"),
+"punch_forward": SubResource("Animation_nf7j3"),
+"punch_up": SubResource("Animation_voj85"),
+"slide": SubResource("Animation_viv5v"),
+"walk": SubResource("Animation_bdjc4")
+}
+
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("sprite", "collider", "animation_player", "coyote_timer", "jump_timer", "modify_block_timer")]
+script = ExtResource("1_7uomn")
+sprite = NodePath("Sprite2D")
+collider = NodePath("CollisionShape2D")
+animation_player = NodePath("AnimationPlayer")
+coyote_timer = NodePath("CoyoteTimer")
+jump_timer = NodePath("JumpTimer")
+modify_block_timer = NodePath("ModifyBlockTimer")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -1)
+texture = ExtResource("1_dqdrb")
+hframes = 4
+vframes = 4
+frame = 2
+script = ExtResource("4_faxp7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -0.5)
+shape = SubResource("RectangleShape2D_i4kni")
+
+[node name="CoyoteTimer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
+[node name="JumpTimer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
+
+[node name="ModifyBlockTimer" type="Timer" parent="."]
+process_callback = 0
+wait_time = 0.3
+one_shot = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_whnse")
+}
+
+[connection signal="timeout" from="ModifyBlockTimer" to="." method="_on_modify_block_timer_timeout"]

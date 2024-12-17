@@ -7,9 +7,9 @@
 [ext_resource type="Script" path="res://assets/objects/world/block/render/block_world_renderer.gd" id="7_ddnpg"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_serializer.gd" id="7_dv0bx"]
 [ext_resource type="PackedScene" uid="uid://qnuf5qyuxwxp" path="res://assets/objects/world/block/render/block_particle.tscn" id="8_in2xm"]
-[ext_resource type="PackedScene" uid="uid://qhbwwmg422j6" path="res://assets/objects/world/player/player.tscn" id="9_x3p4l"]
+[ext_resource type="PackedScene" uid="uid://qhbwwmg422j6" path="res://assets/objects/world/entity/player/player.tscn" id="9_x3p4l"]
 [ext_resource type="Script" path="res://assets/objects/game_packet_manager.gd" id="10_wvv0v"]
-[ext_resource type="Script" path="res://assets/objects/world/player/player_camera.gd" id="24_vgm8j"]
+[ext_resource type="Script" path="res://assets/objects/world/entity/player/player_camera.gd" id="24_vgm8j"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hm8g0"]
 shader = ExtResource("2_d1sjh")
@@ -83,7 +83,3 @@ handle_input_locally = false
 canvas_item_default_texture_filter = 0
 size = Vector2i(40, 40)
 render_target_update_mode = 4
-
-[connection signal="block_particles_spawned" from="GameWorld" to="." method="_on_game_world_block_particles_spawned"]
-[connection signal="block_updated" from="GameWorld" to="." method="_on_game_world_block_updated"]
-[connection signal="effect_sprite_spawned" from="GameWorld" to="." method="_on_game_world_effect_sprite_spawned"]
