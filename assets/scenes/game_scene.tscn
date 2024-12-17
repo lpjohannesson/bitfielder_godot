@@ -26,7 +26,7 @@ width = 1
 fill_from = Vector2(0, 1)
 fill_to = Vector2(0, 0)
 
-[node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "block_serializer", "block_world_renderer", "packet_manager", "particles", "shadow_viewport")]
+[node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "block_serializer", "block_world_renderer", "packet_manager", "particles", "shadow_viewport", "player")]
 script = ExtResource("1_jdhth")
 world = NodePath("GameWorld")
 block_serializer = NodePath("BlockSerializer")
@@ -36,6 +36,7 @@ particles = NodePath("Particles")
 shadow_viewport = NodePath("ShadowViewport")
 shadow_shader = SubResource("ShaderMaterial_hm8g0")
 effect_sprite_scene = ExtResource("3_k32od")
+player = NodePath("Player")
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
@@ -82,3 +83,7 @@ handle_input_locally = false
 canvas_item_default_texture_filter = 0
 size = Vector2i(40, 40)
 render_target_update_mode = 4
+
+[connection signal="block_particles_spawned" from="GameWorld" to="." method="_on_game_world_block_particles_spawned"]
+[connection signal="block_updated" from="GameWorld" to="." method="_on_game_world_block_updated"]
+[connection signal="effect_sprite_spawned" from="GameWorld" to="." method="_on_game_world_effect_sprite_spawned"]

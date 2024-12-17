@@ -15,23 +15,18 @@ static var instance: GameScene
 @export var shadow_shader: ShaderMaterial
 
 @export var effect_sprite_scene: PackedScene
+@export var player: Player
 
 @onready var viewport := get_viewport()
 
 var server: ServerConnection
 
-func spawn_effect_sprite() -> EffectSprite:
-	var effect_sprite: EffectSprite = effect_sprite_scene.instantiate()
-	particles.add_child(effect_sprite)
+func send_player_position():
+	var packet := GamePacket.create_packet(
+		Packets.ClientPacket.PLAYER_POSITION,
+		{ "position": player.global_position })
 	
-	return effect_sprite
-
-func update_block(block_position: Vector2i) -> void:
-	var block_world := world.block_world
-	
-	for chunk in block_world.get_block_chunks(block_position):
-		block_world.update_chunk(chunk)
-		chunk.redraw_chunk()
+	server.send_packet(packet)
 
 func resize() -> void:
 	shadow_viewport.size = viewport.size
@@ -45,7 +40,32 @@ func _ready() -> void:
 	
 	resize()
 	viewport.size_changed.connect(resize)
+	
+	GameWorld.instance = world
 
 func _process(_delta: float) -> void:
 	shadow_viewport.canvas_transform = \
 		viewport.canvas_transform * SHADOW_TRANSFORM
+	
+	player.player_input.read_inputs(server)
+	send_player_position()
+
+func _on_game_world_effect_sprite_spawned(
+		effect_name: String,
+		effect_position: Vector2) -> void:
+	
+	var effect_sprite: EffectSprite = effect_sprite_scene.instantiate()
+	particles.add_child(effect_sprite)
+	
+	effect_sprite.global_position = effect_position
+	effect_sprite.play(effect_name)
+
+func _on_game_world_block_updated(block_position: Vector2i) -> void:
+	var block_world := world.block_world
+	
+	for chunk in block_world.get_block_chunks(block_position):
+		block_world.update_chunk(chunk)
+		chunk.redraw_chunk()
+
+func _on_game_world_block_particles_spawned(block_id: int, block_position: Vector2i) -> void:
+	block_world_renderer.create_particles(block_id, block_position)

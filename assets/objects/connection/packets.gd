@@ -1,6 +1,7 @@
 class_name Packets
 
 enum ServerPacket {
+	TELEPORT_PLAYER,
 	BLOCK_CHUNK
 }
 

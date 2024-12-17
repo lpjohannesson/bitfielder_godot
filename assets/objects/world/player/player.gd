@@ -21,6 +21,8 @@ var midstopped := false
 
 var last_on_surface := false
 
+var player_input := PlayerInput.new()
+
 func get_facing_sign():
 	return -1 if sprite.flip_h else 1
 
@@ -32,14 +34,14 @@ func walk(delta: float) -> void:
 			ACCELERATION * delta)
 
 func aim() -> void:
-	move_direction = sign(Input.get_axis("move_left", "move_right"))
-	look_direction = sign(Input.get_axis("look_up", "look_down"))
+	move_direction = sign(player_input.get_axis("move_left", "move_right"))
+	look_direction = sign(player_input.get_axis("look_up", "look_down"))
 	
 	if move_direction != 0.0:
 		sprite.flip_h = move_direction < 0.0
 
 func jump() -> void:
-	if Input.is_action_just_pressed("jump"):
+	if player_input.is_action_just_pressed("jump"):
 		jump_timer.start()
 	
 	if jump_timer.is_stopped() or coyote_timer.is_stopped():
@@ -54,7 +56,7 @@ func jump() -> void:
 func midstop_jump():
 	if not midstopped and \
 		velocity.y < 0.0 and \
-		not Input.is_action_pressed("jump"):
+		not player_input.is_action_pressed("jump"):
 		
 		midstopped = true
 		velocity.y *= JUMP_MIDSTOP
@@ -95,16 +97,15 @@ func modify_block() -> bool:
 	# Determine block layer
 	var on_front_layer: bool
 	
-	if Input.is_action_pressed("break_front"):
+	if player_input.is_action_pressed("break_front"):
 		on_front_layer = true
-	elif Input.is_action_pressed("break_back"):
+	elif player_input.is_action_pressed("break_back"):
 		on_front_layer = false
 	else:
 		return false
 	
 	# Get block position
-	var block_world := GameScene.instance.world.block_world
-	var block_world_renderer := GameScene.instance.block_world_renderer
+	var block_world := GameWorld.instance.block_world
 	
 	var center_block_position := block_world.world_to_block(global_position)
 	var forward_block_position := center_block_position
@@ -150,8 +151,6 @@ func modify_block() -> bool:
 		breaking = is_back_block_breakable(center_address)
 	
 	# Place or break
-	var effect_sprite := GameScene.instance.spawn_effect_sprite()
-	
 	if breaking:
 		var address: BlockAddress
 		var block_ids: PackedInt32Array
@@ -168,14 +167,15 @@ func modify_block() -> bool:
 		
 		var block_id := block_ids[address.block_index]
 		
-		block_world_renderer.create_particles(block_id, block_position)
+		GameWorld.instance.block_particles_spawned.emit(block_id, block_position)
 		
 		block_ids[address.block_index] = 0
-		GameScene.instance.update_block(block_position)
+		GameWorld.instance.block_updated.emit(block_position)
 		
-		effect_sprite.play("break")
-		effect_sprite.global_position = \
+		GameWorld.instance.effect_sprite_spawned.emit(
+			"break",
 			block_world.block_to_world(block_position, true)
+		)
 	else:
 		var block_ids: PackedInt32Array
 		
@@ -185,11 +185,12 @@ func modify_block() -> bool:
 			block_ids = center_address.chunk.back_ids
 		
 		block_ids[center_address.block_index] = block_world.get_block_id("wood_planks")
-		GameScene.instance.update_block(center_block_position)
+		GameWorld.instance.block_updated.emit(center_block_position)
 		
-		effect_sprite.play("place")
-		effect_sprite.global_position = \
+		GameWorld.instance.effect_sprite_spawned.emit(
+			"place",
 			block_world.block_to_world(center_block_position, true)
+		)
 	
 	# Start movement
 	velocity = Vector2.ZERO
@@ -250,28 +251,20 @@ func controls(delta: float) -> void:
 		if last_on_surface:
 			break
 		
-		var effect_sprite := GameScene.instance.spawn_effect_sprite()
-		
-		effect_sprite.play("ground")
-		effect_sprite.global_position = Vector2(global_position.x, collision.get_position().y)
+		GameWorld.instance.effect_sprite_spawned.emit(
+			"ground",
+			Vector2(global_position.x, collision.get_position().y)
+		)
 		
 		break
 	
 	last_on_surface = on_surface
 
-func send_player_position():
-	var packet := GamePacket.new()
-	
-	packet.type = Packets.ClientPacket.PLAYER_POSITION
-	packet.data = { "position": global_position }
-	
-	GameScene.instance.server.send_packet(packet)
-
 func _physics_process(delta: float) -> void:
 	if modify_block_timer.is_stopped():
 		controls(delta)
 	
-	send_player_position()
+	player_input.update_inputs()
 
 func _on_modify_block_timer_timeout() -> void:
 	collider.disabled = false

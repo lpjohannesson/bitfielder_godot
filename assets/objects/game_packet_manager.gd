@@ -3,6 +3,13 @@ class_name GamePacketManager
 
 @export var scene: GameScene
 
+func teleport_player(packet: GamePacket):
+	var position: Vector2 = packet.data["position"]
+	var velocity: Vector2 = packet.data["velocity"]
+	
+	scene.player.global_position = position
+	scene.player.velocity = velocity
+
 func load_block_chunk(packet: GamePacket) -> void:
 	var block_world := scene.world.block_world
 	var chunk := block_world.create_chunk(packet.data["index"])
@@ -14,5 +21,8 @@ func load_block_chunk(packet: GamePacket) -> void:
 
 func recieve_packet(packet: GamePacket) -> void:
 	match packet.type:
+		Packets.ServerPacket.TELEPORT_PLAYER:
+			teleport_player(packet)
+		
 		Packets.ServerPacket.BLOCK_CHUNK:
 			load_block_chunk(packet)

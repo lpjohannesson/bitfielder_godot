@@ -7,6 +7,7 @@ var client := LocalClientConnection.new()
 var server := LocalServerConnection.new()
 
 func _ready() -> void:
+	# Attach local client and server connections
 	GameScene.instance.server = server
 	server.client = client
 	

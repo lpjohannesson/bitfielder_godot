@@ -37,6 +37,7 @@ func _on_multiplayer_menu_connect_selected(address: String, port: int) -> void:
 	multiplayer_menu.hide()
 	connection_menu.show()
 	
+	# Connect to server
 	server = RemoteServerConnection.new()
 	RemoteServerConnection.instance = server
 	

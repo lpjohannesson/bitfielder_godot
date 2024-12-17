@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://dabfu1b4js5p2"]
+[gd_scene load_steps=7 format=3 uid="uid://dabfu1b4js5p2"]
 
 [ext_resource type="PackedScene" uid="uid://celyk57ifua4f" path="res://assets/objects/world/game_world.tscn" id="1_3i2nf"]
 [ext_resource type="Script" path="res://assets/objects/game_server.gd" id="1_wrg7q"]
+[ext_resource type="PackedScene" uid="uid://qhbwwmg422j6" path="res://assets/objects/world/player/player.tscn" id="2_db1tb"]
 [ext_resource type="Script" path="res://assets/objects/world/block/generator/block_generator.gd" id="2_nhcsd"]
 [ext_resource type="Resource" uid="uid://3geq4dw1tlva" path="res://assets/resources/biomes/test_biome.tres" id="3_fgtlb"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_serializer.gd" id="5_e6gss"]
@@ -11,6 +12,7 @@ script = ExtResource("1_wrg7q")
 world = NodePath("GameWorld")
 block_generator = NodePath("BlockGenerator")
 block_serializer = NodePath("BlockSerializer")
+player_scene = ExtResource("2_db1tb")
 
 [node name="GameWorld" parent="." instance=ExtResource("1_3i2nf")]
 
