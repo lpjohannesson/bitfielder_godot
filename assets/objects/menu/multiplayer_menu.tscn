@@ -1,0 +1,45 @@
+[gd_scene load_steps=2 format=3 uid="uid://d4jfjxf7378j6"]
+
+[ext_resource type="Script" path="res://assets/objects/menu/multiplayer_menu.gd" id="1_47ovg"]
+
+[node name="MultiplayerMenu" type="Control" node_paths=PackedStringArray("address_text")]
+layout_mode = 3
+anchors_preset = 0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+script = ExtResource("1_47ovg")
+address_text = NodePath("AddressText")
+
+[node name="AddressText" type="LineEdit" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -91.0
+offset_right = 91.0
+offset_bottom = 31.0
+grow_horizontal = 2
+text = "localhost"
+placeholder_text = "Server address"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -36.0
+offset_top = 43.0
+offset_right = 36.0
+offset_bottom = 144.0
+grow_horizontal = 2
+
+[node name="ConnectButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Connect"
+
+[node name="CancelButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "Cancel"
+
+[connection signal="button_down" from="VBoxContainer/ConnectButton" to="." method="_on_connect_button_button_down"]
+[connection signal="button_down" from="VBoxContainer/CancelButton" to="." method="_on_cancel_button_button_down"]

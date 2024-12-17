@@ -4,9 +4,9 @@
 [ext_resource type="Script" path="res://assets/scenes/local_game_scene.gd" id="1_tbd82"]
 [ext_resource type="PackedScene" uid="uid://dabfu1b4js5p2" path="res://assets/objects/game_server.tscn" id="2_xjlhy"]
 
-[node name="LocalGameScene" type="Node2D" node_paths=PackedStringArray("server")]
+[node name="LocalGameScene" type="Node2D" node_paths=PackedStringArray("local_server")]
 script = ExtResource("1_tbd82")
-server = NodePath("ServerContainer/GameServer")
+local_server = NodePath("ServerContainer/GameServer")
 
 [node name="GameScene" parent="." instance=ExtResource("1_rbb3k")]
 

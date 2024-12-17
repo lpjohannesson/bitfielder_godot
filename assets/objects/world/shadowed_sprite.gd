@@ -6,7 +6,7 @@ var shadow: Sprite2D
 func _ready() -> void:
 	shadow = Sprite2D.new()
 	
-	var shadow_viewport := GameScene.scene.shadow_viewport
+	var shadow_viewport := GameScene.instance.shadow_viewport
 	shadow_viewport.add_child(shadow)
 	
 	shadow.texture = texture

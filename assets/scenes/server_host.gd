@@ -6,18 +6,30 @@ const MAX_CLIENTS = 32
 
 @export var server: GameServer
 
-static var scene: ServerHost
-var peer := ENetMultiplayerPeer.new()
+var connection := ENetConnection.new()
+
+var peer_clients := {}
 
 func _ready():
-	scene = self
-	
-	peer.create_server(PORT, MAX_CLIENTS)
-	multiplayer.multiplayer_peer = peer
-	
-	multiplayer.peer_connected.connect(func(id: int) -> void: 
-		var client := RemoteClientConnection.new()
-		client.peer_id = id
+	connection.create_host_bound("*", PORT, 32)
+
+func _process(_delta: float) -> void:
+	while true:
+		var event := connection.service()
+		var event_type: ENetConnection.EventType = event[0]
+		var peer: ENetPacketPeer = event[1]
 		
-		server.connect_client(client)
-	)
+		match event_type:
+			ENetConnection.EVENT_NONE:
+				break
+			
+			ENetConnection.EVENT_CONNECT:
+				var client := RemoteClientConnection.new()
+				client.peer = peer
+				peer_clients[peer] = client
+				
+				server.connect_client(client)
+			
+			ENetConnection.EVENT_RECEIVE:
+				var packet := GamePacket.from_bytes(peer.get_packet())
+				server.recieve_packet(packet, peer_clients[peer])

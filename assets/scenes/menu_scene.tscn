@@ -1,24 +1,35 @@
-[gd_scene format=3 uid="uid://bgj63tpb1tesm"]
+[gd_scene load_steps=6 format=3 uid="uid://bgj63tpb1tesm"]
 
-[node name="MenuScene" type="Node2D"]
+[ext_resource type="Script" path="res://assets/scenes/menu_scene.gd" id="1_5k21t"]
+[ext_resource type="PackedScene" uid="uid://c1xyjnh5dpdt2" path="res://assets/objects/menu/main_menu.tscn" id="2_elm5u"]
+[ext_resource type="PackedScene" uid="uid://d4jfjxf7378j6" path="res://assets/objects/menu/multiplayer_menu.tscn" id="3_xkfv7"]
+[ext_resource type="PackedScene" uid="uid://cvvclvjf62j4p" path="res://assets/objects/menu/connection_menu.tscn" id="4_duo2n"]
+[ext_resource type="Texture2D" uid="uid://cnxn7meqpnyf1" path="res://assets/textures/menu/logo.png" id="4_ofaut"]
 
-[node name="Button" type="Button" parent="."]
-offset_left = 287.0
-offset_top = 89.0
-offset_right = 390.0
-offset_bottom = 120.0
-text = "Singleplayer"
+[node name="MenuScene" type="Node2D" node_paths=PackedStringArray("main_menu", "multiplayer_menu", "connection_menu")]
+script = ExtResource("1_5k21t")
+main_menu = NodePath("MainMenu")
+multiplayer_menu = NodePath("MultiplayerMenu")
+connection_menu = NodePath("ConnectionMenu")
 
-[node name="Button2" type="Button" parent="."]
-offset_left = 285.0
-offset_top = 129.0
-offset_right = 388.0
-offset_bottom = 160.0
-text = "Multiplayer"
+[node name="MainMenu" parent="." instance=ExtResource("2_elm5u")]
 
-[node name="LineEdit" type="LineEdit" parent="."]
-offset_left = 96.0
-offset_top = 127.0
-offset_right = 278.0
-offset_bottom = 158.0
-text = "localhost"
+[node name="MultiplayerMenu" parent="." instance=ExtResource("3_xkfv7")]
+visible = false
+
+[node name="ConnectionMenu" parent="." instance=ExtResource("4_duo2n")]
+visible = false
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(2, 2)
+
+[node name="Logo" type="Sprite2D" parent="."]
+position = Vector2(0, -48)
+scale = Vector2(3, 3)
+texture = ExtResource("4_ofaut")
+
+[connection signal="mulitplayer_selected" from="MainMenu" to="." method="_on_main_menu_mulitplayer_selected"]
+[connection signal="singleplayer_selected" from="MainMenu" to="." method="_on_main_menu_singleplayer_selected"]
+[connection signal="cancel_selected" from="MultiplayerMenu" to="." method="_on_multiplayer_menu_cancel_selected"]
+[connection signal="connect_selected" from="MultiplayerMenu" to="." method="_on_multiplayer_menu_connect_selected"]
+[connection signal="cancel_selected" from="ConnectionMenu" to="." method="_on_connection_menu_cancel_selected"]

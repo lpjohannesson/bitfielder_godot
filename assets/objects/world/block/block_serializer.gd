@@ -22,7 +22,6 @@ func save_paletted_blocks(
 		block_ids: PackedInt32Array) -> PackedInt32Array:
 	
 	var saved_block_ids: PackedInt32Array = []
-	
 	saved_block_ids.resize(BlockChunk.BLOCK_COUNT)
 	
 	for i in range(BlockChunk.BLOCK_COUNT):
@@ -49,8 +48,11 @@ func save_chunk(chunk: BlockChunk) -> Dictionary:
 		return chunk_data
 	
 	# Load block data
-	chunk_data["front"] = save_paletted_blocks(palette_map, chunk.front_ids)
-	chunk_data["back"] = save_paletted_blocks(palette_map, chunk.back_ids)
+	chunk_data["front"] = save_paletted_blocks(
+		palette_map, chunk.front_ids)
+	
+	chunk_data["back"] = save_paletted_blocks(
+		palette_map, chunk.back_ids)
 	
 	return chunk_data
 
@@ -70,14 +72,16 @@ func load_chunk(chunk: BlockChunk, chunk_data: Dictionary) -> void:
 		
 		return
 	
+	# Load blocks from palette
 	var palette_ids: PackedInt32Array = []
 	
+	for block_name in palette:
+		var block_id := block_world.get_block_id(block_name)
+		palette_ids.push_back(block_id)
+	
+	# Load block data
 	var front_ids: PackedInt32Array = chunk_data["front"]
 	var back_ids: PackedInt32Array = chunk_data["back"]
-	
-	# Load blocks from palette
-	for block_name in palette:
-		palette_ids.push_back(block_world.get_block_id(block_name))
 	
 	for i in range(BlockChunk.BLOCK_COUNT):
 		chunk.front_ids[i] = palette_ids[front_ids[i]]

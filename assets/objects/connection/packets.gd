@@ -1,8 +1,11 @@
-class_name ServerPacket
+class_name Packets
 
-enum PacketType {
+enum ServerPacket {
 	BLOCK_CHUNK
 }
 
-var type: PacketType
-var data: Variant
+enum ClientPacket {
+	PLAYER_POSITION,
+	ACTION_PRESSED,
+	ACTION_RELEASED
+}

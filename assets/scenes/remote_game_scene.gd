@@ -1,24 +1,20 @@
 extends Node2D
 class_name RemoteGameScene
 
-var peer := ENetMultiplayerPeer.new()
-
 func _ready() -> void:
-	peer.create_client("localhost", ServerHost.PORT)
-	multiplayer.multiplayer_peer = peer
+	GameScene.instance.server = RemoteServerConnection.instance
+
+func _process(_delta: float) -> void:
+	var server := RemoteServerConnection.instance
 	
-	multiplayer.peer_connected.connect(func(_id: int) -> void:
-		print("connected")
-	)
-	
-	multiplayer.peer_packet.connect(func(
-			id: int, packet: PackedByteArray) -> void:
+	while true:
+		var peer_event: Array = server.connection.service()
+		var event_type: ENetConnection.EventType = peer_event[0]
 		
-		var packet_data: Dictionary = bytes_to_var(packet)
-		
-		var server_packet := ServerPacket.new()
-		server_packet.type = packet_data["type"]
-		server_packet.data = packet_data["data"]
-		
-		GameScene.scene.recieve_packet(server_packet)
-	)
+		match event_type:
+			ENetConnection.EVENT_NONE:
+				break
+			
+			ENetConnection.EVENT_RECEIVE:
+				var packet = GamePacket.from_bytes(server.peer.get_packet())
+				GameScene.instance.packet_manager.recieve_packet(packet)

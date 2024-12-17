@@ -1,10 +1,13 @@
 extends Node2D
 class_name LocalGameScene
 
-@export var server: GameServer
+@export var local_server: GameServer
 
-var client: LocalClientConnection
+var client := LocalClientConnection.new()
+var server := LocalServerConnection.new()
 
 func _ready() -> void:
-	client = LocalClientConnection.new()
-	server.connect_client(client)
+	GameScene.instance.server = server
+	server.client = client
+	
+	local_server.connect_client(client)

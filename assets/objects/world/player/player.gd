@@ -103,8 +103,8 @@ func modify_block() -> bool:
 		return false
 	
 	# Get block position
-	var block_world := GameScene.scene.world.block_world
-	var block_world_renderer := GameScene.scene.block_world_renderer
+	var block_world := GameScene.instance.world.block_world
+	var block_world_renderer := GameScene.instance.block_world_renderer
 	
 	var center_block_position := block_world.world_to_block(global_position)
 	var forward_block_position := center_block_position
@@ -150,7 +150,7 @@ func modify_block() -> bool:
 		breaking = is_back_block_breakable(center_address)
 	
 	# Place or break
-	var effect_sprite := GameScene.scene.spawn_effect_sprite()
+	var effect_sprite := GameScene.instance.spawn_effect_sprite()
 	
 	if breaking:
 		var address: BlockAddress
@@ -171,7 +171,7 @@ func modify_block() -> bool:
 		block_world_renderer.create_particles(block_id, block_position)
 		
 		block_ids[address.block_index] = 0
-		GameScene.scene.update_block(block_position)
+		GameScene.instance.update_block(block_position)
 		
 		effect_sprite.play("break")
 		effect_sprite.global_position = \
@@ -185,7 +185,7 @@ func modify_block() -> bool:
 			block_ids = center_address.chunk.back_ids
 		
 		block_ids[center_address.block_index] = block_world.get_block_id("wood_planks")
-		GameScene.scene.update_block(center_block_position)
+		GameScene.instance.update_block(center_block_position)
 		
 		effect_sprite.play("place")
 		effect_sprite.global_position = \
@@ -250,7 +250,7 @@ func controls(delta: float) -> void:
 		if last_on_surface:
 			break
 		
-		var effect_sprite := GameScene.scene.spawn_effect_sprite()
+		var effect_sprite := GameScene.instance.spawn_effect_sprite()
 		
 		effect_sprite.play("ground")
 		effect_sprite.global_position = Vector2(global_position.x, collision.get_position().y)
@@ -259,9 +259,19 @@ func controls(delta: float) -> void:
 	
 	last_on_surface = on_surface
 
+func send_player_position():
+	var packet := GamePacket.new()
+	
+	packet.type = Packets.ClientPacket.PLAYER_POSITION
+	packet.data = { "position": global_position }
+	
+	GameScene.instance.server.send_packet(packet)
+
 func _physics_process(delta: float) -> void:
 	if modify_block_timer.is_stopped():
 		controls(delta)
+	
+	send_player_position()
 
 func _on_modify_block_timer_timeout() -> void:
 	collider.disabled = false

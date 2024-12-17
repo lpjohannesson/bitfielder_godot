@@ -74,10 +74,10 @@ func draw_chunk_shadow(chunk: BlockChunk) -> void:
 
 func start_chunk(chunk: BlockChunk) -> void:
 	# Create shadow
-	chunk.back_layer.material = GameScene.scene.shadow_shader
+	chunk.back_layer.material = GameScene.instance.shadow_shader
 	
 	chunk.shadow_layer = Node2D.new()
-	GameScene.scene.shadow_viewport.add_child(chunk.shadow_layer)
+	GameScene.instance.shadow_viewport.add_child(chunk.shadow_layer)
 	
 	chunk.shadow_layer.global_transform = chunk.global_transform
 	
@@ -100,7 +100,7 @@ func create_particles(block_id: int, block_position: Vector2i):
 	
 	for i in range(5):
 		var particle: BlockParticle = particle_scene.instantiate()
-		GameScene.scene.particles.add_child(particle)
+		GameScene.instance.particles.add_child(particle)
 		
 		particle.global_position = particle_position
 		particle.sprite.texture = block.particle_texture
