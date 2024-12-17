@@ -8,6 +8,7 @@ const GRAVITY_ACCELERATION = 300.0
 const GRAVITY_SPEED = 300.0
 const JUMP_MIDSTOP = 0.5
 
+@export var entity: GameEntity
 @export var sprite: Sprite2D
 @export var collider: CollisionShape2D
 @export var animation_player: AnimationPlayer
@@ -21,7 +22,6 @@ var midstopped := false
 
 var last_on_surface := false
 
-var entity := GameEntity.new()
 var player_input := PlayerInput.new()
 
 func get_facing_sign():

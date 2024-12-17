@@ -1,7 +1,11 @@
 extends Node
 class_name GameEntity
 
-@export var on_server = false
+@export var entity_type: String
+@export var body: CharacterBody2D
+
+var entity_id := 0
+var on_server = false
 
 func get_game_world() -> GameWorld:
 	return GameServer.instance.world if on_server else GameScene.instance.world

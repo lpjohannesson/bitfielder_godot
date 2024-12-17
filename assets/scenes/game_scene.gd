@@ -15,11 +15,11 @@ static var instance: GameScene
 @export var shadow_shader: ShaderMaterial
 
 @export var effect_sprite_scene: PackedScene
-@export var player: Player
 
 @onready var viewport := get_viewport()
 
 var server: ServerConnection
+var player: Player
 
 func send_player_position() -> void:
 	var packet := GamePacket.create_packet(
@@ -54,12 +54,11 @@ func _ready() -> void:
 	
 	resize()
 	viewport.size_changed.connect(resize)
-	
-	player.entity.on_server = false
 
 func _process(_delta: float) -> void:
 	shadow_viewport.canvas_transform = \
 		viewport.canvas_transform * SHADOW_TRANSFORM
 	
-	player.player_input.read_inputs(server)
-	send_player_position()
+	if player != null:
+		player.player_input.read_inputs(server)
+		send_player_position()

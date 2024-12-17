@@ -1,8 +1,11 @@
 class_name Packets
 
 enum ServerPacket {
-	TELEPORT_PLAYER,
-	BLOCK_CHUNK
+	CREATE_BLOCK_CHUNK,
+	CREATE_ENTITY,
+	ENTITY_POSITION,
+	ENTITY_VELOCITY,
+	ASSIGN_PLAYER
 }
 
 enum ClientPacket {
