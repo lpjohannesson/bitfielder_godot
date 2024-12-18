@@ -102,6 +102,22 @@ func load_entity_velocity(packet: GamePacket) -> void:
 	
 	entity.body.velocity = packet.data["value"]
 
+func load_entity_flip(packet: GamePacket) -> void:
+	var entity := get_packet_entity(packet)
+	
+	if entity == null:
+		return
+	
+	entity.sprite.flip_h = packet.data["value"]
+
+func load_entity_animation(packet: GamePacket) -> void:
+	var entity := get_packet_entity(packet)
+	
+	if entity == null:
+		return
+	
+	entity.animation_player.play(packet.data["value"])
+
 func assign_player(packet: GamePacket) -> void:
 	var entity := scene.world.entities.get_entity(packet.data)
 	scene.player = entity.entity_node
@@ -128,6 +144,12 @@ func recieve_packet(packet: GamePacket) -> void:
 		
 		Packets.ServerPacket.ENTITY_VELOCITY:
 			load_entity_velocity(packet)
+		
+		Packets.ServerPacket.ENTITY_FLIP:
+			load_entity_flip(packet)
+		
+		Packets.ServerPacket.ENTITY_ANIMATION:
+			load_entity_animation(packet)
 		
 		Packets.ServerPacket.ASSIGN_PLAYER:
 			assign_player(packet)

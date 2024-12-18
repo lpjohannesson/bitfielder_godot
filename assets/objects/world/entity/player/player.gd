@@ -223,6 +223,8 @@ func modify_block() -> bool:
 	else:
 		animation_player.play("punch_forward")
 	
+	animation_player.queue("fall")
+	
 	modify_block_timer.start()
 	collider.disabled = true
 	
@@ -247,7 +249,6 @@ func controls(delta: float) -> void:
 		midstop_jump()
 	
 	move_and_slide()
-	animate()
 	
 	var on_surface := false
 	
@@ -270,6 +271,9 @@ func controls(delta: float) -> void:
 		break
 	
 	last_on_surface = on_surface
+	
+	if entity.on_server or GameScene.instance.player == self:
+		animate()
 
 func stop_modify_block() -> void:
 	if modify_block_tween != null:

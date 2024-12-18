@@ -22,3 +22,9 @@ biome = ExtResource("3_fgtlb")
 [node name="BlockSerializer" type="Node" parent="." node_paths=PackedStringArray("world")]
 script = ExtResource("5_e6gss")
 world = NodePath("../GameWorld")
+
+[node name="EntitySendTimer" type="Timer" parent="."]
+wait_time = 0.1
+autostart = true
+
+[connection signal="timeout" from="EntitySendTimer" to="." method="_on_entity_send_timer_timeout"]

@@ -11,6 +11,7 @@ size = Vector2(8, 13)
 [sub_resource type="Animation" id="Animation_t7vn5"]
 resource_name = "fall"
 length = 0.001
+loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -27,6 +28,7 @@ tracks/0/keys = {
 [sub_resource type="Animation" id="Animation_1032r"]
 resource_name = "idle"
 length = 0.001
+loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -43,6 +45,7 @@ tracks/0/keys = {
 [sub_resource type="Animation" id="Animation_p1jpt"]
 resource_name = "jump"
 length = 0.001
+loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -59,6 +62,7 @@ tracks/0/keys = {
 [sub_resource type="Animation" id="Animation_omo4f"]
 resource_name = "look_down"
 length = 0.001
+loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -75,6 +79,7 @@ tracks/0/keys = {
 [sub_resource type="Animation" id="Animation_ikka8"]
 resource_name = "look_up"
 length = 0.001
+loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -142,6 +147,7 @@ tracks/0/keys = {
 [sub_resource type="Animation" id="Animation_viv5v"]
 resource_name = "slide"
 length = 0.001
+loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -202,7 +208,7 @@ position = Vector2(0, -1)
 texture = ExtResource("1_dqdrb")
 hframes = 4
 vframes = 4
-frame = 2
+frame = 8
 script = ExtResource("4_faxp7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -227,10 +233,12 @@ libraries = {
 "": SubResource("AnimationLibrary_whnse")
 }
 
-[node name="GameEntity" type="Node" parent="." node_paths=PackedStringArray("entity_node", "body")]
+[node name="GameEntity" type="Node" parent="." node_paths=PackedStringArray("entity_node", "body", "sprite", "animation_player")]
 script = ExtResource("4_1rk0b")
 entity_type = "player"
 entity_node = NodePath("..")
 body = NodePath("..")
+sprite = NodePath("../Sprite2D")
+animation_player = NodePath("../AnimationPlayer")
 
 [connection signal="timeout" from="ModifyBlockTimer" to="." method="_on_modify_block_timer_timeout"]

@@ -69,6 +69,18 @@ func get_entity_velocity_packet(entity: GameEntity) -> GamePacket:
 		{ "id": entity.entity_id, "value": entity.body.velocity }
 	)
 
+func get_entity_flip_packet(entity: GameEntity) -> GamePacket:
+	return GamePacket.create_packet(
+		Packets.ServerPacket.ENTITY_FLIP,
+		{ "id": entity.entity_id, "value": entity.sprite.flip_h }
+	)
+
+func get_entity_animation_packet(entity: GameEntity) -> GamePacket:
+	return GamePacket.create_packet(
+		Packets.ServerPacket.ENTITY_ANIMATION,
+		{ "id": entity.entity_id, "value": entity.animation_player.current_animation }
+	)
+
 func get_assign_player_packet(client: ClientConnection) -> GamePacket:
 	return GamePacket.create_packet(
 		Packets.ServerPacket.ASSIGN_PLAYER,
@@ -180,6 +192,37 @@ func update_player_chunks(client: ClientConnection) -> void:
 	client.chunk_index = chunk_index
 	client.send_packet(get_player_chunk_index_packet(chunk_index))
 
+func send_entity_states() -> void:
+	for entity in world.entities.entities:
+		if entity.body != null:
+			var position_packet := get_entity_position_packet(entity)
+			var velocity_packet = get_entity_velocity_packet(entity)
+			
+			for client in clients:
+				if entity == client.player.entity:
+					continue
+				
+				client.send_packet(position_packet)
+				client.send_packet(velocity_packet)
+		
+		if entity.sprite != null:
+			var packet := get_entity_flip_packet(entity)
+			
+			for client in clients:
+				if entity == client.player.entity:
+					continue
+				
+				client.send_packet(packet)
+		
+		if entity.animation_player != null:
+			var packet := get_entity_animation_packet(entity)
+			
+			for client in clients:
+				if entity == client.player.entity:
+					continue
+				
+				client.send_packet(packet)
+
 func connect_client(client: ClientConnection) -> void:
 	# Spawn player
 	var player: Player = world.entities.player_scene.instantiate()
@@ -235,15 +278,6 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	for client in clients:
 		update_player_chunks(client)
-	
-	for entity in world.entities.entities:
-		if entity.body != null:
-			var position_packet := get_entity_position_packet(entity)
-			var velocity_packet = get_entity_velocity_packet(entity)
-			
-			for client in clients:
-				if entity == client.player.entity:
-					continue
-				
-				client.send_packet(position_packet)
-				client.send_packet(velocity_packet)
+
+func _on_entity_send_timer_timeout() -> void:
+	send_entity_states()

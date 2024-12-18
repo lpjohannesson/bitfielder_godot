@@ -4,6 +4,8 @@ class_name GameEntity
 @export var entity_type: String
 @export var entity_node: Node
 @export var body: CharacterBody2D
+@export var sprite: Sprite2D
+@export var animation_player: AnimationPlayer
 
 var entity_id := 0
 var on_server = false
