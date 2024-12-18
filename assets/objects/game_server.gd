@@ -13,8 +13,8 @@ static var instance: GameServer
 var clients: Array[ClientConnection] = []
 var next_entity_id := 1
 
-func add_entity(entity: GameEntity, entity_node: Node) -> void:
-	world.entities.add_entity(entity, next_entity_id, entity_node, true)
+func add_entity(entity: GameEntity) -> void:
+	world.entities.add_entity(entity, next_entity_id, true)
 	next_entity_id += 1
 
 func get_block_chunk_packet(chunk: BlockChunk) -> GamePacket:
@@ -49,6 +49,12 @@ func get_create_entity_packet(entity: GameEntity) -> GamePacket:
 			"id": entity.entity_id,
 			"type": entity.entity_type
 		}
+	)
+
+func get_destroy_entity_packet(entity: GameEntity) -> GamePacket:
+	return GamePacket.create_packet(
+		Packets.ServerPacket.DESTROY_ENTITY,
+		entity.entity_id
 	)
 
 func get_entity_position_packet(entity: GameEntity) -> GamePacket:
@@ -118,7 +124,8 @@ func update_player_input(
 		input_state: bool) -> void:
 	
 	var action: String = packet.data["action"]
-	client.player.player_input.input_map[action] = input_state
+	
+	client.player.player_input.set_action(action, input_state)
 
 func recieve_packet(packet: GamePacket, client: ClientConnection) -> void:
 	match packet.type:
@@ -133,40 +140,6 @@ func recieve_packet(packet: GamePacket, client: ClientConnection) -> void:
 		
 		Packets.ClientPacket.ACTION_RELEASED:
 			update_player_input(packet, client, false)
-
-func connect_client(client: ClientConnection) -> void:
-	# Spawn player
-	var player: Player = world.entities.player_scene.instantiate()
-	add_entity(player.entity, player)
-	
-	client.player = player
-	
-	# Send initial packets
-	client.chunk_index = get_player_chunk_index(client)
-	var chunk_load_zone = get_chunk_load_zone(client.chunk_index)
-	
-	for y in range(chunk_load_zone.position.y, chunk_load_zone.end.y):
-		for x in range(chunk_load_zone.position.x, chunk_load_zone.end.x):
-			var chunk_index := Vector2i(x, y)
-			var chunk := world.block_world.get_chunk(chunk_index)
-			
-			if chunk == null:
-				continue
-			
-			client.send_packet(get_block_chunk_packet(chunk))
-	
-	for entity in world.entities.entities:
-		client.send_packet(get_create_entity_packet(entity))
-	
-	client.send_packet(get_assign_player_packet(client))
-	
-	# Add client and send to others
-	var entity_packet := get_create_entity_packet(player.entity)
-	
-	for other_client in clients:
-		other_client.send_packet(entity_packet)
-	
-	clients.push_back(client)
 
 func get_player_chunk_index(client: ClientConnection) -> Vector2i:
 	var player_block_position := \
@@ -206,6 +179,51 @@ func update_player_chunks(client: ClientConnection) -> void:
 	
 	client.chunk_index = chunk_index
 	client.send_packet(get_player_chunk_index_packet(chunk_index))
+
+func connect_client(client: ClientConnection) -> void:
+	# Spawn player
+	var player: Player = world.entities.player_scene.instantiate()
+	add_entity(player.entity)
+	
+	client.player = player
+	
+	# Send initial packets
+	client.chunk_index = get_player_chunk_index(client)
+	var chunk_load_zone = get_chunk_load_zone(client.chunk_index)
+	
+	for y in range(chunk_load_zone.position.y, chunk_load_zone.end.y):
+		for x in range(chunk_load_zone.position.x, chunk_load_zone.end.x):
+			var chunk_index := Vector2i(x, y)
+			var chunk := world.block_world.get_chunk(chunk_index)
+			
+			if chunk == null:
+				continue
+			
+			client.send_packet(get_block_chunk_packet(chunk))
+	
+	for entity in world.entities.entities:
+		client.send_packet(get_create_entity_packet(entity))
+	
+	client.send_packet(get_assign_player_packet(client))
+	
+	# Add client and send to others
+	var create_packet := get_create_entity_packet(player.entity)
+	
+	for other_client in clients:
+		other_client.send_packet(create_packet)
+	
+	clients.push_back(client)
+
+func disconnect_client(client: ClientConnection) -> void:
+	clients.erase(client)
+	
+	# Send removal to others
+	var destroy_packet := get_destroy_entity_packet(client.player.entity)
+	
+	for other_client in clients:
+		other_client.send_packet(destroy_packet)
+	
+	world.entities.remove_entity(client.player.entity)
 
 func _init() -> void:
 	instance = self

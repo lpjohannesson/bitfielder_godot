@@ -2,6 +2,7 @@ extends Node
 class_name GameEntity
 
 @export var entity_type: String
+@export var entity_node: Node
 @export var body: CharacterBody2D
 
 var entity_id := 0

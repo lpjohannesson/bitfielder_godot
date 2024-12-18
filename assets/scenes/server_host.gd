@@ -30,6 +30,12 @@ func _process(_delta: float) -> void:
 				
 				server.connect_client(client)
 			
+			ENetConnection.EVENT_DISCONNECT:
+				var client: ClientConnection = peer_clients[peer]
+				
+				server.disconnect_client(client)
+				peer_clients.erase(peer)
+			
 			ENetConnection.EVENT_RECEIVE:
 				var packet := GamePacket.from_bytes(peer.get_packet())
 				server.recieve_packet(packet, peer_clients[peer])

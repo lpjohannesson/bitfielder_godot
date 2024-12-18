@@ -76,6 +76,14 @@ func create_entity(packet: GamePacket) -> void:
 	var entity_type: String = packet.data["type"]
 	
 	scene.world.entities.create_entity_by_type(entity_id, entity_type, false)
+
+func destroy_entity(packet: GamePacket) -> void:
+	var entity := scene.world.entities.get_entity(packet.data)
+	
+	if entity == null:
+		return
+	
+	scene.world.entities.remove_entity(entity)
  
 func load_entity_position(packet: GamePacket) -> void:
 	var entity := get_packet_entity(packet)
@@ -96,7 +104,7 @@ func load_entity_velocity(packet: GamePacket) -> void:
 
 func assign_player(packet: GamePacket) -> void:
 	var entity := scene.world.entities.get_entity(packet.data)
-	scene.player = entity.body
+	scene.player = entity.entity_node
 
 func recieve_packet(packet: GamePacket) -> void:
 	match packet.type:
@@ -111,6 +119,9 @@ func recieve_packet(packet: GamePacket) -> void:
 		
 		Packets.ServerPacket.CREATE_ENTITY:
 			create_entity(packet)
+		
+		Packets.ServerPacket.DESTROY_ENTITY:
+			destroy_entity(packet)
 		
 		Packets.ServerPacket.ENTITY_POSITION:
 			load_entity_position(packet)

@@ -48,6 +48,12 @@ func read_inputs(server: ServerConnection) -> void:
 			
 			server.send_packet(packet)
 
+func set_action(action: String, value: bool) -> void:
+	if not action in input_map:
+		return
+	
+	input_map[action] = value
+
 func _init() -> void:
 	for action in PLAYER_ACTIONS:
 		input_map[action] = false

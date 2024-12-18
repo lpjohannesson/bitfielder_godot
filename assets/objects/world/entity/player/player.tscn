@@ -227,9 +227,10 @@ libraries = {
 "": SubResource("AnimationLibrary_whnse")
 }
 
-[node name="GameEntity" type="Node" parent="." node_paths=PackedStringArray("body")]
+[node name="GameEntity" type="Node" parent="." node_paths=PackedStringArray("entity_node", "body")]
 script = ExtResource("4_1rk0b")
 entity_type = "player"
+entity_node = NodePath("..")
 body = NodePath("..")
 
 [connection signal="timeout" from="ModifyBlockTimer" to="." method="_on_modify_block_timer_timeout"]
