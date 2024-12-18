@@ -1,6 +1,7 @@
 extends Node
 class_name GameServer
 
+const CHUNK_LOAD_EXTENTS := Vector2i(3, 2)
 const BLOCK_CHECK_TIMEOUT := 0.25
 
 @export var world: GameWorld
@@ -20,6 +21,12 @@ func get_block_chunk_packet(chunk: BlockChunk) -> GamePacket:
 	return GamePacket.create_packet(
 		Packets.ServerPacket.CREATE_BLOCK_CHUNK,
 		block_serializer.save_chunk(chunk)
+	)
+
+func get_player_chunk_index_packet(chunk_index: Vector2i) -> GamePacket:
+	return GamePacket.create_packet(
+		Packets.ServerPacket.PLAYER_CHUNK_INDEX,
+		chunk_index
 	)
 
 func get_update_block_packet(block_specifier: BlockSpecifier) -> GamePacket:
@@ -135,8 +142,18 @@ func connect_client(client: ClientConnection) -> void:
 	client.player = player
 	
 	# Send initial packets
-	for chunk in world.block_world.chunk_map.values():
-		client.send_packet(get_block_chunk_packet(chunk))
+	client.chunk_index = get_player_chunk_index(client)
+	var chunk_load_zone = get_chunk_load_zone(client.chunk_index)
+	
+	for y in range(chunk_load_zone.position.y, chunk_load_zone.end.y):
+		for x in range(chunk_load_zone.position.x, chunk_load_zone.end.x):
+			var chunk_index := Vector2i(x, y)
+			var chunk := world.block_world.get_chunk(chunk_index)
+			
+			if chunk == null:
+				continue
+			
+			client.send_packet(get_block_chunk_packet(chunk))
 	
 	for entity in world.entities.entities:
 		client.send_packet(get_create_entity_packet(entity))
@@ -151,6 +168,45 @@ func connect_client(client: ClientConnection) -> void:
 	
 	clients.push_back(client)
 
+func get_player_chunk_index(client: ClientConnection) -> Vector2i:
+	var player_block_position := \
+		world.block_world.world_to_block_round(client.player.global_position)
+	
+	return BlockWorld.get_chunk_index(player_block_position)
+
+static func get_chunk_load_zone(chunk_index: Vector2i) -> Rect2i:
+	return Rect2i(
+		chunk_index - CHUNK_LOAD_EXTENTS,
+		CHUNK_LOAD_EXTENTS * 2)
+
+func update_player_chunks(client: ClientConnection) -> void:
+	var chunk_index = get_player_chunk_index(client)
+	
+	# Skip if still on same chunk
+	if chunk_index == client.chunk_index:
+		return
+	
+	var old_load_zone = get_chunk_load_zone(client.chunk_index)
+	var new_load_zone = get_chunk_load_zone(chunk_index)
+	
+	for y in range(new_load_zone.position.y, new_load_zone.end.y):
+		for x in range(new_load_zone.position.x, new_load_zone.end.x):
+			var new_chunk_index := Vector2i(x, y)
+			
+			# Skip already loaded chunks
+			if old_load_zone.has_point(new_chunk_index):
+				continue
+			
+			var chunk := world.block_world.get_chunk(new_chunk_index)
+			
+			if chunk == null:
+				continue
+			
+			client.send_packet(get_block_chunk_packet(chunk))
+	
+	client.chunk_index = chunk_index
+	client.send_packet(get_player_chunk_index_packet(chunk_index))
+
 func _init() -> void:
 	instance = self
 
@@ -159,6 +215,9 @@ func _ready() -> void:
 	block_generator.generate_area(0, 16)
 
 func _process(_delta: float) -> void:
+	for client in clients:
+		update_player_chunks(client)
+	
 	for entity in world.entities.entities:
 		if entity.body != null:
 			var position_packet := get_entity_position_packet(entity)

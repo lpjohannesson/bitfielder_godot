@@ -14,8 +14,6 @@ func _ready():
 	connection.create_host_bound("*", PORT, 32)
 
 func _process(_delta: float) -> void:
-	Engine.max_fps = 60
-	
 	while true:
 		var event := connection.service()
 		var event_type: ENetConnection.EventType = event[0]

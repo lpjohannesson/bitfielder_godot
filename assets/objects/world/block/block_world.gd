@@ -29,6 +29,9 @@ static func get_block_position(
 func world_to_block(world_position: Vector2) -> Vector2i:
 	return floor(world_position / scale)
 
+func world_to_block_round(world_position: Vector2) -> Vector2i:
+	return round(world_position / scale)
+
 func block_to_world(block_position: Vector2i, centered: bool) -> Vector2:
 	var world_position := Vector2(block_position) * scale
 	
@@ -94,6 +97,15 @@ func create_chunk(chunk_index: Vector2i) -> BlockChunk:
 	create_colliders(chunk)
 	
 	return chunk
+
+func destroy_chunk(chunk_index: Vector2i) -> void:
+	var chunk := get_chunk(chunk_index)
+	
+	if chunk == null:
+		return
+	
+	chunk_map.erase(chunk_index)
+	chunk.queue_free()
 
 func update_chunk(chunk: BlockChunk) -> void:
 	for collider in chunk.colliders.get_children():

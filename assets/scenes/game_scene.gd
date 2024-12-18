@@ -36,7 +36,7 @@ func update_block(block_position: Vector2i) -> void:
 		chunk.redraw_chunk()
 
 func resize() -> void:
-	shadow_viewport.size = viewport.size
+	shadow_viewport.size = viewport.get_visible_rect().size
 
 func _init() -> void:
 	instance = self

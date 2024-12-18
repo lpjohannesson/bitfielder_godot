@@ -3,16 +3,37 @@ class_name GamePacketManager
 
 @export var scene: GameScene
 
+var last_chunk_index: Vector2i
+
 func create_block_chunk(packet: GamePacket) -> void:
+	var block_world := scene.world.block_world
 	var chunk_index: Vector2i = packet.data["index"]
 	
-	var block_world := scene.world.block_world
+	# Skip if chunk exists
+	if block_world.get_chunk(chunk_index) != null:
+		return
+	
 	var chunk := block_world.create_chunk(chunk_index)
 	
 	scene.block_serializer.load_chunk(chunk, packet.data)
 	block_world.update_chunk(chunk)
 	
 	scene.block_world_renderer.start_chunk(chunk)
+
+func load_player_chunk_index(packet: GamePacket) -> void:
+	var player_chunk_index: Vector2i = packet.data
+	
+	var old_load_zone := GameServer.get_chunk_load_zone(last_chunk_index)
+	var new_load_zone := GameServer.get_chunk_load_zone(player_chunk_index)
+	
+	var block_world := scene.world.block_world
+	
+	# Unload out of range chunks, redraw new ones
+	for chunk_index in block_world.chunk_map.keys():
+		if not new_load_zone.has_point(chunk_index):
+			block_world.destroy_chunk(chunk_index)
+	
+	last_chunk_index = player_chunk_index
 
 func update_block(packet: GamePacket) -> void:
 	var block_world := scene.world.block_world
@@ -24,6 +45,11 @@ func update_block(packet: GamePacket) -> void:
 		return
 	
 	var block_ids := block_specifier.get_layer(address.chunk)
+	
+	# Skip if already the same block
+	if block_ids[address.block_index] == block_specifier.block_id:
+		return
+	
 	block_ids[address.block_index] = block_specifier.block_id
 	
 	scene.update_block(block_specifier.block_position)
@@ -78,9 +104,11 @@ func recieve_packet(packet: GamePacket) -> void:
 		Packets.ServerPacket.CREATE_BLOCK_CHUNK:
 			create_block_chunk(packet)
 		
+		Packets.ServerPacket.PLAYER_CHUNK_INDEX:
+			load_player_chunk_index(packet)
+		
 		Packets.ServerPacket.UPDATE_BLOCK:
 			update_block(packet)
-			print("update")
 		
 		Packets.ServerPacket.CREATE_ENTITY:
 			create_entity(packet)
