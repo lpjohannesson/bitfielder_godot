@@ -152,6 +152,9 @@ func modify_block() -> bool:
 		breaking = is_back_block_breakable(center_address)
 	
 	# Place or break
+	var block_specifier := BlockSpecifier.new()
+	block_specifier.on_front_layer = on_front_layer
+	
 	if breaking:
 		var address: BlockAddress
 		var block_ids: PackedInt32Array
@@ -167,16 +170,17 @@ func modify_block() -> bool:
 			block_position = center_block_position
 		
 		var block_id := block_ids[address.block_index]
-		
 		entity.spawn_block_particles(block_id, block_position)
 		
 		block_ids[address.block_index] = 0
-		entity.update_block(block_position)
 		
 		entity.spawn_effect_sprite(
 			"break",
 			block_world.block_to_world(block_position, true)
 		)
+		
+		block_specifier.block_position = block_position
+		block_specifier.block_id = 0
 	else:
 		var block_ids: PackedInt32Array
 		
@@ -185,13 +189,18 @@ func modify_block() -> bool:
 		else:
 			block_ids = center_address.chunk.back_ids
 		
-		block_ids[center_address.block_index] = block_world.get_block_id("wood_planks")
-		entity.update_block(center_block_position)
-		
 		entity.spawn_effect_sprite(
 			"place",
 			block_world.block_to_world(center_block_position, true)
 		)
+		
+		var block_id := block_world.get_block_id("wood_planks")
+		block_ids[center_address.block_index] = block_id
+		
+		block_specifier.block_position = center_block_position
+		block_specifier.block_id = block_id
+	
+	entity.update_block(block_specifier)
 	
 	# Start movement
 	velocity = Vector2.ZERO

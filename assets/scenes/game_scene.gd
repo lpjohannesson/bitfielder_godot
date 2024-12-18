@@ -21,13 +21,6 @@ static var instance: GameScene
 var server: ServerConnection
 var player: Player
 
-func send_player_position() -> void:
-	var packet := GamePacket.create_packet(
-		Packets.ClientPacket.PLAYER_POSITION,
-		{ "position": player.global_position })
-	
-	server.send_packet(packet)
-
 func spawn_effect_sprite(effect_name: String, effect_position: Vector2) -> void:
 	var effect_sprite: EffectSprite = effect_sprite_scene.instantiate()
 	particles.add_child(effect_sprite)
@@ -61,4 +54,4 @@ func _process(_delta: float) -> void:
 	
 	if player != null:
 		player.player_input.read_inputs(server)
-		send_player_position()
+		packet_manager.send_check_player_position()

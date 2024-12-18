@@ -2,6 +2,7 @@ class_name Packets
 
 enum ServerPacket {
 	CREATE_BLOCK_CHUNK,
+	UPDATE_BLOCK,
 	CREATE_ENTITY,
 	ENTITY_POSITION,
 	ENTITY_VELOCITY,
@@ -9,7 +10,8 @@ enum ServerPacket {
 }
 
 enum ClientPacket {
-	PLAYER_POSITION,
+	CHECK_PLAYER_POSITION,
+	CHECK_BLOCK_UPDATE,
 	ACTION_PRESSED,
 	ACTION_RELEASED
 }
