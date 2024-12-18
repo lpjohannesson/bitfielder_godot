@@ -77,3 +77,9 @@ handle_input_locally = false
 canvas_item_default_texture_filter = 0
 size = Vector2i(40, 40)
 render_target_update_mode = 4
+
+[node name="PlayerPositionTimer" type="Timer" parent="."]
+wait_time = 0.2
+autostart = true
+
+[connection signal="timeout" from="PlayerPositionTimer" to="." method="_on_player_position_timer_timeout"]

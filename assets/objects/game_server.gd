@@ -1,7 +1,7 @@
 extends Node
 class_name GameServer
 
-const CHUNK_LOAD_EXTENTS := Vector2i(3, 2)
+const CHUNK_LOAD_EXTENTS := Vector2i(3, 3)
 const BLOCK_CHECK_TIMEOUT := 0.25
 
 @export var world: GameWorld
@@ -79,7 +79,7 @@ func check_player_position(packet: GamePacket, client: ClientConnection) -> void
 	var position: Vector2 = packet.data["position"]
 	
 	# Check if player needs to be teleported
-	if client.player.global_position.distance_to(position) > 8.0:
+	if client.player.global_position.distance_to(position) > 12.0:
 		rubberband_player(client)
 
 func get_failed_block_packet(

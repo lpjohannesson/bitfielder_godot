@@ -19,6 +19,7 @@ const JUMP_MIDSTOP = 0.5
 var move_direction := 0.0
 var look_direction := 0.0
 var midstopped := false
+var modify_block_tween: Tween
 
 var last_on_surface := false
 
@@ -194,7 +195,7 @@ func modify_block() -> bool:
 			block_world.block_to_world(center_block_position, true)
 		)
 		
-		var block_id := block_world.get_block_id("wood_planks")
+		var block_id := block_world.get_block_id("wood_log")
 		block_ids[center_address.block_index] = block_id
 		
 		block_specifier.block_position = center_block_position
@@ -205,11 +206,11 @@ func modify_block() -> bool:
 	# Start movement
 	velocity = Vector2.ZERO
 	
-	var tween := create_tween()\
+	modify_block_tween = create_tween()\
 		.set_ease(Tween.EASE_OUT)\
 		.set_trans(Tween.TRANS_QUAD)
 	
-	tween.tween_property(self, "global_position",
+	modify_block_tween.tween_property(self, "global_position",
 		block_world.block_to_world(forward_block_position, true),
 		modify_block_timer.wait_time)
 	
@@ -269,6 +270,14 @@ func controls(delta: float) -> void:
 		break
 	
 	last_on_surface = on_surface
+
+func stop_modify_block() -> void:
+	if modify_block_tween != null:
+		modify_block_tween.kill()
+		modify_block_tween = null
+
+func _ready() -> void:
+	entity.position_changed.connect(stop_modify_block)
 
 func _physics_process(delta: float) -> void:
 	if modify_block_timer.is_stopped():

@@ -7,6 +7,8 @@ class_name GameEntity
 var entity_id := 0
 var on_server = false
 
+signal position_changed
+
 func get_game_world() -> GameWorld:
 	return GameServer.instance.world if on_server else GameScene.instance.world
 

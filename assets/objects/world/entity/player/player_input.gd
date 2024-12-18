@@ -17,13 +17,14 @@ func is_action_pressed(action: String) -> bool:
 	return input_map[action]
 
 func is_action_just_pressed(action: String) -> bool:
-	return input_map[action]
+	return input_map[action] and !last_input_map[action]
 
 func get_axis(action1: String, action2: String) -> float:
 	return float(input_map[action2]) - float(input_map[action1])
 
 func update_inputs() -> void:
-	last_input_map = input_map
+	for action in PLAYER_ACTIONS:
+		last_input_map[action] = input_map[action]
 
 func read_inputs(server: ServerConnection) -> void:
 	for action in PLAYER_ACTIONS:
@@ -50,3 +51,4 @@ func read_inputs(server: ServerConnection) -> void:
 func _init() -> void:
 	for action in PLAYER_ACTIONS:
 		input_map[action] = false
+		last_input_map[action] = false

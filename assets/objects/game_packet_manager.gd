@@ -22,15 +22,13 @@ func create_block_chunk(packet: GamePacket) -> void:
 
 func load_player_chunk_index(packet: GamePacket) -> void:
 	var player_chunk_index: Vector2i = packet.data
-	
-	var old_load_zone := GameServer.get_chunk_load_zone(last_chunk_index)
-	var new_load_zone := GameServer.get_chunk_load_zone(player_chunk_index)
+	var load_zone := GameServer.get_chunk_load_zone(player_chunk_index)
 	
 	var block_world := scene.world.block_world
-	
+	 
 	# Unload out of range chunks, redraw new ones
 	for chunk_index in block_world.chunk_map.keys():
-		if not new_load_zone.has_point(chunk_index):
+		if not load_zone.has_point(chunk_index):
 			block_world.destroy_chunk(chunk_index)
 	
 	last_chunk_index = player_chunk_index
@@ -86,6 +84,7 @@ func load_entity_position(packet: GamePacket) -> void:
 		return
 	
 	entity.body.global_position = packet.data["value"]
+	entity.position_changed.emit()
 
 func load_entity_velocity(packet: GamePacket) -> void:
 	var entity := get_packet_entity(packet)

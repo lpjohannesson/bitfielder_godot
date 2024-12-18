@@ -54,4 +54,7 @@ func _process(_delta: float) -> void:
 	
 	if player != null:
 		player.player_input.read_inputs(server)
+
+func _on_player_position_timer_timeout() -> void:
+	if player != null:
 		packet_manager.send_check_player_position()
