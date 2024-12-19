@@ -1,9 +1,29 @@
-[gd_scene load_steps=3 format=3 uid="uid://h186alvivx06"]
+[gd_scene load_steps=5 format=3 uid="uid://h186alvivx06"]
 
 [ext_resource type="Script" path="res://assets/scenes/remote_game_scene.gd" id="1_r57ti"]
 [ext_resource type="PackedScene" uid="uid://dofu8ik7dtua1" path="res://assets/scenes/game_scene.tscn" id="2_g7it3"]
+[ext_resource type="PackedScene" uid="uid://cbxga1xteuyhl" path="res://assets/objects/menu/pause/pause_screen.tscn" id="3_bcyw3"]
+[ext_resource type="PackedScene" uid="uid://lad1idntiasm" path="res://assets/objects/menu/pause/pause_menu.tscn" id="4_wcq24"]
 
-[node name="RemoteGameScene" type="Node2D"]
+[node name="RemoteGameScene" type="Node2D" node_paths=PackedStringArray("pause_screen")]
 script = ExtResource("1_r57ti")
+pause_screen = NodePath("PauseScreen")
 
 [node name="GameScene" parent="." instance=ExtResource("2_g7it3")]
+
+[node name="PauseScreen" parent="." instance=ExtResource("3_bcyw3")]
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="PauseScreen" parent="CanvasLayer" instance=ExtResource("4_wcq24")]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[connection signal="continue_selected" from="PauseScreen" to="." method="_on_pause_screen_continue_selected"]
+[connection signal="quit_selected" from="PauseScreen" to="." method="_on_pause_screen_quit_selected"]

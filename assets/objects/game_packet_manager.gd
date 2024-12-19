@@ -92,7 +92,7 @@ func load_entity_position(packet: GamePacket) -> void:
 		return
 	
 	entity.body.global_position = packet.data["value"]
-	entity.position_changed.emit()
+	entity.send_position_changed()
 
 func load_entity_velocity(packet: GamePacket) -> void:
 	var entity := get_packet_entity(packet)

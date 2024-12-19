@@ -2,12 +2,13 @@
 
 [ext_resource type="Script" path="res://assets/objects/menu/connection_menu.gd" id="1_jwr63"]
 
-[node name="ConnectionMenu" type="Control"]
+[node name="ConnectionMenu" type="Control" node_paths=PackedStringArray("status_label")]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_jwr63")
-connecting_text = "Connecting to server..."
-connection_failed_text = "Connection failed."
+connecting_text = "Connecting..."
+disconnected_text = "Disconnected."
+status_label = NodePath("StatusLabel")
 
 [node name="StatusLabel" type="Label" parent="."]
 layout_mode = 1
@@ -21,7 +22,7 @@ grow_horizontal = 2
 text = "Status text"
 horizontal_alignment = 1
 
-[node name="CancelButton" type="Button" parent="."]
+[node name="BackButton" type="Button" parent="."]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
@@ -31,6 +32,6 @@ offset_top = 33.0
 offset_right = 30.0
 offset_bottom = 64.0
 grow_horizontal = 2
-text = "Cancel"
+text = "Back"
 
-[connection signal="button_down" from="CancelButton" to="." method="_on_cancel_button_button_down"]
+[connection signal="button_down" from="BackButton" to="." method="_on_back_button_button_down"]

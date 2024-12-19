@@ -1,7 +1,7 @@
 [gd_scene load_steps=17 format=3 uid="uid://qhbwwmg422j6"]
 
 [ext_resource type="Script" path="res://assets/objects/world/entity/player/player.gd" id="1_7uomn"]
-[ext_resource type="Texture2D" uid="uid://dbtonbihnosbj" path="res://assets/textures/player.png" id="1_dqdrb"]
+[ext_resource type="Texture2D" uid="uid://dbtonbihnosbj" path="res://assets/textures/player/player.png" id="1_dqdrb"]
 [ext_resource type="Script" path="res://assets/objects/world/entity/game_entity.gd" id="4_1rk0b"]
 [ext_resource type="Script" path="res://assets/objects/world/shadowed_sprite.gd" id="4_faxp7"]
 
@@ -208,7 +208,7 @@ position = Vector2(0, -1)
 texture = ExtResource("1_dqdrb")
 hframes = 4
 vframes = 4
-frame = 8
+frame = 1
 script = ExtResource("4_faxp7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

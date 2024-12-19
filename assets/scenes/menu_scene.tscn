@@ -4,13 +4,14 @@
 [ext_resource type="PackedScene" uid="uid://c1xyjnh5dpdt2" path="res://assets/objects/menu/main_menu.tscn" id="2_elm5u"]
 [ext_resource type="PackedScene" uid="uid://d4jfjxf7378j6" path="res://assets/objects/menu/multiplayer_menu.tscn" id="3_xkfv7"]
 [ext_resource type="PackedScene" uid="uid://cvvclvjf62j4p" path="res://assets/objects/menu/connection_menu.tscn" id="4_duo2n"]
-[ext_resource type="Texture2D" uid="uid://cnxn7meqpnyf1" path="res://assets/textures/menu/logo.png" id="4_ofaut"]
+[ext_resource type="Texture2D" uid="uid://cnxn7meqpnyf1" path="res://assets/textures/menu/logos/title.png" id="4_ofaut"]
 
-[node name="MenuScene" type="Node2D" node_paths=PackedStringArray("main_menu", "multiplayer_menu", "connection_menu")]
+[node name="MenuScene" type="Node2D" node_paths=PackedStringArray("main_menu", "multiplayer_menu", "connection_menu", "connection_timer")]
 script = ExtResource("1_5k21t")
 main_menu = NodePath("MainMenu")
 multiplayer_menu = NodePath("MultiplayerMenu")
 connection_menu = NodePath("ConnectionMenu")
+connection_timer = NodePath("ConnectionTimer")
 
 [node name="MainMenu" parent="." instance=ExtResource("2_elm5u")]
 
@@ -19,17 +20,30 @@ visible = false
 
 [node name="ConnectionMenu" parent="." instance=ExtResource("4_duo2n")]
 visible = false
+connection_timed_out_text = "Connection timed out."
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(2, 2)
 
-[node name="Logo" type="Sprite2D" parent="."]
-position = Vector2(0, -48)
-scale = Vector2(3, 3)
+[node name="Logo" type="TextureRect" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -120.0
+offset_top = -96.0
+offset_right = 120.0
+grow_horizontal = 2
+grow_vertical = 0
 texture = ExtResource("4_ofaut")
+
+[node name="ConnectionTimer" type="Timer" parent="."]
+one_shot = true
 
 [connection signal="mulitplayer_selected" from="MainMenu" to="." method="_on_main_menu_mulitplayer_selected"]
 [connection signal="singleplayer_selected" from="MainMenu" to="." method="_on_main_menu_singleplayer_selected"]
 [connection signal="cancel_selected" from="MultiplayerMenu" to="." method="_on_multiplayer_menu_cancel_selected"]
 [connection signal="connect_selected" from="MultiplayerMenu" to="." method="_on_multiplayer_menu_connect_selected"]
-[connection signal="cancel_selected" from="ConnectionMenu" to="." method="_on_connection_menu_cancel_selected"]
+[connection signal="back_selected" from="ConnectionMenu" to="." method="_on_connection_menu_back_selected"]
+[connection signal="timeout" from="ConnectionTimer" to="." method="_on_connection_timer_timeout"]

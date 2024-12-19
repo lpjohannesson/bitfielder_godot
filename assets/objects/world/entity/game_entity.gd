@@ -12,6 +12,9 @@ var on_server = false
 
 signal position_changed
 
+func send_position_changed() -> void:
+	position_changed.emit()
+
 func get_game_world() -> GameWorld:
 	return GameServer.instance.world if on_server else GameScene.instance.world
 

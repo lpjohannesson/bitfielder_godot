@@ -58,3 +58,22 @@ func _process(_delta: float) -> void:
 func _on_player_position_timer_timeout() -> void:
 	if player != null:
 		packet_manager.send_check_player_position()
+
+func _on_click_surface_gui_input(event: InputEvent) -> void:
+	if not event is InputEventMouseButton:
+		return
+	
+	var action: String
+	
+	match event.button_index:
+		MOUSE_BUTTON_LEFT:
+			action = "break_front"
+		MOUSE_BUTTON_RIGHT:
+			action = "break_back"
+		_:
+			return
+	
+	if event.pressed:
+		Input.action_press(action)
+	else:
+		Input.action_release(action)

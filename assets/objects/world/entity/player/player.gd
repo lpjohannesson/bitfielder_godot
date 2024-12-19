@@ -272,8 +272,7 @@ func controls(delta: float) -> void:
 	
 	last_on_surface = on_surface
 	
-	if entity.on_server or GameScene.instance.player == self:
-		animate()
+	animate()
 
 func stop_modify_block() -> void:
 	if modify_block_tween != null:
@@ -284,6 +283,10 @@ func _ready() -> void:
 	entity.position_changed.connect(stop_modify_block)
 
 func _physics_process(delta: float) -> void:
+	# Check if remote controlled player
+	if not entity.on_server and GameScene.instance.player != self:
+		return
+	
 	if modify_block_timer.is_stopped():
 		controls(delta)
 	

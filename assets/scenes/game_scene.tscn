@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=14 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="2_d1sjh"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://assets/objects/world/block/render/block_world_renderer.gd" id="7_ddnpg"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_serializer.gd" id="7_dv0bx"]
 [ext_resource type="PackedScene" uid="uid://qnuf5qyuxwxp" path="res://assets/objects/world/block/render/block_particle.tscn" id="8_in2xm"]
+[ext_resource type="PackedScene" uid="uid://bfuyur4okfeqs" path="res://assets/objects/menu/items/item_bar.tscn" id="10_46wuw"]
 [ext_resource type="Script" path="res://assets/objects/game_packet_manager.gd" id="10_wvv0v"]
 [ext_resource type="Script" path="res://assets/objects/world/entity/player/player_camera.gd" id="24_vgm8j"]
 
@@ -82,4 +83,27 @@ render_target_update_mode = 4
 wait_time = 0.2
 autostart = true
 
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="ClickSurface" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ItemBar" parent="CanvasLayer" instance=ExtResource("10_46wuw")]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+scale = Vector2(3, 3)
+
 [connection signal="timeout" from="PlayerPositionTimer" to="." method="_on_player_position_timer_timeout"]
+[connection signal="gui_input" from="CanvasLayer/ClickSurface" to="." method="_on_click_surface_gui_input"]
