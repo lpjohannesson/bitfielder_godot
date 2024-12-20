@@ -14,7 +14,10 @@ var clients: Array[ClientConnection] = []
 var next_entity_id := 1
 
 func add_entity(entity: GameEntity) -> void:
-	world.entities.add_entity(entity, next_entity_id, true)
+	entity.entity_id = next_entity_id
+	entity.on_server = true
+	
+	world.entities.add_entity(entity)
 	next_entity_id += 1
 
 func get_block_chunk_packet(chunk: BlockChunk) -> GamePacket:
@@ -45,10 +48,7 @@ func update_block(block_specifier: BlockSpecifier) -> void:
 func get_create_entity_packet(entity: GameEntity) -> GamePacket:
 	return GamePacket.create_packet(
 		Packets.ServerPacket.CREATE_ENTITY,
-		{
-			"id": entity.entity_id,
-			"type": entity.entity_type
-		}
+		EntityDataManager.create_entity_spawn_data(entity)
 	)
 
 func get_destroy_entity_packet(entity: GameEntity) -> GamePacket:
@@ -57,28 +57,10 @@ func get_destroy_entity_packet(entity: GameEntity) -> GamePacket:
 		entity.entity_id
 	)
 
-func get_entity_position_packet(entity: GameEntity) -> GamePacket:
+func get_entity_data_packet(entity_data: Dictionary) -> GamePacket:
 	return GamePacket.create_packet(
-		Packets.ServerPacket.ENTITY_POSITION,
-		{ "id": entity.entity_id, "value": entity.body.position }
-	)
-
-func get_entity_velocity_packet(entity: GameEntity) -> GamePacket:
-	return GamePacket.create_packet(
-		Packets.ServerPacket.ENTITY_VELOCITY,
-		{ "id": entity.entity_id, "value": entity.body.velocity }
-	)
-
-func get_entity_flip_packet(entity: GameEntity) -> GamePacket:
-	return GamePacket.create_packet(
-		Packets.ServerPacket.ENTITY_FLIP,
-		{ "id": entity.entity_id, "value": entity.sprite.flip_h }
-	)
-
-func get_entity_animation_packet(entity: GameEntity) -> GamePacket:
-	return GamePacket.create_packet(
-		Packets.ServerPacket.ENTITY_ANIMATION,
-		{ "id": entity.entity_id, "value": entity.animation_player.current_animation }
+		Packets.ServerPacket.ENTITY_DATA,
+		entity_data
 	)
 
 func get_assign_player_packet(client: ClientConnection) -> GamePacket:
@@ -90,11 +72,14 @@ func get_assign_player_packet(client: ClientConnection) -> GamePacket:
 func rubberband_player(client: ClientConnection):
 	var entity := client.player.entity
 	
-	client.send_packet(get_entity_position_packet(entity))
-	client.send_packet(get_entity_velocity_packet(entity))
+	var entity_data := EntityDataManager.create_entity_data(entity)
+	EntityDataManager.save_entity_position(entity, entity_data)
+	EntityDataManager.save_entity_velocity(entity, entity_data)
+	
+	client.send_packet(get_entity_data_packet(entity_data))
 
 func check_player_position(packet: GamePacket, client: ClientConnection) -> void:
-	var position: Vector2 = packet.data["position"]
+	var position: Vector2 = packet.data
 	
 	# Check if player needs to be teleported
 	if client.player.global_position.distance_to(position) > 12.0:
@@ -135,8 +120,7 @@ func update_player_input(
 		client: ClientConnection,
 		input_state: bool) -> void:
 	
-	var action: String = packet.data["action"]
-	
+	var action: String = packet.data
 	client.player.player_input.set_action(action, input_state)
 
 func recieve_packet(packet: GamePacket, client: ClientConnection) -> void:
@@ -194,38 +178,18 @@ func update_player_chunks(client: ClientConnection) -> void:
 
 func send_entity_states() -> void:
 	for entity in world.entities.entities:
-		if entity.body != null:
-			var position_packet := get_entity_position_packet(entity)
-			var velocity_packet = get_entity_velocity_packet(entity)
-			
-			for client in clients:
-				if entity == client.player.entity:
-					continue
-				
-				client.send_packet(position_packet)
-				client.send_packet(velocity_packet)
+		var entity_data := EntityDataManager.create_entity_update_data(entity)
+		var packet := get_entity_data_packet(entity_data)
 		
-		if entity.sprite != null:
-			var packet := get_entity_flip_packet(entity)
+		for client in clients:
+			if entity == client.player.entity:
+				continue
 			
-			for client in clients:
-				if entity == client.player.entity:
-					continue
-				
-				client.send_packet(packet)
-		
-		if entity.animation_player != null:
-			var packet := get_entity_animation_packet(entity)
-			
-			for client in clients:
-				if entity == client.player.entity:
-					continue
-				
-				client.send_packet(packet)
+			client.send_packet(packet)
 
 func connect_client(client: ClientConnection) -> void:
 	# Spawn player
-	var player: Player = world.entities.player_scene.instantiate()
+	var player: Player = world.entities_data.player_scene.instantiate()
 	add_entity(player.entity)
 	
 	client.player = player
@@ -250,10 +214,10 @@ func connect_client(client: ClientConnection) -> void:
 	client.send_packet(get_assign_player_packet(client))
 	
 	# Add client and send to others
-	var create_packet := get_create_entity_packet(player.entity)
+	var create_player_packet := get_create_entity_packet(player.entity)
 	
 	for other_client in clients:
-		other_client.send_packet(create_packet)
+		other_client.send_packet(create_player_packet)
 	
 	clients.push_back(client)
 

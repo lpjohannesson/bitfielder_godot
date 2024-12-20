@@ -38,4 +38,6 @@ func _process(_delta: float) -> void:
 			
 			ENetConnection.EVENT_RECEIVE:
 				var packet := GamePacket.from_bytes(peer.get_packet())
+				print(Packets.ClientPacket.find_key(packet.type), ": ", packet.data)
+				
 				server.recieve_packet(packet, peer_clients[peer])

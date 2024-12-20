@@ -3,3 +3,4 @@ class_name GameWorld
 
 @export var block_world: BlockWorld
 @export var entities: EntityManager
+@export var entities_data: EntityDataManager

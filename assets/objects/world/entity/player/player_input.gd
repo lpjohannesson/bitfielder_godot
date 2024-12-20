@@ -33,7 +33,7 @@ func read_inputs(server: ServerConnection) -> void:
 			
 			var packet := GamePacket.create_packet(
 				Packets.ClientPacket.ACTION_PRESSED,
-				{ "action": action }
+				action
 			)
 			
 			server.send_packet(packet)
@@ -43,7 +43,7 @@ func read_inputs(server: ServerConnection) -> void:
 			
 			var packet := GamePacket.create_packet(
 				Packets.ClientPacket.ACTION_RELEASED,
-				{ "action": action }
+				action
 			)
 			
 			server.send_packet(packet)

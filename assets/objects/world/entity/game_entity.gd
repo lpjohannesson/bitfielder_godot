@@ -1,7 +1,7 @@
 extends Node
 class_name GameEntity
 
-@export var entity_type: String
+@export var entity_type: EntityDataManager.EntityType
 @export var entity_node: Node
 @export var body: CharacterBody2D
 @export var sprite: Sprite2D

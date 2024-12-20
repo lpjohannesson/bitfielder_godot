@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://celyk57ifua4f"]
+[gd_scene load_steps=10 format=3 uid="uid://celyk57ifua4f"]
 
 [ext_resource type="PackedScene" uid="uid://skq7ko7cqtj1" path="res://assets/objects/world/block/block_world.tscn" id="1_5y2sb"]
 [ext_resource type="Script" path="res://assets/objects/world/game_world.gd" id="1_waysh"]
@@ -8,11 +8,13 @@
 [ext_resource type="Script" path="res://assets/objects/world/item/item_type.gd" id="4_u7yh7"]
 [ext_resource type="Resource" uid="uid://c750yayfee88g" path="res://assets/resources/items/dirt.tres" id="5_degwe"]
 [ext_resource type="Resource" uid="uid://cnyqb65ifw6f0" path="res://assets/resources/items/stone.tres" id="6_nqmh0"]
+[ext_resource type="Script" path="res://assets/objects/world/entity/entity_data_manager.gd" id="8_gdq6u"]
 
-[node name="GameWorld" type="Node2D" node_paths=PackedStringArray("block_world", "entities")]
+[node name="GameWorld" type="Node2D" node_paths=PackedStringArray("block_world", "entities", "entities_data")]
 script = ExtResource("1_waysh")
 block_world = NodePath("BlockWorld")
 entities = NodePath("EntityManager")
+entities_data = NodePath("EntityDataManager")
 
 [node name="BlockWorld" parent="." instance=ExtResource("1_5y2sb")]
 
@@ -22,4 +24,8 @@ item_types = Array[ExtResource("4_u7yh7")]([ExtResource("5_degwe"), ExtResource(
 
 [node name="EntityManager" type="Node" parent="."]
 script = ExtResource("3_jc7ju")
+
+[node name="EntityDataManager" type="Node" parent="." node_paths=PackedStringArray("entities")]
+script = ExtResource("8_gdq6u")
+entities = NodePath("../EntityManager")
 player_scene = ExtResource("4_hgqgm")
