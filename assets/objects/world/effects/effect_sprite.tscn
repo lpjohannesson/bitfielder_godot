@@ -1,8 +1,9 @@
-[gd_scene load_steps=15 format=3 uid="uid://dpmf4snl7yob2"]
+[gd_scene load_steps=19 format=3 uid="uid://dpmf4snl7yob2"]
 
 [ext_resource type="Texture2D" uid="uid://dghuesjvv30oq" path="res://assets/textures/effects/break.png" id="1_vflrm"]
 [ext_resource type="Texture2D" uid="uid://cefd6e62j71qs" path="res://assets/textures/effects/ground.png" id="2_fhy27"]
 [ext_resource type="Texture2D" uid="uid://oywskwbi3n1t" path="res://assets/textures/effects/place.png" id="3_601cr"]
+[ext_resource type="Texture2D" uid="uid://du8n3vrn1hmsf" path="res://assets/textures/effects/slide.png" id="4_gavc4"]
 [ext_resource type="Script" path="res://assets/objects/world/effects/effect_sprite.gd" id="4_wr8tn"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lqq27"]
@@ -39,6 +40,18 @@ region = Rect2(16, 0, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_j8p1u"]
 atlas = ExtResource("3_601cr")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xpqrl"]
+atlas = ExtResource("4_gavc4")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j4vyk"]
+atlas = ExtResource("4_gavc4")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n51s1"]
+atlas = ExtResource("4_gavc4")
 region = Rect2(32, 0, 16, 16)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_2qh1e"]
@@ -84,11 +97,27 @@ animations = [{
 "loop": false,
 "name": &"place",
 "speed": 9.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xpqrl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j4vyk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n51s1")
+}],
+"loop": false,
+"name": &"slide",
+"speed": 9.0
 }]
 
 [node name="EffectSprite" type="AnimatedSprite2D"]
 sprite_frames = SubResource("SpriteFrames_2qh1e")
-animation = &"ground"
+animation = &"slide"
+frame = 2
+frame_progress = 1.0
 script = ExtResource("4_wr8tn")
 
 [connection signal="animation_finished" from="." to="." method="_on_animation_finished"]

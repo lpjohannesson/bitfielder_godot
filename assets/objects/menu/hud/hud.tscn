@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://c587sy0idbcjt"]
+
+[ext_resource type="PackedScene" uid="uid://bfuyur4okfeqs" path="res://assets/objects/menu/hud/items/item_bar.tscn" id="1_ppg0x"]
+[ext_resource type="Texture2D" uid="uid://dudtqt58jka2n" path="res://assets/textures/menu/hud/test_icons.png" id="2_7uup0"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="ItemBar" parent="." instance=ExtResource("1_ppg0x")]
+
+[node name="TestIcons" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = -83.0
+offset_top = -23.0
+offset_right = 83.0
+offset_bottom = -11.0
+texture = ExtResource("2_7uup0")

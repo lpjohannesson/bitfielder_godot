@@ -7,14 +7,14 @@
 [ext_resource type="Script" path="res://assets/objects/world/block/render/block_world_renderer.gd" id="7_ddnpg"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_serializer.gd" id="7_dv0bx"]
 [ext_resource type="PackedScene" uid="uid://qnuf5qyuxwxp" path="res://assets/objects/world/block/render/block_particle.tscn" id="8_in2xm"]
-[ext_resource type="PackedScene" uid="uid://bfuyur4okfeqs" path="res://assets/objects/menu/items/item_bar.tscn" id="10_46wuw"]
+[ext_resource type="PackedScene" uid="uid://c587sy0idbcjt" path="res://assets/objects/menu/hud/hud.tscn" id="10_0vvsh"]
 [ext_resource type="Script" path="res://assets/objects/game_packet_manager.gd" id="10_wvv0v"]
 [ext_resource type="Script" path="res://assets/objects/world/entity/player/player_camera.gd" id="24_vgm8j"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hm8g0"]
 shader = ExtResource("2_d1sjh")
 shader_parameter/back_shade = 0.2
-shader_parameter/shadow_shade = 0.3
+shader_parameter/shadow_shade = 0.2
 
 [sub_resource type="Gradient" id="Gradient_7u5hj"]
 offsets = PackedFloat32Array(0, 0.333, 0.667, 1)
@@ -93,14 +93,14 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ItemBar" parent="CanvasLayer" instance=ExtResource("10_46wuw")]
+[node name="HUD" parent="CanvasLayer" instance=ExtResource("10_0vvsh")]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_top = -40.0
-offset_bottom = -40.0
+offset_top = -45.0
+offset_bottom = -45.0
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(3, 3)

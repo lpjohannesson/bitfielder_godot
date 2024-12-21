@@ -193,7 +193,7 @@ _data = {
 "walk": SubResource("Animation_bdjc4")
 }
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("entity", "sprite", "collider", "animation_player", "coyote_timer", "jump_timer", "modify_block_timer", "floor_point", "ceiling_point")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("entity", "sprite", "collider", "animation_player", "coyote_timer", "jump_timer", "modify_block_timer", "slide_effect_timer", "floor_point", "ceiling_point")]
 script = ExtResource("1_7uomn")
 entity = NodePath("GameEntity")
 sprite = NodePath("Sprite2D")
@@ -202,6 +202,7 @@ animation_player = NodePath("AnimationPlayer")
 coyote_timer = NodePath("CoyoteTimer")
 jump_timer = NodePath("JumpTimer")
 modify_block_timer = NodePath("ModifyBlockTimer")
+slide_effect_timer = NodePath("SlideEffectTimer")
 floor_point = NodePath("FloorPoint")
 ceiling_point = NodePath("CeilingPoint")
 
@@ -217,6 +218,26 @@ script = ExtResource("4_faxp7")
 position = Vector2(0, -0.5)
 shape = SubResource("RectangleShape2D_i4kni")
 
+[node name="FloorPoint" type="Node2D" parent="."]
+position = Vector2(0, 6)
+
+[node name="CeilingPoint" type="Node2D" parent="."]
+position = Vector2(0, -7)
+
+[node name="GameEntity" type="Node" parent="." node_paths=PackedStringArray("entity_node", "body", "sprite", "collider", "animation_player")]
+script = ExtResource("4_1rk0b")
+entity_type = "player"
+entity_node = NodePath("..")
+body = NodePath("..")
+sprite = NodePath("../Sprite2D")
+collider = NodePath("../CollisionShape2D")
+animation_player = NodePath("../AnimationPlayer")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_whnse")
+}
+
 [node name="CoyoteTimer" type="Timer" parent="."]
 wait_time = 0.1
 one_shot = true
@@ -230,24 +251,8 @@ process_callback = 0
 wait_time = 0.3
 one_shot = true
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
-libraries = {
-"": SubResource("AnimationLibrary_whnse")
-}
-
-[node name="GameEntity" type="Node" parent="." node_paths=PackedStringArray("entity_node", "body", "sprite", "collider", "animation_player")]
-script = ExtResource("4_1rk0b")
-entity_type = "player"
-entity_node = NodePath("..")
-body = NodePath("..")
-sprite = NodePath("../Sprite2D")
-collider = NodePath("../CollisionShape2D")
-animation_player = NodePath("../AnimationPlayer")
-
-[node name="FloorPoint" type="Node2D" parent="."]
-position = Vector2(0, 6)
-
-[node name="CeilingPoint" type="Node2D" parent="."]
-position = Vector2(0, -7)
+[node name="SlideEffectTimer" type="Timer" parent="."]
+wait_time = 0.1
+one_shot = true
 
 [connection signal="timeout" from="ModifyBlockTimer" to="." method="_on_modify_block_timer_timeout"]

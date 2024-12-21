@@ -9,6 +9,8 @@ var top_id: int
 var bottom_id: int
 
 func start_layer(block_world: BlockWorld) -> void:
+	noise.seed = randi()
+	
 	top_id = block_world.get_block_id(top_block_name)
 	bottom_id = block_world.get_block_id(bottom_block_name)
 

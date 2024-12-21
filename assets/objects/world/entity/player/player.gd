@@ -15,6 +15,7 @@ const JUMP_MIDSTOP = 0.5
 @export var coyote_timer: Timer
 @export var jump_timer: Timer
 @export var modify_block_timer: Timer
+@export var slide_effect_timer: Timer
 @export var floor_point: Node2D
 @export var ceiling_point: Node2D
 
@@ -27,8 +28,14 @@ var last_surface := 0.0
 
 var player_input := PlayerInput.new()
 
-func get_facing_sign():
-	return -1 if sprite.flip_h else 1
+func get_facing_sign() -> float:
+	return -1.0 if sprite.flip_h else 1.0
+
+func is_sliding() -> bool:
+	return\
+		move_direction != 0.0 and\
+		velocity.x != 0.0 and\
+		sign(velocity.x) != sign(move_direction)
 
 func walk(delta: float) -> void:
 	if is_on_floor() or move_direction != 0.0:
@@ -75,10 +82,10 @@ func animate() -> void:
 			else:
 				animation_player.play("idle")
 		else:
-			if sign(velocity.x) == sign(move_direction):
-				animation_player.play("walk")
-			else:
+			if is_sliding():
 				animation_player.play("slide")
+			else:
+				animation_player.play("walk")
 	else:
 		if velocity.y < 0.0:
 			animation_player.play("jump")
@@ -115,7 +122,7 @@ func modify_block() -> bool:
 	var forward_block_position := center_block_position
 	
 	if look_direction == 0.0:
-		forward_block_position.x += get_facing_sign()
+		forward_block_position.x += int(get_facing_sign())
 	else:
 		forward_block_position.y += int(look_direction)
 	
@@ -173,7 +180,7 @@ func modify_block() -> bool:
 		address = center_address
 		
 		block_specifier.block_position = center_block_position
-		block_specifier.block_id = block_world.get_block_id("wood_log")
+		block_specifier.block_id = block_world.get_block_id("leaves")
 	
 	# Start movement
 	velocity = Vector2.ZERO
@@ -209,13 +216,18 @@ func show_ground_effects() -> void:
 	var surface_point: Node2D
 	
 	if is_on_floor():
-		surface = 1
+		surface = 1.0
 		surface_point = floor_point
+		
+		if slide_effect_timer.is_stopped() and is_sliding():
+			entity.spawn_effect_sprite("slide", floor_point.global_position)
+			slide_effect_timer.start()
+		
 	elif is_on_ceiling():
-		surface = -1
+		surface = -1.0
 		surface_point = ceiling_point
 	else:
-		last_surface = 0
+		last_surface = 0.0
 		return
 	
 	if surface == last_surface:
@@ -223,6 +235,8 @@ func show_ground_effects() -> void:
 	
 	entity.spawn_effect_sprite("ground", surface_point.global_position)
 	last_surface = surface
+	
+	
 
 func controls(delta: float) -> void:
 	if modify_block():
