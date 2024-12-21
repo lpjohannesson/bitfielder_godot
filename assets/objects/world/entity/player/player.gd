@@ -32,10 +32,7 @@ func get_facing_sign() -> float:
 	return -1.0 if sprite.flip_h else 1.0
 
 func is_sliding() -> bool:
-	return\
-		move_direction != 0.0 and\
-		velocity.x != 0.0 and\
-		sign(velocity.x) != sign(move_direction)
+	return velocity.x != 0.0 and sign(velocity.x) != get_facing_sign()
 
 func walk(delta: float) -> void:
 	if is_on_floor() or move_direction != 0.0:
