@@ -109,15 +109,12 @@ func start_chunk(chunk: BlockChunk) -> void:
 		
 		neighbor_chunk.redraw_chunk()
 
-func spawn_particles(block_id: int, block_position: Vector2i):
+func spawn_particles(block_id: int, particle_position: Vector2):
 	var block_world := world.block_world
-	
 	var block := block_world.block_types[block_id]
 	
 	if block.particle_texture == null:
 		return
-	
-	var particle_position = block_world.block_to_world(block_position, true)
 	
 	for i in range(5):
 		var particle: BlockParticle = particle_scene.instantiate()

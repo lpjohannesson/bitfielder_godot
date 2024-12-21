@@ -15,13 +15,15 @@ const JUMP_MIDSTOP = 0.5
 @export var coyote_timer: Timer
 @export var jump_timer: Timer
 @export var modify_block_timer: Timer
+@export var floor_point: Node2D
+@export var ceiling_point: Node2D
 
 var move_direction := 0.0
 var look_direction := 0.0
 var midstopped := false
 var modify_block_tween: Tween
 
-var last_on_surface := false
+var last_surface := 0.0
 
 var player_input := PlayerInput.new()
 
@@ -156,52 +158,22 @@ func modify_block() -> bool:
 	var block_specifier := BlockSpecifier.new()
 	block_specifier.on_front_layer = on_front_layer
 	
+	var address: BlockAddress
+	
 	if breaking:
-		var address: BlockAddress
-		var block_ids: PackedInt32Array
-		var block_position: Vector2i
-		
 		if on_front_layer:
 			address = forward_address
-			block_ids = forward_address.chunk.front_ids
-			block_position = forward_block_position
+			block_specifier.block_position = forward_block_position
 		else:
 			address = center_address
-			block_ids = center_address.chunk.back_ids
-			block_position = center_block_position
+			block_specifier.block_position = center_block_position
 		
-		var block_id := block_ids[address.block_index]
-		entity.spawn_block_particles(block_id, block_position)
-		
-		block_ids[address.block_index] = 0
-		
-		entity.spawn_effect_sprite(
-			"break",
-			block_world.block_to_world(block_position, true)
-		)
-		
-		block_specifier.block_position = block_position
 		block_specifier.block_id = 0
 	else:
-		var block_ids: PackedInt32Array
-		
-		if on_front_layer:
-			block_ids = center_address.chunk.front_ids
-		else:
-			block_ids = center_address.chunk.back_ids
-		
-		entity.spawn_effect_sprite(
-			"place",
-			block_world.block_to_world(center_block_position, true)
-		)
-		
-		var block_id := block_world.get_block_id("wood_log")
-		block_ids[center_address.block_index] = block_id
+		address = center_address
 		
 		block_specifier.block_position = center_block_position
-		block_specifier.block_id = block_id
-	
-	entity.update_block(block_specifier)
+		block_specifier.block_id = block_world.get_block_id("wood_log")
 	
 	# Start movement
 	velocity = Vector2.ZERO
@@ -228,7 +200,29 @@ func modify_block() -> bool:
 	modify_block_timer.start()
 	collider.disabled = true
 	
+	entity.update_block(block_specifier, address)
+	
 	return true
+
+func show_ground_effects() -> void:
+	var surface: float
+	var surface_point: Node2D
+	
+	if is_on_floor():
+		surface = 1
+		surface_point = floor_point
+	elif is_on_ceiling():
+		surface = -1
+		surface_point = ceiling_point
+	else:
+		last_surface = 0
+		return
+	
+	if surface == last_surface:
+		return
+	
+	entity.spawn_effect_sprite("ground", surface_point.global_position)
+	last_surface = surface
 
 func controls(delta: float) -> void:
 	if modify_block():
@@ -250,28 +244,7 @@ func controls(delta: float) -> void:
 	
 	move_and_slide()
 	
-	var on_surface := false
-	
-	for i in range(get_slide_collision_count()):
-		var collision := get_slide_collision(i)
-		
-		if collision.get_normal().y == 0.0:
-			continue
-		
-		on_surface = true
-		
-		if last_on_surface:
-			break
-		
-		entity.spawn_effect_sprite(
-			"ground",
-			Vector2(global_position.x, collision.get_position().y)
-		)
-		
-		break
-	
-	last_on_surface = on_surface
-	
+	show_ground_effects()
 	animate()
 
 func stop_modify_block() -> void:
@@ -285,6 +258,8 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	# Check if remote controlled player
 	if not entity.on_server and GameScene.instance.player != self:
+		move_and_slide()
+		show_ground_effects()
 		return
 	
 	if modify_block_timer.is_stopped():

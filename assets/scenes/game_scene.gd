@@ -28,10 +28,34 @@ func spawn_effect_sprite(effect_name: String, effect_position: Vector2) -> void:
 	effect_sprite.global_position = effect_position
 	effect_sprite.play(effect_name)
 
-func update_block(block_position: Vector2i) -> void:
+func update_block(
+		block_specifier: BlockSpecifier,
+		address: BlockAddress,
+		show_effects: bool) -> void:
+	
+	var block_ids := block_specifier.get_layer(address.chunk)
+	
+	# Skip if already the same block
+	if block_ids[address.block_index] == block_specifier.block_id:
+		return
+	
 	var block_world := world.block_world
 	
-	for chunk in block_world.get_block_chunks(block_position):
+	if show_effects:
+		var effect_position := block_world.block_to_world(
+			block_specifier.block_position, true)
+		
+		if block_specifier.block_id == 0:
+			block_world_renderer.spawn_particles(
+				block_ids[address.block_index], effect_position)
+			
+			spawn_effect_sprite("break", effect_position)
+		else:
+			spawn_effect_sprite("place", effect_position)
+	
+	block_specifier.write_address(address)
+	
+	for chunk in block_world.get_block_chunks(block_specifier.block_position):
 		block_world.update_chunk(chunk)
 		chunk.redraw_chunk()
 

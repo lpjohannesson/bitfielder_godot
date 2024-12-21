@@ -4,7 +4,7 @@ class_name BlockSerializer
 @export var world: GameWorld
 
 func create_palette(
-		palette: PackedInt32Array,
+		palette: PackedStringArray,
 		palette_map: Dictionary,
 		block_ids: PackedInt32Array) -> void:
 	
@@ -15,7 +15,7 @@ func create_palette(
 		var block := world.block_world.block_types[block_id]
 		
 		palette_map[block_id] = palette.size()
-		palette.push_back(block_id)
+		palette.push_back(block.block_name)
 
 func save_paletted_blocks(
 		palette_map: Dictionary,
@@ -32,7 +32,7 @@ func save_paletted_blocks(
 
 func save_chunk(chunk: BlockChunk) -> Array:
 	# Create palette
-	var palette: PackedInt32Array = []
+	var palette: PackedStringArray = []
 	var palette_map := {}
 	
 	create_palette(palette, palette_map, chunk.front_ids)
@@ -57,11 +57,11 @@ func load_chunk(chunk: BlockChunk, chunk_data: Array) -> void:
 	var block_world := world.block_world
 	
 	# Load palette blocks
-	var palette: PackedInt32Array = chunk_data[1]
+	var palette: PackedStringArray = chunk_data[1]
 	
 	# Check for all one block
 	if palette.size() == 1:
-		var block_id := palette[0]
+		var block_id := block_world.get_block_id(palette[0])
 		
 		for i in range(BlockChunk.BLOCK_COUNT):
 			chunk.front_ids[i] = block_id
@@ -69,10 +69,17 @@ func load_chunk(chunk: BlockChunk, chunk_data: Array) -> void:
 		
 		return
 	
+	# Load blocks from palette
+	var palette_ids: PackedInt32Array = []
+	
+	for block_name in palette:
+		var block_id := block_world.get_block_id(block_name)
+		palette_ids.push_back(block_id)
+	
 	# Load block data
 	var front_ids: PackedInt32Array = chunk_data[2]
 	var back_ids: PackedInt32Array = chunk_data[3]
 	
 	for i in range(BlockChunk.BLOCK_COUNT):
-		chunk.front_ids[i] = palette[front_ids[i]]
-		chunk.back_ids[i] = palette[back_ids[i]]
+		chunk.front_ids[i] = palette_ids[front_ids[i]]
+		chunk.back_ids[i] = palette_ids[back_ids[i]]

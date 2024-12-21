@@ -35,22 +35,15 @@ func load_player_chunk_index(packet: GamePacket) -> void:
 
 func update_block(packet: GamePacket) -> void:
 	var block_world := scene.world.block_world
-	var block_specifier := BlockSpecifier.from_data(packet.data, block_world)
+	var block_specifier := BlockSpecifier.from_data(packet.data[0], block_world)
+	var show_effects: bool = packet.data[1]
 	
 	var address := block_world.get_block_address(block_specifier.block_position)
 	
 	if address == null:
 		return
 	
-	var block_ids := block_specifier.get_layer(address.chunk)
-	
-	# Skip if already the same block
-	if block_ids[address.block_index] == block_specifier.block_id:
-		return
-	
-	block_ids[address.block_index] = block_specifier.block_id
-	
-	scene.update_block(block_specifier.block_position)
+	scene.update_block(block_specifier, address, show_effects)
 
 func send_check_player_position() -> void:
 	var packet := GamePacket.create_packet(

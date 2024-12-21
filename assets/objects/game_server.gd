@@ -32,15 +32,27 @@ func get_player_chunk_index_packet(chunk_index: Vector2i) -> GamePacket:
 		chunk_index
 	)
 
-func get_update_block_packet(block_specifier: BlockSpecifier) -> GamePacket:
+func get_update_block_packet(
+		block_specifier: BlockSpecifier,
+		show_effects: bool) -> GamePacket:
+	
 	return GamePacket.create_packet(
 		Packets.ServerPacket.UPDATE_BLOCK,
-		block_specifier.to_data(world.block_world)
+		[block_specifier.to_data(world.block_world), show_effects]
 	)
 
-func update_block(block_specifier: BlockSpecifier) -> void:
+func update_block(
+		block_specifier: BlockSpecifier,
+		address: BlockAddress,
+		show_effects: bool) -> void:
+	
+	# Ensure entities are updated before block update
+	send_entity_states()
+	
+	block_specifier.write_address(address)
+	
 	world.block_world.update_block(block_specifier.block_position)
-	var packet := get_update_block_packet(block_specifier)
+	var packet := get_update_block_packet(block_specifier, show_effects)
 	
 	for client in clients:
 		client.send_packet(packet)
@@ -73,8 +85,10 @@ func rubberband_player(client: ClientConnection):
 	var entity := client.player.entity
 	
 	var entity_data := EntityDataManager.create_entity_data(entity)
-	EntityDataManager.save_entity_position(entity, entity_data)
-	EntityDataManager.save_entity_velocity(entity, entity_data)
+	var request = EntityDataManager.DataRequest.create(entity, entity_data, true)
+	
+	EntityDataManager.save_entity_position(request)
+	EntityDataManager.save_entity_velocity(request)
 	
 	client.send_packet(get_entity_data_packet(entity_data))
 
@@ -96,7 +110,7 @@ func get_failed_block_packet(
 	new_block_specifier.on_front_layer = block_specifier.on_front_layer
 	new_block_specifier.block_id = block_id
 	
-	return get_update_block_packet(new_block_specifier)
+	return get_update_block_packet(new_block_specifier, false)
 
 func check_block_update(packet: GamePacket, client: ClientConnection) -> void:
 	# Delay block check to wait for server-side changes
@@ -178,7 +192,12 @@ func update_player_chunks(client: ClientConnection) -> void:
 
 func send_entity_states() -> void:
 	for entity in world.entities.entities:
-		var entity_data := EntityDataManager.create_entity_update_data(entity)
+		var entity_data := EntityDataManager.create_entity_update_data(entity, false)
+		
+		# Check if no data besides ID
+		if entity_data.size() == 1:
+			continue
+		
 		var packet := get_entity_data_packet(entity_data)
 		
 		for client in clients:
