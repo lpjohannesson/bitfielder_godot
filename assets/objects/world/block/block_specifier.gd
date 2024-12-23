@@ -19,10 +19,7 @@ func to_data(blocks: BlockWorld) -> Array:
 	return [block_position, on_front_layer, block_name]
 
 func get_layer(chunk: BlockChunk) -> PackedInt32Array:
-	if on_front_layer:
-		return chunk.front_ids
-	else:
-		return chunk.back_ids
+	return chunk.get_layer(on_front_layer)
 
 func read_address(address: BlockAddress) -> int:
 	return get_layer(address.chunk)[address.block_index]

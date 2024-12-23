@@ -1,17 +1,6 @@
 extends Node
 class_name BlockWorldRenderer
 
-const CHUNK_NEIGHBOR_OFFSETS: Array[Vector2i] = [
-	Vector2i.UP,
-	Vector2i.DOWN,
-	Vector2i.LEFT,
-	Vector2i.RIGHT,
-	Vector2i.UP + Vector2i.LEFT,
-	Vector2i.UP + Vector2i.RIGHT,
-	Vector2i.DOWN + Vector2i.LEFT,
-	Vector2i.DOWN + Vector2i.RIGHT,
-]
-
 @export var world: GameWorld
 @export var particle_scene: PackedScene
 
@@ -100,7 +89,7 @@ func start_chunk(chunk: BlockChunk) -> void:
 	chunk.tree_exited.connect(chunk.shadow_layer.queue_free)
 	
 	# Update neighbors
-	for chunk_offset in CHUNK_NEIGHBOR_OFFSETS:
+	for chunk_offset in Direction.NEIGHBOR_OFFSETS_EIGHT:
 		var neighbor_chunk_index := chunk.chunk_index + chunk_offset
 		var neighbor_chunk := world.blocks.get_chunk(neighbor_chunk_index)
 		

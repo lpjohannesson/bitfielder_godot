@@ -18,6 +18,12 @@ var chunk_index: Vector2i
 static func get_block_index(chunk_position: Vector2i) -> int:
 	return chunk_position.y * CHUNK_SIZE.x + chunk_position.x
 
+func get_layer(on_front_layer: bool) -> PackedInt32Array:
+	if on_front_layer:
+		return front_ids
+	else:
+		return back_ids
+
 func redraw_chunk() -> void:
 	front_layer.queue_redraw()
 	back_layer.queue_redraw()

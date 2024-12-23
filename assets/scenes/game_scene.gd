@@ -73,6 +73,11 @@ func select_item(item_index: int) -> void:
 	
 	server.send_packet(packet)
 
+func move_item_selection(select_direction: int) -> void:
+	select_item(posmod(
+		player.inventory.selected_index + select_direction,
+		ItemInventory.ITEM_COUNT))
+
 func try_select_items() -> void:
 	var select_direction = \
 		int(Input.is_action_just_pressed("select_right")) - \
@@ -81,9 +86,7 @@ func try_select_items() -> void:
 	if select_direction == 0:
 		return
 	
-	select_item(posmod(
-		player.inventory.selected_index + select_direction,
-		ItemInventory.ITEM_COUNT))
+	move_item_selection(select_direction)
 
 func resize() -> void:
 	shadow_viewport.size = viewport.get_visible_rect().size
@@ -121,6 +124,10 @@ func _on_click_surface_gui_input(event: InputEvent) -> void:
 			action = "use_front"
 		MOUSE_BUTTON_RIGHT:
 			action = "use_back"
+		MOUSE_BUTTON_WHEEL_UP:
+			action = "select_left"
+		MOUSE_BUTTON_WHEEL_DOWN:
+			action = "select_right"
 		_:
 			return
 	
