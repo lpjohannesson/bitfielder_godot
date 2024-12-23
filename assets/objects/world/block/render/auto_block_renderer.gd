@@ -12,7 +12,7 @@ const CORNER_SOURCE_SIZE := Vector2.ONE * 8.0
 @export var texture: Texture2D
 
 func is_neighbor_partial(render_data: BlockRenderData, block_id: int):
-	var block := render_data.block_world.block_types[block_id]
+	var block := render_data.blocks.block_types[block_id]
 	
 	if block.renderer == null:
 		return true
@@ -26,7 +26,7 @@ func get_neighbor_mask(
 	
 	# Get address
 	var neighbor_address := \
-		render_data.block_world.get_block_address(block_position + offset)
+		render_data.blocks.get_block_address(block_position + offset)
 	
 	if neighbor_address == null:
 		return 0

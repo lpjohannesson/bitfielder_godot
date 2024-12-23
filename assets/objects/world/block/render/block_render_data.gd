@@ -1,6 +1,6 @@
 class_name BlockRenderData
 
-var block_world: BlockWorld
+var blocks: BlockWorld
 
 var chunk: BlockChunk
 var block_ids: PackedInt32Array

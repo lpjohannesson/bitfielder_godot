@@ -7,7 +7,8 @@ enum ServerPacket {
 	CREATE_ENTITY,
 	DESTROY_ENTITY,
 	ENTITY_DATA,
-	ASSIGN_PLAYER
+	ASSIGN_PLAYER,
+	CREATE_INVENTORY
 }
 
 enum ClientPacket {

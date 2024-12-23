@@ -7,6 +7,7 @@ const WORLD_CHUNK_HEIGHT = 16
 @export var chunk_scene: PackedScene
 
 @export var chunks: Node2D
+@export var serializer: BlockSerializer
 
 var chunk_map := {}
 var block_type_map := {}

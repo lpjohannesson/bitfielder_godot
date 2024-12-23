@@ -1,11 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://c587sy0idbcjt"]
+[gd_scene load_steps=4 format=3 uid="uid://c587sy0idbcjt"]
 
-[ext_resource type="PackedScene" uid="uid://bfuyur4okfeqs" path="res://assets/objects/menu/hud/items/item_bar.tscn" id="1_ppg0x"]
+[ext_resource type="Script" path="res://assets/objects/menu/hud/hud.gd" id="1_kns3o"]
+[ext_resource type="PackedScene" uid="uid://bfuyur4okfeqs" path="res://assets/objects/menu/hud/item/item_bar.tscn" id="1_ppg0x"]
 [ext_resource type="Texture2D" uid="uid://dudtqt58jka2n" path="res://assets/textures/menu/hud/test_icons.png" id="2_7uup0"]
 
-[node name="HUD" type="Control"]
+[node name="HUD" type="Control" node_paths=PackedStringArray("item_bar")]
 layout_mode = 3
 anchors_preset = 0
+script = ExtResource("1_kns3o")
+item_bar = NodePath("ItemBar")
 
 [node name="ItemBar" parent="." instance=ExtResource("1_ppg0x")]
 

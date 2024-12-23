@@ -6,8 +6,10 @@ const PLAYER_ACTIONS := [
 	"look_up",
 	"look_down",
 	"jump",
-	"break_front",
-	"break_back"
+	"use_front",
+	"use_back",
+	"select_left",
+	"select_right"
 ]
 
 var last_input_map := {}

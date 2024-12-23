@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemType" load_steps=5 format=3 uid="uid://d0kfvaxqq26ha"]
+
+[ext_resource type="Texture2D" uid="uid://bedfvgrtr33j1" path="res://assets/textures/items/wood_log.png" id="1_7dixw"]
+[ext_resource type="Script" path="res://assets/objects/world/item/properties/block_item_properties.gd" id="2_uhbkh"]
+[ext_resource type="Script" path="res://assets/objects/world/item/item_type.gd" id="3_y3i0g"]
+
+[sub_resource type="Resource" id="Resource_2axdm"]
+script = ExtResource("2_uhbkh")
+
+[resource]
+script = ExtResource("3_y3i0g")
+item_name = "wood_log"
+item_texture = ExtResource("1_7dixw")
+properties = SubResource("Resource_2axdm")

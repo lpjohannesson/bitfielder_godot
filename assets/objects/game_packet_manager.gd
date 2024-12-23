@@ -6,39 +6,39 @@ class_name GamePacketManager
 var last_chunk_index: Vector2i
 
 func create_block_chunk(packet: GamePacket) -> void:
-	var block_world := scene.world.block_world
+	var blocks := scene.world.blocks
 	var chunk_index: Vector2i = packet.data[0]
 	
 	# Skip if chunk exists
-	if block_world.get_chunk(chunk_index) != null:
+	if blocks.get_chunk(chunk_index) != null:
 		return
 	
-	var chunk := block_world.create_chunk(chunk_index)
+	var chunk := blocks.create_chunk(chunk_index)
 	
-	scene.block_serializer.load_chunk(chunk, packet.data)
-	block_world.update_chunk(chunk)
+	scene.world.blocks.serializer.load_chunk(chunk, packet.data)
+	blocks.update_chunk(chunk)
 	
-	scene.block_world_renderer.start_chunk(chunk)
+	scene.blocks_renderer.start_chunk(chunk)
 
 func load_player_chunk_index(packet: GamePacket) -> void:
 	var player_chunk_index: Vector2i = packet.data
 	var load_zone := GameServer.get_chunk_load_zone(player_chunk_index)
 	
-	var block_world := scene.world.block_world
+	var blocks := scene.world.blocks
 	 
 	# Unload out of range chunks, redraw new ones
-	for chunk_index in block_world.chunk_map.keys():
+	for chunk_index in blocks.chunk_map.keys():
 		if not load_zone.has_point(chunk_index):
-			block_world.destroy_chunk(chunk_index)
+			blocks.destroy_chunk(chunk_index)
 	
 	last_chunk_index = player_chunk_index
 
 func update_block(packet: GamePacket) -> void:
-	var block_world := scene.world.block_world
-	var block_specifier := BlockSpecifier.from_data(packet.data[0], block_world)
+	var blocks := scene.world.blocks
+	var block_specifier := BlockSpecifier.from_data(packet.data[0], blocks)
 	var show_effects: bool = packet.data[1]
 	
-	var address := block_world.get_block_address(block_specifier.block_position)
+	var address := blocks.get_block_address(block_specifier.block_position)
 	
 	if address == null:
 		return
@@ -55,12 +55,12 @@ func send_check_player_position() -> void:
 func send_check_block_update(block_specifier: BlockSpecifier) -> void:
 	var packet := GamePacket.create_packet(
 		Packets.ClientPacket.CHECK_BLOCK_UPDATE,
-		block_specifier.to_data(scene.world.block_world))
+		block_specifier.to_data(scene.world.blocks))
 	
 	scene.server.send_packet(packet)
 
 func create_entity(packet: GamePacket) -> void:
-	scene.world.entities_data.create_entity(packet.data)
+	scene.world.entities.serializer.create_entity(packet.data)
 
 func destroy_entity(packet: GamePacket) -> void:
 	var entity := scene.world.entities.get_entity(packet.data)
@@ -71,17 +71,26 @@ func destroy_entity(packet: GamePacket) -> void:
 	scene.world.entities.remove_entity(entity)
  
 func load_entity_data(packet: GamePacket) -> void:
-	var entity_id: int = packet.data[EntityDataManager.DataType.ID]
-	var entity := scene.world.entities.get_entity(entity_id)
+	var entities := scene.world.entities
+	
+	var entity_id: int = packet.data[EntitySerializer.DataType.ID]
+	var entity := entities.get_entity(entity_id)
 	
 	if entity == null:
 		return
 	
-	EntityDataManager.load_entity_data(entity, packet.data)
+	entities.serializer.load_entity_data(entity, packet.data)
 
 func assign_player(packet: GamePacket) -> void:
 	var entity := scene.world.entities.get_entity(packet.data)
 	scene.player = entity.entity_node
+
+func create_inventory(packet: GamePacket) -> void:
+	var inventory := ItemInventory.new()
+	scene.player.inventory = inventory
+	
+	scene.world.items.serializer.load_inventory(packet.data, inventory)
+	scene.hud.item_bar.show_inventory(inventory)
 
 func recieve_packet(packet: GamePacket) -> void:
 	print(Packets.ServerPacket.find_key(packet.type), ": ", packet.data)
@@ -107,3 +116,6 @@ func recieve_packet(packet: GamePacket) -> void:
 		
 		Packets.ServerPacket.ASSIGN_PLAYER:
 			assign_player(packet)
+		
+		Packets.ServerPacket.CREATE_INVENTORY:
+			create_inventory(packet)

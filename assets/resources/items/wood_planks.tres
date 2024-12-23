@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="ItemType" load_steps=5 format=3 uid="uid://ct1ykd6eghuc3"]
+
+[ext_resource type="Texture2D" uid="uid://o38scagyksey" path="res://assets/textures/items/wood_planks.png" id="1_u4ubg"]
+[ext_resource type="Script" path="res://assets/objects/world/item/properties/block_item_properties.gd" id="2_tu04n"]
+[ext_resource type="Script" path="res://assets/objects/world/item/item_type.gd" id="3_pnl3t"]
+
+[sub_resource type="Resource" id="Resource_2axdm"]
+script = ExtResource("2_tu04n")
+block_name = "wood_planks"
+
+[resource]
+script = ExtResource("3_pnl3t")
+item_name = "wood_planks"
+item_texture = ExtResource("1_u4ubg")
+properties = SubResource("Resource_2axdm")

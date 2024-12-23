@@ -1,7 +1,7 @@
 extends Node
 class_name BlockSerializer
 
-@export var world: GameWorld
+@export var blocks: BlockWorld
 
 func create_palette(
 		palette: PackedStringArray,
@@ -12,7 +12,7 @@ func create_palette(
 		if palette_map.has(block_id):
 			continue
 		
-		var block := world.block_world.block_types[block_id]
+		var block := blocks.block_types[block_id]
 		
 		palette_map[block_id] = palette.size()
 		palette.push_back(block.block_name)
@@ -54,14 +54,12 @@ func save_chunk(chunk: BlockChunk) -> Array:
 	return chunk_data
 
 func load_chunk(chunk: BlockChunk, chunk_data: Array) -> void:
-	var block_world := world.block_world
-	
 	# Load palette blocks
 	var palette: PackedStringArray = chunk_data[1]
 	
 	# Check for all one block
 	if palette.size() == 1:
-		var block_id := block_world.get_block_id(palette[0])
+		var block_id := blocks.get_block_id(palette[0])
 		
 		for i in range(BlockChunk.BLOCK_COUNT):
 			chunk.front_ids[i] = block_id
@@ -73,7 +71,7 @@ func load_chunk(chunk: BlockChunk, chunk_data: Array) -> void:
 	var palette_ids: PackedInt32Array = []
 	
 	for block_name in palette:
-		var block_id := block_world.get_block_id(block_name)
+		var block_id := blocks.get_block_id(block_name)
 		palette_ids.push_back(block_id)
 	
 	# Load block data

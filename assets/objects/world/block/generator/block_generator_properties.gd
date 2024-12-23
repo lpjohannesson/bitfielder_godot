@@ -1,7 +1,7 @@
 class_name BlockGeneratorProperties
 
-var block_world: BlockWorld
-var block_start_x: int
-var block_end_x: int
-var block_start_y: int
+var blocks: BlockWorld
+var start_x: int
+var end_x: int
+var start_y: int
 var layer_getter: Callable

@@ -22,7 +22,7 @@ func create_render_data(
 		on_front_layer: bool) -> BlockRenderData:
 	
 	var render_data := BlockRenderData.new()
-	render_data.block_world = world.block_world
+	render_data.blocks = world.blocks
 	
 	render_data.chunk = chunk
 	render_data.block_ids = block_ids
@@ -37,7 +37,7 @@ func get_render_block(render_data: BlockRenderData) -> BlockType:
 		BlockChunk.get_block_index(render_data.chunk_position)
 	
 	render_data.block_id = render_data.block_ids[block_index]
-	return world.block_world.block_types[render_data.block_id]
+	return world.blocks.block_types[render_data.block_id]
 
 func draw_chunk(render_data: BlockRenderData) -> void:
 	for y in range(BlockChunk.CHUNK_SIZE.y):
@@ -102,7 +102,7 @@ func start_chunk(chunk: BlockChunk) -> void:
 	# Update neighbors
 	for chunk_offset in CHUNK_NEIGHBOR_OFFSETS:
 		var neighbor_chunk_index := chunk.chunk_index + chunk_offset
-		var neighbor_chunk := world.block_world.get_chunk(neighbor_chunk_index)
+		var neighbor_chunk := world.blocks.get_chunk(neighbor_chunk_index)
 		
 		if neighbor_chunk == null:
 			continue
@@ -110,8 +110,8 @@ func start_chunk(chunk: BlockChunk) -> void:
 		neighbor_chunk.redraw_chunk()
 
 func spawn_particles(block_id: int, particle_position: Vector2):
-	var block_world := world.block_world
-	var block := block_world.block_types[block_id]
+	var blocks := world.blocks
+	var block := blocks.block_types[block_id]
 	
 	if block.particle_texture == null:
 		return

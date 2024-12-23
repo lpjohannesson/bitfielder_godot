@@ -1,9 +1,14 @@
-[gd_resource type="Resource" script_class="ItemType" load_steps=3 format=3 uid="uid://c750yayfee88g"]
+[gd_resource type="Resource" script_class="ItemType" load_steps=5 format=3 uid="uid://c750yayfee88g"]
 
 [ext_resource type="Script" path="res://assets/objects/world/item/item_type.gd" id="1_34wbj"]
 [ext_resource type="Texture2D" uid="uid://cqfkrqghddhgj" path="res://assets/textures/items/dirt.png" id="2_b18pg"]
+[ext_resource type="Script" path="res://assets/objects/world/item/properties/block_item_properties.gd" id="2_t68xd"]
+
+[sub_resource type="Resource" id="Resource_exymx"]
+script = ExtResource("2_t68xd")
 
 [resource]
 script = ExtResource("1_34wbj")
 item_name = "dirt"
-texture = ExtResource("2_b18pg")
+item_texture = ExtResource("2_b18pg")
+properties = SubResource("Resource_exymx")

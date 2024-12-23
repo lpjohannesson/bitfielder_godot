@@ -1,0 +1,55 @@
+[gd_scene load_steps=5 format=3 uid="uid://bfuyur4okfeqs"]
+
+[ext_resource type="Texture2D" uid="uid://ckfbickwbfigy" path="res://assets/textures/menu/hud/item_bar.png" id="1_8nb31"]
+[ext_resource type="Script" path="res://assets/objects/menu/hud/item/item_bar.gd" id="1_yj28j"]
+[ext_resource type="PackedScene" uid="uid://boent3mjk48ko" path="res://assets/objects/menu/hud/item/item_display.tscn" id="2_guqpq"]
+[ext_resource type="Texture2D" uid="uid://s3rkr5t4to1m" path="res://assets/textures/menu/hud/item_arrow.png" id="4_tpidm"]
+
+[node name="ItemBar" type="Control" node_paths=PackedStringArray("items", "item_arrow")]
+layout_mode = 3
+anchors_preset = 0
+size_flags_horizontal = 0
+size_flags_vertical = 0
+script = ExtResource("1_yj28j")
+item_display_scene = ExtResource("2_guqpq")
+items = NodePath("Items")
+item_arrow = NodePath("ItemArrow")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -83.0
+offset_top = -11.0
+offset_right = 83.0
+offset_bottom = 11.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_8nb31")
+
+[node name="Items" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_left = -72.0
+offset_right = -72.0
+theme_override_constants/separation = 16
+
+[node name="ItemArrow" type="Control" parent="."]
+anchors_preset = 0
+
+[node name="TextureRect" type="TextureRect" parent="ItemArrow"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -8.0
+offset_top = -4.0
+offset_right = 8.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_tpidm")

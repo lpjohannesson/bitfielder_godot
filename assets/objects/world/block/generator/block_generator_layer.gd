@@ -7,11 +7,11 @@ func get_ground_level(properties: BlockGeneratorProperties, noise: Noise, x: int
 	var noise_sample = (noise.get_noise_1d(x) + 1.0) * 0.5
 	
 	return lerp(
-		properties.block_start_y,
-		properties.block_start_y + height,
+		properties.start_y,
+		properties.start_y + height,
 		noise_sample)
 
-func start_layer(_block_world: BlockWorld) -> void:
+func start_layer(_blocks: BlockWorld) -> void:
 	pass
 
 func generate_layer(_properties: BlockGeneratorProperties) -> void:

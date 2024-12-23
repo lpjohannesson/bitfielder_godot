@@ -193,7 +193,7 @@ _data = {
 "walk": SubResource("Animation_bdjc4")
 }
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("entity", "sprite", "collider", "animation_player", "coyote_timer", "jump_timer", "modify_block_timer", "slide_effect_timer", "floor_point", "ceiling_point")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("entity", "sprite", "collider", "animation_player", "coyote_timer", "jump_timer", "modify_block_timer", "slide_effect_timer", "punch_timer", "floor_point", "ceiling_point")]
 script = ExtResource("1_7uomn")
 entity = NodePath("GameEntity")
 sprite = NodePath("Sprite2D")
@@ -203,6 +203,7 @@ coyote_timer = NodePath("CoyoteTimer")
 jump_timer = NodePath("JumpTimer")
 modify_block_timer = NodePath("ModifyBlockTimer")
 slide_effect_timer = NodePath("SlideEffectTimer")
+punch_timer = NodePath("PunchTimer")
 floor_point = NodePath("FloorPoint")
 ceiling_point = NodePath("CeilingPoint")
 
@@ -253,6 +254,10 @@ one_shot = true
 
 [node name="SlideEffectTimer" type="Timer" parent="."]
 wait_time = 0.1
+one_shot = true
+
+[node name="PunchTimer" type="Timer" parent="."]
+wait_time = 0.3
 one_shot = true
 
 [connection signal="timeout" from="ModifyBlockTimer" to="." method="_on_modify_block_timer_timeout"]

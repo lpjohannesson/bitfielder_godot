@@ -1,5 +1,5 @@
 extends Node
-class_name EntityDataManager
+class_name EntitySerializer
 
 class DataRequest:
 	var entity: GameEntity
@@ -35,7 +35,7 @@ class DataType:
 
 @export var player_scene: PackedScene
 
-static func save_entity_data(
+func save_entity_data(
 		request: DataRequest,
 		data_type: String,
 		value: Variant) -> void:
@@ -47,33 +47,33 @@ static func save_entity_data(
 	request.entity_data[data_type] = value
 	request.entity.entity_data[data_type] = value
 
-static func save_entity_position(request: DataRequest) -> void:
+func save_entity_position(request: DataRequest) -> void:
 	save_entity_data(request, DataType.POSITION,
 		request.entity.body.global_position)
 
-static func save_entity_velocity(request: DataRequest) -> void:
+func save_entity_velocity(request: DataRequest) -> void:
 	save_entity_data(request, DataType.VELOCITY,
 		request.entity.body.velocity)
 
-static func save_entity_flip_x(request: DataRequest) -> void:
+func save_entity_flip_x(request: DataRequest) -> void:
 	save_entity_data(request, DataType.FLIP_X,
 		request.entity.sprite.flip_h)
 
-static func save_entity_animation(request: DataRequest) -> void:
+func save_entity_animation(request: DataRequest) -> void:
 	save_entity_data(request, DataType.ANIMATION,
 		request.entity.animation_player.current_animation)
 
-static func save_entity_colliding(request: DataRequest) -> void:
+func save_entity_colliding(request: DataRequest) -> void:
 	save_entity_data(request, DataType.COLLIDING,
 		not request.entity.collider.disabled)
 
-static func create_entity_data(entity: GameEntity) -> Dictionary:
+func create_entity_data(entity: GameEntity) -> Dictionary:
 	var entity_data := {}
 	entity_data[DataType.ID] = entity.entity_id
 	
 	return entity_data
 
-static func create_entity_update_data(entity: GameEntity, spawning: bool) -> Dictionary:
+func create_entity_update_data(entity: GameEntity, spawning: bool) -> Dictionary:
 	var entity_data := create_entity_data(entity)
 	
 	var request := DataRequest.create(entity, entity_data, spawning)
@@ -94,13 +94,13 @@ static func create_entity_update_data(entity: GameEntity, spawning: bool) -> Dic
 	
 	return entity_data
 
-static func create_entity_spawn_data(entity: GameEntity) -> Dictionary:
+func create_entity_spawn_data(entity: GameEntity) -> Dictionary:
 	var entity_data := create_entity_update_data(entity, true)
 	entity_data[DataType.TYPE] = entity.entity_type
 	
 	return entity_data
 
-static func load_entity_data(entity: GameEntity, entity_data: Dictionary) -> void:
+func load_entity_data(entity: GameEntity, entity_data: Dictionary) -> void:
 	for data_type in entity_data.keys():
 		match data_type:
 			DataType.POSITION:

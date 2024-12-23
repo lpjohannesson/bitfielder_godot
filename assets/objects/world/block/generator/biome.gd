@@ -11,21 +11,21 @@ static func get_front_layer(chunk: BlockChunk) -> PackedInt32Array:
 static func get_back_layer(chunk: BlockChunk) -> PackedInt32Array:
 	return chunk.back_ids
 
-func start_biome(block_world: BlockWorld):
+func start_biome(blocks: BlockWorld):
 	for layer in front_layers + back_layers:
-		layer.start_layer(block_world)
+		layer.start_layer(blocks)
 
 func generate_biome(properties: BlockGeneratorProperties) -> void:
-	properties.block_start_y = bottom_y
+	properties.start_y = bottom_y
 	properties.layer_getter = get_front_layer
 	
 	for layer in front_layers:
-		properties.block_start_y -= layer.height
+		properties.start_y -= layer.height
 		layer.generate_layer(properties)
 	
-	properties.block_start_y = bottom_y
+	properties.start_y = bottom_y
 	properties.layer_getter = get_back_layer
 	
 	for layer in back_layers:
-		properties.block_start_y -= layer.height
+		properties.start_y -= layer.height
 		layer.generate_layer(properties)

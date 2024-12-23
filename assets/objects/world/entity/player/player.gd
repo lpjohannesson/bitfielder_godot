@@ -16,6 +16,7 @@ const JUMP_MIDSTOP = 0.5
 @export var jump_timer: Timer
 @export var modify_block_timer: Timer
 @export var slide_effect_timer: Timer
+@export var punch_timer: Timer
 @export var floor_point: Node2D
 @export var ceiling_point: Node2D
 
@@ -23,9 +24,9 @@ var move_direction := 0.0
 var look_direction := 0.0
 var midstopped := false
 var modify_block_tween: Tween
+var inventory: ItemInventory
 
 var last_surface := 0.0
-
 var player_input := PlayerInput.new()
 
 func get_facing_sign() -> float:
@@ -69,7 +70,66 @@ func midstop_jump():
 		midstopped = true
 		velocity.y *= JUMP_MIDSTOP
 
+func punch() -> void:
+	if not punch_timer.is_stopped():
+		return
+	
+	play_punch_animation()
+	punch_timer.start()
+
+func try_use_item() -> void:
+	if inventory == null:
+		return
+	
+	var on_front_layer: bool
+	
+	var pressed_action: String
+	var just_pressed: bool
+	
+	if player_input.is_action_pressed("use_front"):
+		on_front_layer = true
+		pressed_action = "use_front"
+	elif player_input.is_action_pressed("use_back"):
+		on_front_layer = false
+		pressed_action = "use_back"
+	else:
+		return
+	
+	just_pressed = player_input.is_action_just_pressed(pressed_action)
+	
+	var item_slot := inventory.items[inventory.selected_index]
+	
+	if item_slot.item_id == 0:
+		if not try_modify_block(0, on_front_layer) and just_pressed:
+			punch()
+		
+		return
+	
+	var item := entity.get_game_world().items.item_types[item_slot.item_id]
+	
+	if item.properties == null:
+		return
+	
+	var use_data := ItemUseData.new()
+	use_data.player = self
+	use_data.on_front_layer = on_front_layer
+	
+	item.properties.use_item(use_data)
+
+func play_punch_animation() -> void:
+	animation_player.stop()
+	
+	if look_direction < 0.0:
+		animation_player.play("punch_up")
+	elif look_direction > 0.0:
+		animation_player.play("punch_down")
+	else:
+		animation_player.play("punch_forward")
+
 func animate() -> void:
+	if animation_player.current_animation.begins_with("punch_"):
+		return
+	
 	if is_on_floor():
 		if move_direction == 0.0 or velocity.x == 0.0:
 			if look_direction < 0.0:
@@ -98,24 +158,14 @@ func is_front_block_breakable(address: BlockAddress) -> bool:
 func is_back_block_breakable(address: BlockAddress) -> bool:
 	return is_block_breakable(address.block_index, address.chunk.back_ids)
 
-func modify_block() -> bool:
+func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	if not modify_block_timer.is_stopped():
 		return false
 	
-	# Determine block layer
-	var on_front_layer: bool
-	
-	if player_input.is_action_pressed("break_front"):
-		on_front_layer = true
-	elif player_input.is_action_pressed("break_back"):
-		on_front_layer = false
-	else:
-		return false
-	
 	# Get block position
-	var block_world := entity.get_game_world().block_world
+	var blocks := entity.get_game_world().blocks
 	
-	var center_block_position := block_world.world_to_block(global_position)
+	var center_block_position := blocks.world_to_block(global_position)
 	var forward_block_position := center_block_position
 	
 	if look_direction == 0.0:
@@ -124,8 +174,8 @@ func modify_block() -> bool:
 		forward_block_position.y += int(look_direction)
 	
 	# Get block addresses
-	var center_address := block_world.get_block_address(center_block_position)
-	var forward_address := block_world.get_block_address(forward_block_position)
+	var center_address := blocks.get_block_address(center_block_position)
+	var forward_address := blocks.get_block_address(forward_block_position)
 	
 	# Determine if placing or breaking
 	var breaking: bool
@@ -151,7 +201,7 @@ func modify_block() -> bool:
 		if forward_address != null:
 			var forward_front_ids := forward_address.chunk.front_ids
 			var forward_front_id := forward_front_ids[forward_address.block_index]
-			var forward_front_block := block_world.block_types[forward_front_id]
+			var forward_front_block := blocks.block_types[forward_front_id]
 			
 			if forward_front_block.properties.is_solid:
 				return false
@@ -174,10 +224,13 @@ func modify_block() -> bool:
 		
 		block_specifier.block_id = 0
 	else:
+		if block_id == 0:
+			return false
+		
 		address = center_address
 		
 		block_specifier.block_position = center_block_position
-		block_specifier.block_id = block_world.get_block_id("leaves")
+		block_specifier.block_id = block_id
 	
 	# Start movement
 	velocity = Vector2.ZERO
@@ -187,18 +240,10 @@ func modify_block() -> bool:
 		.set_trans(Tween.TRANS_QUAD)
 	
 	modify_block_tween.tween_property(self, "global_position",
-		block_world.block_to_world(forward_block_position, true),
+		blocks.block_to_world(forward_block_position, true),
 		modify_block_timer.wait_time)
 	
-	animation_player.stop()
-	
-	if look_direction < 0.0:
-		animation_player.play("punch_up")
-	elif look_direction > 0.0:
-		animation_player.play("punch_down")
-	else:
-		animation_player.play("punch_forward")
-	
+	play_punch_animation()
 	animation_player.queue("fall")
 	
 	modify_block_timer.start()
@@ -232,11 +277,28 @@ func show_ground_effects() -> void:
 	
 	entity.spawn_effect_sprite("ground", surface_point.global_position)
 	last_surface = surface
+
+func select_inventory() -> void:
+	if inventory == null:
+		return
 	
+	var select_direction = \
+		int(player_input.is_action_just_pressed("select_right")) - \
+		int(player_input.is_action_just_pressed("select_left"))
 	
+	if select_direction == 0:
+		return
+	
+	inventory.selected_index = posmod(
+		inventory.selected_index + select_direction, ItemInventory.ITEM_COUNT)
+	
+	if not entity.on_server:
+		GameScene.instance.hud.item_bar.show_item_arrow(inventory.selected_index)
 
 func controls(delta: float) -> void:
-	if modify_block():
+	try_use_item()
+	
+	if not modify_block_timer.is_stopped():
 		return
 	
 	velocity.y = Direction.target_axis(
@@ -272,6 +334,8 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		show_ground_effects()
 		return
+	
+	select_inventory()
 	
 	if modify_block_timer.is_stopped():
 		controls(delta)

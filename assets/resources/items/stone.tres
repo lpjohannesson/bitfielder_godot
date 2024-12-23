@@ -1,9 +1,15 @@
-[gd_resource type="Resource" script_class="ItemType" load_steps=3 format=3 uid="uid://cnyqb65ifw6f0"]
+[gd_resource type="Resource" script_class="ItemType" load_steps=5 format=3 uid="uid://cnyqb65ifw6f0"]
 
 [ext_resource type="Script" path="res://assets/objects/world/item/item_type.gd" id="1_1x2fu"]
+[ext_resource type="Script" path="res://assets/objects/world/item/properties/block_item_properties.gd" id="2_aevne"]
 [ext_resource type="Texture2D" uid="uid://bhmrdbhuv5hlv" path="res://assets/textures/items/stone.png" id="2_xyibb"]
+
+[sub_resource type="Resource" id="Resource_y7vrr"]
+script = ExtResource("2_aevne")
+block_name = "stone"
 
 [resource]
 script = ExtResource("1_1x2fu")
 item_name = "stone"
-texture = ExtResource("2_xyibb")
+item_texture = ExtResource("2_xyibb")
+properties = SubResource("Resource_y7vrr")

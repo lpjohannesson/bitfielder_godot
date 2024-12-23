@@ -6,9 +6,9 @@ const SHADOW_TRANSFORM := Transform2D(0.0, Vector2.ONE * 2.0)
 static var instance: GameScene
 
 @export var world: GameWorld
-@export var block_serializer: BlockSerializer
-@export var block_world_renderer: BlockWorldRenderer
+@export var blocks_renderer: BlockWorldRenderer
 @export var packet_manager: GamePacketManager
+@export var hud: HUD
 
 @export var particles: Node2D
 @export var shadow_viewport: SubViewport
@@ -33,21 +33,21 @@ func update_block(
 		address: BlockAddress,
 		show_effects: bool) -> void:
 	
-	var block_ids := block_specifier.get_layer(address.chunk)
+	var block_id := block_specifier.get_layer(address.chunk)[address.block_index]
 	
 	# Skip if already the same block
-	if block_ids[address.block_index] == block_specifier.block_id:
+	if block_id == block_specifier.block_id:
 		return
 	
-	var block_world := world.block_world
+	var blocks := world.blocks
 	
 	if show_effects:
-		var effect_position := block_world.block_to_world(
+		var effect_position := blocks.block_to_world(
 			block_specifier.block_position, true)
 		
 		if block_specifier.block_id == 0:
-			block_world_renderer.spawn_particles(
-				block_ids[address.block_index], effect_position)
+			blocks_renderer.spawn_particles(
+				block_id, effect_position)
 			
 			spawn_effect_sprite("break", effect_position)
 		else:
@@ -55,8 +55,8 @@ func update_block(
 	
 	block_specifier.write_address(address)
 	
-	for chunk in block_world.get_block_chunks(block_specifier.block_position):
-		block_world.update_chunk(chunk)
+	for chunk in blocks.get_block_chunks(block_specifier.block_position):
+		blocks.update_chunk(chunk)
 		chunk.redraw_chunk()
 
 func resize() -> void:
@@ -91,9 +91,9 @@ func _on_click_surface_gui_input(event: InputEvent) -> void:
 	
 	match event.button_index:
 		MOUSE_BUTTON_LEFT:
-			action = "break_front"
+			action = "use_front"
 		MOUSE_BUTTON_RIGHT:
-			action = "break_back"
+			action = "use_back"
 		_:
 			return
 	

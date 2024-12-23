@@ -7,7 +7,6 @@ const CHUNK_LOAD_DISTANCE := 128.0
 
 @export var world: GameWorld
 @export var block_generator: BlockGenerator
-@export var block_serializer: BlockSerializer
 
 static var instance: GameServer
 
@@ -24,7 +23,7 @@ func add_entity(entity: GameEntity) -> void:
 func get_block_chunk_packet(chunk: BlockChunk) -> GamePacket:
 	return GamePacket.create_packet(
 		Packets.ServerPacket.CREATE_BLOCK_CHUNK,
-		block_serializer.save_chunk(chunk)
+		world.blocks.serializer.save_chunk(chunk)
 	)
 
 func get_player_chunk_index_packet(chunk_index: Vector2i) -> GamePacket:
@@ -39,7 +38,7 @@ func get_update_block_packet(
 	
 	return GamePacket.create_packet(
 		Packets.ServerPacket.UPDATE_BLOCK,
-		[block_specifier.to_data(world.block_world), show_effects]
+		[block_specifier.to_data(world.blocks), show_effects]
 	)
 
 func update_block(
@@ -52,7 +51,7 @@ func update_block(
 	
 	block_specifier.write_address(address)
 	
-	world.block_world.update_block(block_specifier.block_position)
+	world.blocks.update_block(block_specifier.block_position)
 	var packet := get_update_block_packet(block_specifier, show_effects)
 	
 	for client in clients:
@@ -61,7 +60,7 @@ func update_block(
 func get_create_entity_packet(entity: GameEntity) -> GamePacket:
 	return GamePacket.create_packet(
 		Packets.ServerPacket.CREATE_ENTITY,
-		EntityDataManager.create_entity_spawn_data(entity)
+		world.entities.serializer.create_entity_spawn_data(entity)
 	)
 
 func get_destroy_entity_packet(entity: GameEntity) -> GamePacket:
@@ -82,14 +81,21 @@ func get_assign_player_packet(client: ClientConnection) -> GamePacket:
 		client.player.entity.entity_id
 	)
 
+func get_create_inventory_packet(client: ClientConnection) -> GamePacket:
+	return GamePacket.create_packet(
+		Packets.ServerPacket.CREATE_INVENTORY,
+		world.items.serializer.save_inventory(client.player.inventory)
+	)
+
 func rubberband_player(client: ClientConnection):
 	var entity := client.player.entity
+	var entity_serializer := world.entities.serializer
 	
-	var entity_data := EntityDataManager.create_entity_data(entity)
-	var request = EntityDataManager.DataRequest.create(entity, entity_data, true)
+	var entity_data := entity_serializer.create_entity_data(entity)
+	var request = EntitySerializer.DataRequest.create(entity, entity_data, true)
 	
-	EntityDataManager.save_entity_position(request)
-	EntityDataManager.save_entity_velocity(request)
+	entity_serializer.save_entity_position(request)
+	entity_serializer.save_entity_velocity(request)
 	
 	client.send_packet(get_entity_data_packet(entity_data))
 
@@ -117,8 +123,8 @@ func check_block_update(packet: GamePacket, client: ClientConnection) -> void:
 	# Delay block check to wait for server-side changes
 	await get_tree().create_timer(BLOCK_CHECK_TIMEOUT).timeout
 	
-	var block_specifier := BlockSpecifier.from_data(packet.data, world.block_world)
-	var address := world.block_world.get_block_address(block_specifier.block_position)
+	var block_specifier := BlockSpecifier.from_data(packet.data, world.blocks)
+	var address := world.blocks.get_block_address(block_specifier.block_position)
 	
 	if address == null:
 		return
@@ -154,7 +160,7 @@ func recieve_packet(packet: GamePacket, client: ClientConnection) -> void:
 
 func get_player_chunk_index(player_position: Vector2) -> Vector2i:
 	var player_block_position := \
-		world.block_world.world_to_block_round(player_position)
+		world.blocks.world_to_block_round(player_position)
 	
 	return BlockWorld.get_chunk_index(player_block_position)
 
@@ -184,7 +190,7 @@ func update_player_chunks(client: ClientConnection) -> void:
 			if old_load_zone.has_point(chunk_index):
 				continue
 			
-			var chunk := world.block_world.get_chunk(chunk_index)
+			var chunk := world.blocks.get_chunk(chunk_index)
 			
 			if chunk == null:
 				continue
@@ -196,7 +202,8 @@ func update_player_chunks(client: ClientConnection) -> void:
 
 func send_entity_states() -> void:
 	for entity in world.entities.entities:
-		var entity_data := EntityDataManager.create_entity_update_data(entity, false)
+		var entity_data := \
+			world.entities.serializer.create_entity_update_data(entity, false)
 		
 		# Check if no data besides ID
 		if entity_data.size() == 1:
@@ -212,7 +219,7 @@ func send_entity_states() -> void:
 
 func connect_client(client: ClientConnection) -> void:
 	# Spawn player
-	var player: Player = world.entities_data.player_scene.instantiate()
+	var player: Player = world.entities.serializer.player_scene.instantiate()
 	add_entity(player.entity)
 	
 	client.player = player
@@ -226,7 +233,7 @@ func connect_client(client: ClientConnection) -> void:
 	for y in range(chunk_load_zone.position.y, chunk_load_zone.end.y):
 		for x in range(chunk_load_zone.position.x, chunk_load_zone.end.x):
 			var chunk_index := Vector2i(x, y)
-			var chunk := world.block_world.get_chunk(chunk_index)
+			var chunk := world.blocks.get_chunk(chunk_index)
 			
 			if chunk == null:
 				continue
@@ -237,6 +244,14 @@ func connect_client(client: ClientConnection) -> void:
 		client.send_packet(get_create_entity_packet(entity))
 	
 	client.send_packet(get_assign_player_packet(client))
+	
+	var inventory := ItemInventory.new()
+	client.player.inventory = inventory
+	
+	for i in range(world.items.item_types.size() - 1):
+		inventory.items[i].item_id = i + 1
+	
+	client.send_packet(get_create_inventory_packet(client))
 	
 	# Add client and send to others
 	var create_player_packet := get_create_entity_packet(player.entity)

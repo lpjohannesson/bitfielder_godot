@@ -1,6 +1,8 @@
 extends Node
 class_name EntityManager
 
+@export var serializer: EntitySerializer
+
 var entities: Array[GameEntity] = []
 var entity_id_map := {}
 
