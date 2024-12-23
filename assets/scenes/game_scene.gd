@@ -59,6 +59,32 @@ func update_block(
 		blocks.update_chunk(chunk)
 		chunk.redraw_chunk()
 
+func select_item(item_index: int) -> void:
+	if player.inventory == null:
+		return
+	
+	player.inventory.selected_index = item_index
+	hud.item_bar.show_item_arrow(item_index)
+	
+	var packet := GamePacket.create_packet(
+		Packets.ClientPacket.SELECT_ITEM,
+		item_index
+	)
+	
+	server.send_packet(packet)
+
+func try_select_items() -> void:
+	var select_direction = \
+		int(Input.is_action_just_pressed("select_right")) - \
+		int(Input.is_action_just_pressed("select_left"))
+	
+	if select_direction == 0:
+		return
+	
+	select_item(posmod(
+		player.inventory.selected_index + select_direction,
+		ItemInventory.ITEM_COUNT))
+
 func resize() -> void:
 	shadow_viewport.size = viewport.get_visible_rect().size
 
@@ -77,6 +103,7 @@ func _process(_delta: float) -> void:
 		viewport.canvas_transform * SHADOW_TRANSFORM
 	
 	if player != null:
+		try_select_items()
 		player.player_input.read_inputs(server)
 
 func _on_player_position_timer_timeout() -> void:

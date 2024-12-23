@@ -144,6 +144,14 @@ func update_player_input(
 	var action: String = packet.data
 	client.player.player_input.set_action(action, input_state)
 
+func select_player_item(packet: GamePacket, client: ClientConnection) -> void:
+	var selected_index: int = packet.data
+	
+	if selected_index < 0 or selected_index > ItemInventory.ITEM_COUNT:
+		return
+	
+	client.player.inventory.selected_index = selected_index
+
 func recieve_packet(packet: GamePacket, client: ClientConnection) -> void:
 	match packet.type:
 		Packets.ClientPacket.CHECK_PLAYER_POSITION:
@@ -157,6 +165,9 @@ func recieve_packet(packet: GamePacket, client: ClientConnection) -> void:
 		
 		Packets.ClientPacket.ACTION_RELEASED:
 			update_player_input(packet, client, false)
+		
+		Packets.ClientPacket.SELECT_ITEM:
+			select_player_item(packet, client)
 
 func get_player_chunk_index(player_position: Vector2) -> Vector2i:
 	var player_block_position := \

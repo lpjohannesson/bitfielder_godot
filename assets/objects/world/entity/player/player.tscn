@@ -1,9 +1,17 @@
-[gd_scene load_steps=17 format=3 uid="uid://qhbwwmg422j6"]
+[gd_scene load_steps=21 format=3 uid="uid://qhbwwmg422j6"]
 
 [ext_resource type="Script" path="res://assets/objects/world/entity/player/player.gd" id="1_7uomn"]
-[ext_resource type="Texture2D" uid="uid://dbtonbihnosbj" path="res://assets/textures/player/player.png" id="1_dqdrb"]
+[ext_resource type="Shader" path="res://assets/shaders/player.gdshader" id="2_1ofg0"]
+[ext_resource type="Texture2D" uid="uid://bsvrr5o1bqqyo" path="res://assets/textures/player/overlay.png" id="3_4xs5l"]
+[ext_resource type="Texture2D" uid="uid://ra74cdvlyfue" path="res://assets/textures/player/skin_uv.png" id="3_8trt0"]
+[ext_resource type="Texture2D" uid="uid://bjxjvgryqsryb" path="res://assets/textures/player/skin.png" id="3_15jwk"]
 [ext_resource type="Script" path="res://assets/objects/world/entity/game_entity.gd" id="4_1rk0b"]
 [ext_resource type="Script" path="res://assets/objects/world/shadowed_sprite.gd" id="4_faxp7"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2p0m6"]
+shader = ExtResource("2_1ofg0")
+shader_parameter/skin_uv_texture = ExtResource("3_8trt0")
+shader_parameter/skin_texture = ExtResource("3_15jwk")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i4kni"]
 size = Vector2(8, 13)
@@ -208,11 +216,12 @@ floor_point = NodePath("FloorPoint")
 ceiling_point = NodePath("CeilingPoint")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_2p0m6")
 position = Vector2(0, -1)
-texture = ExtResource("1_dqdrb")
+texture = ExtResource("3_4xs5l")
 hframes = 4
 vframes = 4
-frame = 14
+frame = 1
 script = ExtResource("4_faxp7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

@@ -12,10 +12,10 @@ script = ExtResource("4_4p8gr")
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_gacnf")
-texture_display = NodePath("TextureRect")
+texture_display = NodePath("TextureDisplay")
 arrow_point = NodePath("ArrowPoint")
 
-[node name="TextureRect" type="TextureRect" parent="."]
+[node name="TextureDisplay" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -44,9 +44,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -13.0
-offset_top = 2.0
+offset_top = 5.0
 offset_right = 11.0
-offset_bottom = 10.0
+offset_bottom = 13.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_fonts/normal_font = ExtResource("3_d8047")
@@ -56,3 +56,5 @@ text = "[right][numbers]256[/numbers][/right]"
 fit_content = true
 scroll_active = false
 custom_effects = [SubResource("RichTextEffect_f67yr")]
+
+[connection signal="gui_input" from="TextureDisplay" to="." method="_on_texture_display_gui_input"]

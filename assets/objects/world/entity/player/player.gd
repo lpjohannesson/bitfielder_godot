@@ -278,23 +278,6 @@ func show_ground_effects() -> void:
 	entity.spawn_effect_sprite("ground", surface_point.global_position)
 	last_surface = surface
 
-func select_inventory() -> void:
-	if inventory == null:
-		return
-	
-	var select_direction = \
-		int(player_input.is_action_just_pressed("select_right")) - \
-		int(player_input.is_action_just_pressed("select_left"))
-	
-	if select_direction == 0:
-		return
-	
-	inventory.selected_index = posmod(
-		inventory.selected_index + select_direction, ItemInventory.ITEM_COUNT)
-	
-	if not entity.on_server:
-		GameScene.instance.hud.item_bar.show_item_arrow(inventory.selected_index)
-
 func controls(delta: float) -> void:
 	try_use_item()
 	
@@ -334,8 +317,6 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		show_ground_effects()
 		return
-	
-	select_inventory()
 	
 	if modify_block_timer.is_stopped():
 		controls(delta)
