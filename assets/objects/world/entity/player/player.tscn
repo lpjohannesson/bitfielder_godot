@@ -4,14 +4,14 @@
 [ext_resource type="Shader" path="res://assets/shaders/player.gdshader" id="2_1ofg0"]
 [ext_resource type="Texture2D" uid="uid://bsvrr5o1bqqyo" path="res://assets/textures/player/overlay.png" id="3_4xs5l"]
 [ext_resource type="Texture2D" uid="uid://ra74cdvlyfue" path="res://assets/textures/player/skin_uv.png" id="3_8trt0"]
-[ext_resource type="Texture2D" uid="uid://bjxjvgryqsryb" path="res://assets/textures/player/skin.png" id="3_15jwk"]
+[ext_resource type="Texture2D" uid="uid://brutpqnoesusk" path="res://assets/textures/player/skin2.png" id="3_hlglw"]
 [ext_resource type="Script" path="res://assets/objects/world/entity/game_entity.gd" id="4_1rk0b"]
 [ext_resource type="Script" path="res://assets/objects/world/shadowed_sprite.gd" id="4_faxp7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_2p0m6"]
 shader = ExtResource("2_1ofg0")
 shader_parameter/skin_uv_texture = ExtResource("3_8trt0")
-shader_parameter/skin_texture = ExtResource("3_15jwk")
+shader_parameter/skin_texture = ExtResource("3_hlglw")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i4kni"]
 size = Vector2(8, 13)
