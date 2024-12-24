@@ -92,6 +92,13 @@ func create_inventory(packet: GamePacket) -> void:
 	scene.world.items.serializer.load_inventory(packet.data, inventory)
 	scene.hud.item_bar.show_inventory(inventory)
 
+func change_player_skin(packet: GamePacket) -> void:
+	var entity_id: int = packet.data[0]
+	var skin_bytes: PackedByteArray = packet.data[1]
+	
+	var player: Player = scene.world.entities.get_entity(entity_id).entity_node
+	PlayerSkinManager.load_skin(player, skin_bytes)
+
 func recieve_packet(packet: GamePacket) -> void:
 	print(Packets.ServerPacket.find_key(packet.type), ": ", packet.data)
 	
@@ -119,3 +126,6 @@ func recieve_packet(packet: GamePacket) -> void:
 		
 		Packets.ServerPacket.CREATE_INVENTORY:
 			create_inventory(packet)
+		
+		Packets.ServerPacket.CHANGE_PLAYER_SKIN:
+			change_player_skin(packet)

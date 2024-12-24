@@ -152,22 +152,31 @@ func select_player_item(packet: GamePacket, client: ClientConnection) -> void:
 	
 	client.player.inventory.selected_index = selected_index
 
-func recieve_packet(packet: GamePacket, client: ClientConnection) -> void:
-	match packet.type:
-		Packets.ClientPacket.CHECK_PLAYER_POSITION:
-			check_player_position(packet, client)
+func get_change_player_skin_packet(client: ClientConnection) -> GamePacket:
+	return GamePacket.create_packet(
+		Packets.ServerPacket.CHANGE_PLAYER_SKIN,
+		[client.player.entity.entity_id, client.skin_bytes]
+	)
+
+func change_player_skin(packet: GamePacket, client: ClientConnection) -> void:
+	var skin_bytes: PackedByteArray = packet.data
+	
+	# Check skin is valid
+	var skin_image := PlayerSkinManager.load_skin_image(skin_bytes)
+	
+	if skin_image == null:
+		return
+	
+	client.skin_bytes = skin_bytes
+	
+	# Send skin to others
+	var others_packet := get_change_player_skin_packet(client)
+	
+	for other_client in clients:
+		if other_client == client:
+			continue
 		
-		Packets.ClientPacket.CHECK_BLOCK_UPDATE:
-			check_block_update(packet, client)
-		
-		Packets.ClientPacket.ACTION_PRESSED:
-			update_player_input(packet, client, true)
-		
-		Packets.ClientPacket.ACTION_RELEASED:
-			update_player_input(packet, client, false)
-		
-		Packets.ClientPacket.SELECT_ITEM:
-			select_player_item(packet, client)
+		other_client.send_packet(others_packet)
 
 func get_player_chunk_index(player_position: Vector2) -> Vector2i:
 	var player_block_position := \
@@ -228,6 +237,26 @@ func send_entity_states() -> void:
 			
 			client.send_packet(packet)
 
+func recieve_packet(packet: GamePacket, client: ClientConnection) -> void:
+	match packet.type:
+		Packets.ClientPacket.CHECK_PLAYER_POSITION:
+			check_player_position(packet, client)
+		
+		Packets.ClientPacket.CHECK_BLOCK_UPDATE:
+			check_block_update(packet, client)
+		
+		Packets.ClientPacket.ACTION_PRESSED:
+			update_player_input(packet, client, true)
+		
+		Packets.ClientPacket.ACTION_RELEASED:
+			update_player_input(packet, client, false)
+		
+		Packets.ClientPacket.SELECT_ITEM:
+			select_player_item(packet, client)
+		
+		Packets.ClientPacket.CHANGE_SKIN:
+			change_player_skin(packet, client)
+
 func connect_client(client: ClientConnection) -> void:
 	# Spawn player
 	var player: Player = world.entities.serializer.player_scene.instantiate()
@@ -269,6 +298,11 @@ func connect_client(client: ClientConnection) -> void:
 	
 	for other_client in clients:
 		other_client.send_packet(create_player_packet)
+		
+		# Send other player's skins
+		if other_client.skin_bytes.size() > 0:
+			var skin_packet := get_change_player_skin_packet(other_client)
+			client.send_packet(skin_packet)
 	
 	clients.push_back(client)
 

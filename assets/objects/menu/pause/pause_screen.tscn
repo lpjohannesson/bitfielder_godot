@@ -3,9 +3,10 @@
 [ext_resource type="Texture2D" uid="uid://bs7u1xhbaxll0" path="res://assets/textures/menu/logos/paused.png" id="1_72k38"]
 [ext_resource type="Script" path="res://assets/objects/menu/pause/pause_screen.gd" id="1_xu7lb"]
 
-[node name="PauseScreen" type="CanvasLayer"]
+[node name="PauseScreen" type="CanvasLayer" node_paths=PackedStringArray("skin_file_dialog")]
 visible = false
 script = ExtResource("1_xu7lb")
+skin_file_dialog = NodePath("SkinFileDialog")
 
 [node name="Menu" type="Control" parent="."]
 layout_mode = 3
@@ -46,9 +47,24 @@ grow_horizontal = 2
 layout_mode = 2
 text = "Continue"
 
+[node name="ChangeSkinButton" type="Button" parent="Menu/VBoxContainer"]
+layout_mode = 2
+text = "Change skin"
+
 [node name="QuitButton" type="Button" parent="Menu/VBoxContainer"]
 layout_mode = 2
 text = "Quit"
 
+[node name="SkinFileDialog" type="FileDialog" parent="."]
+title = "Open a File"
+size = Vector2i(303, 180)
+ok_button_text = "Open"
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.png")
+use_native_dialog = true
+
 [connection signal="button_down" from="Menu/VBoxContainer/ContinueButton" to="." method="_on_continue_button_button_down"]
+[connection signal="button_down" from="Menu/VBoxContainer/ChangeSkinButton" to="." method="_on_change_skin_button_button_down"]
 [connection signal="button_down" from="Menu/VBoxContainer/QuitButton" to="." method="_on_quit_button_button_down"]
+[connection signal="file_selected" from="SkinFileDialog" to="." method="_on_skin_file_dialog_file_selected"]
