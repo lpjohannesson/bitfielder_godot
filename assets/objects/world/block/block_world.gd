@@ -2,6 +2,7 @@ extends Node2D
 class_name BlockWorld
 
 const WORLD_CHUNK_HEIGHT = 16
+const HEIGHTMAP_BOTTOM = WORLD_CHUNK_HEIGHT * BlockChunk.CHUNK_SIZE.y
 
 @export var block_types: Array[BlockType]
 @export var chunk_scene: PackedScene
@@ -10,6 +11,7 @@ const WORLD_CHUNK_HEIGHT = 16
 @export var serializer: BlockSerializer
 
 var chunk_map := {}
+var heightmap_map := {}
 var block_type_map := {}
 
 static func get_chunk_index(block_position: Vector2i) -> Vector2i:
@@ -140,6 +142,52 @@ func update_block(block_position: Vector2i):
 
 func get_block_id(block_name: String) -> int:
 	return block_type_map[block_name]
+
+func create_heightmap(chunk_x: int) -> PackedInt32Array:
+	var heightmap: PackedInt32Array = []
+	heightmap.resize(BlockChunk.CHUNK_SIZE.x)
+	
+	heightmap_map[chunk_x] = heightmap
+	
+	return heightmap
+
+func generate_column_height(chunk_column: Array[BlockChunk], x: int) -> int:
+	for chunk_y in range(WORLD_CHUNK_HEIGHT):
+		var chunk := chunk_column[chunk_y]
+		
+		for y in range(BlockChunk.CHUNK_SIZE.y):
+			var chunk_position := Vector2i(x, y)
+			var block_index := BlockChunk.get_block_index(chunk_position)
+			var block_id := chunk.front_ids[block_index]
+			
+			if block_id == 0:
+				continue
+			
+			return chunk_y * BlockChunk.CHUNK_SIZE.y + y
+	
+	return HEIGHTMAP_BOTTOM
+
+func generate_heightmap(chunk_column: Array[BlockChunk], chunk_x: int) -> void:
+	var heightmap := create_heightmap(chunk_x)
+	
+	for x in range(BlockChunk.CHUNK_SIZE.x):
+		heightmap[x] = generate_column_height(chunk_column, x)
+
+func get_heightmap(chunk_x: int) -> Variant:
+	if not heightmap_map.has(chunk_x):
+		return null
+	
+	return heightmap_map[chunk_x]
+
+func get_block_height(block_x: int) -> int:
+	var chunk_x: int = floor(float(block_x) / float(BlockChunk.CHUNK_SIZE.x))
+	var heightmap = get_heightmap(chunk_x)
+	
+	if heightmap == null:
+		return HEIGHTMAP_BOTTOM
+	
+	var height_index := block_x - chunk_x * BlockChunk.CHUNK_SIZE.x
+	return heightmap[height_index]
 
 func _ready() -> void:
 	# Create block types

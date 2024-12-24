@@ -10,12 +10,20 @@ func generate_area(chunk_start_x: int, chunk_end_x: int) -> void:
 	# Create chunks
 	var chunks: Array[BlockChunk] = []
 	
-	for y in range(BlockWorld.WORLD_CHUNK_HEIGHT):
-		for x in range(chunk_start_x, chunk_end_x):
-			var chunk_index := Vector2i(x, y)
+	var chunk_columns := []
+	
+	for chunk_x in range(chunk_start_x, chunk_end_x):
+		var chunk_column: Array[BlockChunk] = []
+		chunk_column.resize(BlockWorld.WORLD_CHUNK_HEIGHT)
+		
+		for chunk_y in range(BlockWorld.WORLD_CHUNK_HEIGHT):
+			var chunk_index := Vector2i(chunk_x, chunk_y)
 			var chunk := blocks.create_chunk(chunk_index)
 			
 			chunks.push_back(chunk)
+			chunk_column[chunk_y] = chunk
+		
+		chunk_columns.push_back(chunk_column)
 	
 	# Fill layers
 	var properties := BlockGeneratorProperties.new()
@@ -26,6 +34,14 @@ func generate_area(chunk_start_x: int, chunk_end_x: int) -> void:
 	
 	biome.generate_biome(properties)
 	
+	# Create heightmap
+	for i in range(chunk_columns.size()):
+		var chunk_column: Array[BlockChunk] = chunk_columns[i]
+		var chunk_x = chunk_start_x + i
+		
+		blocks.generate_heightmap(chunk_column, chunk_x)
+	
+	# Update chunks
 	for chunk in chunks:
 		blocks.update_chunk(chunk)
 

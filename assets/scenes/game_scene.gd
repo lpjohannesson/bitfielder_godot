@@ -9,6 +9,7 @@ static var instance: GameScene
 @export var blocks_renderer: BlockWorldRenderer
 @export var packet_manager: GamePacketManager
 @export var hud: HUD
+@export var player_camera: PlayerCamera
 
 @export var particles: Node2D
 @export var shadow_viewport: SubViewport

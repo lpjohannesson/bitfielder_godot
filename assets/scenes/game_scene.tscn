@@ -25,12 +25,13 @@ width = 1
 fill_from = Vector2(0, 1)
 fill_to = Vector2(0, 0)
 
-[node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "blocks_renderer", "packet_manager", "hud", "particles", "shadow_viewport")]
+[node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "blocks_renderer", "packet_manager", "hud", "player_camera", "particles", "shadow_viewport")]
 script = ExtResource("1_jdhth")
 world = NodePath("GameWorld")
 blocks_renderer = NodePath("BlockWorldRenderer")
 packet_manager = NodePath("GamePacketManager")
 hud = NodePath("CanvasLayer/HUD")
+player_camera = NodePath("PlayerCamera")
 particles = NodePath("Particles")
 shadow_viewport = NodePath("ShadowViewport")
 shadow_shader = SubResource("ShaderMaterial_hm8g0")
@@ -52,7 +53,7 @@ expand_mode = 2
 
 [node name="Particles" type="Node2D" parent="."]
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="PlayerCamera" type="Camera2D" parent="."]
 zoom = Vector2(3, 3)
 process_callback = 0
 position_smoothing_enabled = true

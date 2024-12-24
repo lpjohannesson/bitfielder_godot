@@ -4,6 +4,7 @@ class_name GameServer
 const CHUNK_LOAD_EXTENTS := Vector2i(4, 3)
 const BLOCK_CHECK_TIMEOUT := 0.25
 const CHUNK_LOAD_DISTANCE := 128.0
+const PLAYER_SPAWN_RANGE := 16
 
 @export var world: GameWorld
 @export var block_generator: BlockGenerator
@@ -24,6 +25,12 @@ func get_block_chunk_packet(chunk: BlockChunk) -> GamePacket:
 	return GamePacket.create_packet(
 		Packets.ServerPacket.CREATE_BLOCK_CHUNK,
 		world.blocks.serializer.save_chunk(chunk)
+	)
+
+func get_block_heightmap_packet(heightmap: PackedInt32Array, chunk_x: int) -> GamePacket:
+	return GamePacket.create_packet(
+		Packets.ServerPacket.CREATE_BLOCK_HEIGHTMAP,
+		[chunk_x, heightmap]
 	)
 
 func get_player_chunk_index_packet(chunk_index: Vector2i) -> GamePacket:
@@ -189,6 +196,23 @@ static func get_chunk_load_zone(chunk_index: Vector2i) -> Rect2i:
 		chunk_index - CHUNK_LOAD_EXTENTS,
 		CHUNK_LOAD_EXTENTS * 2)
 
+func update_player_chunk(client: ClientConnection, chunk_index: Vector2i) -> void:
+	var chunk := world.blocks.get_chunk(chunk_index)
+	
+	if chunk == null:
+		return
+	
+	client.send_packet(get_block_chunk_packet(chunk))
+
+func update_player_heightmap(client: ClientConnection, chunk_x: int) -> void:
+	var heightmap = world.blocks.get_heightmap(chunk_x)
+	
+	if heightmap == null:
+		return
+	
+	var heightmap_packet := get_block_heightmap_packet(heightmap, chunk_x)
+	client.send_packet(heightmap_packet)
+
 func update_player_chunks(client: ClientConnection) -> void:
 	var player_position := client.player.global_position
 	
@@ -202,20 +226,18 @@ func update_player_chunks(client: ClientConnection) -> void:
 	var old_load_zone = get_chunk_load_zone(old_chunk_index)
 	var new_load_zone = get_chunk_load_zone(new_chunk_index)
 	
-	for y in range(new_load_zone.position.y, new_load_zone.end.y):
-		for x in range(new_load_zone.position.x, new_load_zone.end.x):
-			var chunk_index := Vector2i(x, y)
+	for chunk_x in range(new_load_zone.position.x, new_load_zone.end.x):
+		if chunk_x < old_load_zone.position.x or chunk_x >= old_load_zone.end.x:
+			update_player_heightmap(client, chunk_x)
+		
+		for chunk_y in range(new_load_zone.position.y, new_load_zone.end.y):
+			var chunk_index := Vector2i(chunk_x, chunk_y)
 			
 			# Skip already loaded chunks
 			if old_load_zone.has_point(chunk_index):
 				continue
 			
-			var chunk := world.blocks.get_chunk(chunk_index)
-			
-			if chunk == null:
-				continue
-			
-			client.send_packet(get_block_chunk_packet(chunk))
+			update_player_chunk(client, chunk_index)
 	
 	client.send_packet(get_player_chunk_index_packet(new_chunk_index))
 	client.chunk_load_position = player_position
@@ -264,21 +286,26 @@ func connect_client(client: ClientConnection) -> void:
 	
 	client.player = player
 	
+	# Set player position
+	var player_ground_x := randi_range(-PLAYER_SPAWN_RANGE, PLAYER_SPAWN_RANGE)
+	var player_ground_y := world.blocks.get_block_height(player_ground_x) - 1
+	var player_ground_position := Vector2i(player_ground_x, player_ground_y)
+	
+	player.global_position = \
+		world.blocks.block_to_world(player_ground_position, true)
+	
 	# Send initial packets
 	client.chunk_load_position = player.global_position
 	var player_chunk_index = get_player_chunk_index(player.global_position)
 	
 	var chunk_load_zone = get_chunk_load_zone(player_chunk_index)
 	
-	for y in range(chunk_load_zone.position.y, chunk_load_zone.end.y):
-		for x in range(chunk_load_zone.position.x, chunk_load_zone.end.x):
-			var chunk_index := Vector2i(x, y)
-			var chunk := world.blocks.get_chunk(chunk_index)
-			
-			if chunk == null:
-				continue
-			
-			client.send_packet(get_block_chunk_packet(chunk))
+	for chunk_x in range(chunk_load_zone.position.x, chunk_load_zone.end.x):
+		update_player_heightmap(client, chunk_x)
+		
+		for chunk_y in range(chunk_load_zone.position.y, chunk_load_zone.end.y):
+			var chunk_index := Vector2i(chunk_x, chunk_y)
+			update_player_chunk(client, chunk_index)
 	
 	for entity in world.entities.entities:
 		client.send_packet(get_create_entity_packet(entity))
@@ -322,7 +349,7 @@ func _init() -> void:
 
 func _ready() -> void:
 	block_generator.start_generator()
-	block_generator.generate_area(0, 16)
+	block_generator.generate_area(-8, 8)
 
 func _process(_delta: float) -> void:
 	for client in clients:
