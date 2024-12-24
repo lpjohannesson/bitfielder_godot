@@ -6,7 +6,6 @@
 
 [sub_resource type="Resource" id="Resource_y7vrr"]
 script = ExtResource("2_aevne")
-block_name = "stone"
 
 [resource]
 script = ExtResource("1_1x2fu")

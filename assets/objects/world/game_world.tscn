@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://celyk57ifua4f"]
+[gd_scene load_steps=34 format=3 uid="uid://celyk57ifua4f"]
 
 [ext_resource type="Script" path="res://assets/objects/world/game_world.gd" id="1_waysh"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_world.gd" id="2_3pcni"]
@@ -28,6 +28,7 @@
 [ext_resource type="Resource" uid="uid://dg6mhdsulrrt0" path="res://assets/resources/blocks/wool.tres" id="17_nq8w5"]
 [ext_resource type="Resource" uid="uid://7n2ngwx0enf7" path="res://assets/resources/blocks/water.tres" id="18_v0tft"]
 [ext_resource type="PackedScene" uid="uid://omkj7o5gbs7m" path="res://assets/objects/world/block/block_chunk.tscn" id="19_qsv6g"]
+[ext_resource type="Resource" uid="uid://bk7ovjdedqhol" path="res://assets/resources/items/grass.tres" id="24_xmnu3"]
 [ext_resource type="Resource" uid="uid://d0kfvaxqq26ha" path="res://assets/resources/items/wood_log.tres" id="25_bs7sh"]
 [ext_resource type="Resource" uid="uid://dw2eqcb66nn1v" path="res://assets/resources/items/leaves.tres" id="25_tebgd"]
 [ext_resource type="Resource" uid="uid://b66ts0vonntho" path="res://assets/resources/items/stick.tres" id="26_xwre3"]
@@ -57,7 +58,7 @@ blocks = NodePath("..")
 script = ExtResource("3_vg71c")
 world = NodePath("..")
 serializer = NodePath("ItemSerializer")
-item_types = Array[ExtResource("4_u7yh7")]([null, ExtResource("5_degwe"), ExtResource("6_nqmh0"), ExtResource("25_bs7sh"), ExtResource("26_xwre3"), ExtResource("25_tebgd"), ExtResource("28_jv7b0")])
+item_types = Array[ExtResource("4_u7yh7")]([null, ExtResource("5_degwe"), ExtResource("24_xmnu3"), ExtResource("6_nqmh0"), ExtResource("25_bs7sh"), ExtResource("26_xwre3"), ExtResource("25_tebgd"), ExtResource("28_jv7b0")])
 
 [node name="ItemSerializer" type="Node" parent="ItemManager" node_paths=PackedStringArray("items")]
 script = ExtResource("9_j762g")
