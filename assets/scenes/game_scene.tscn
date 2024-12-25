@@ -30,7 +30,7 @@ fill_to = Vector2(0, 0)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_k8a25"]
 shader = ExtResource("9_owgvs")
-shader_parameter/sample_round = 0.5
+shader_parameter/sample_round = 2.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qaax0"]
 shader = ExtResource("10_nih1y")
@@ -67,11 +67,16 @@ expand_mode = 2
 
 [node name="Particles" type="Node2D" parent="."]
 
-[node name="PlayerCamera" type="Camera2D" parent="."]
-zoom = Vector2(3, 3)
+[node name="PlayerCamera" type="Camera2D" parent="." node_paths=PackedStringArray("pan_timer")]
 process_callback = 0
 position_smoothing_enabled = true
 script = ExtResource("24_vgm8j")
+pan_timer = NodePath("PanTimer")
+
+[node name="PanTimer" type="Timer" parent="PlayerCamera"]
+process_callback = 0
+wait_time = 0.5
+one_shot = true
 
 [node name="BlockWorldRenderer" type="Node" parent="." node_paths=PackedStringArray("world")]
 script = ExtResource("7_ddnpg")
@@ -127,11 +132,10 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_top = -45.0
-offset_bottom = -45.0
+offset_top = -16.0
+offset_bottom = -16.0
 grow_horizontal = 2
 grow_vertical = 0
-scale = Vector2(3, 3)
 
 [connection signal="timeout" from="PlayerPositionTimer" to="." method="_on_player_position_timer_timeout"]
 [connection signal="gui_input" from="CanvasLayer/ClickSurface" to="." method="_on_click_surface_gui_input"]

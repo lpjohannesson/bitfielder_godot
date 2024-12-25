@@ -46,6 +46,30 @@ func aim() -> void:
 	if move_direction != 0.0:
 		entity.sprite.flip_h = move_direction < 0.0
 
+func try_jump_down() -> bool:
+	if not player_input.is_action_pressed("look_down"):
+		return false
+	
+	var collision_count := get_slide_collision_count()
+	
+	if collision_count == 0:
+		return false
+	
+	# Check every floor is one-way
+	for i in range(collision_count):
+		var collision := get_slide_collision(i)
+		
+		if collision.get_normal().y >= 0.0:
+			continue
+		
+		var collider := collision.get_collider_shape()
+		
+		if not collider.one_way_collision:
+			return false
+	
+	global_position.y += 1.0
+	return true
+
 func jump() -> void:
 	if player_input.is_action_just_pressed("jump"):
 		jump_timer.start()
@@ -55,6 +79,9 @@ func jump() -> void:
 	
 	jump_timer.stop()
 	coyote_timer.stop()
+	
+	if try_jump_down():
+		return
 	
 	velocity.y = -JUMP_VELOCITY
 	midstopped = false

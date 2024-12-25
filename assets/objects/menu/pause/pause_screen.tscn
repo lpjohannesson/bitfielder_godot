@@ -26,9 +26,9 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -120.0
-offset_top = -96.0
-offset_right = 120.0
+offset_left = -80.0
+offset_top = -64.0
+offset_right = 80.0
 grow_horizontal = 2
 grow_vertical = 0
 texture = ExtResource("1_72k38")
@@ -38,9 +38,9 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -39.5
-offset_right = 39.5
-offset_bottom = 66.0
+offset_left = -51.0
+offset_right = 51.0
+offset_bottom = 101.0
 grow_horizontal = 2
 
 [node name="ContinueButton" type="Button" parent="Menu/VBoxContainer"]
