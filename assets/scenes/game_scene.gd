@@ -10,6 +10,7 @@ static var instance: GameScene
 @export var packet_manager: GamePacketManager
 @export var hud: HUD
 @export var player_camera: PlayerCamera
+@export var lighting_display: LightingDisplay
 
 @export var particles: Node2D
 @export var shadow_viewport: SubViewport
@@ -56,9 +57,12 @@ func update_block(
 	
 	block_specifier.write_address(address)
 	
-	for chunk in blocks.get_block_chunks(block_specifier.block_position):
+	for chunk in blocks.get_neighboring_chunks(block_specifier.block_position):
 		blocks.update_chunk(chunk)
 		chunk.redraw_chunk()
+	
+	blocks.update_heightmap(block_specifier)
+	lighting_display.show_lightmap()
 
 func select_item(item_index: int) -> void:
 	if player.inventory == null:

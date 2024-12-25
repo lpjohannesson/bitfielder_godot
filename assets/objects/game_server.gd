@@ -59,6 +59,8 @@ func update_block(
 	block_specifier.write_address(address)
 	
 	world.blocks.update_block(block_specifier.block_position)
+	world.blocks.update_heightmap(block_specifier)
+	
 	var packet := get_update_block_packet(block_specifier, show_effects)
 	
 	for client in clients:
@@ -306,6 +308,8 @@ func connect_client(client: ClientConnection) -> void:
 		for chunk_y in range(chunk_load_zone.position.y, chunk_load_zone.end.y):
 			var chunk_index := Vector2i(chunk_x, chunk_y)
 			update_player_chunk(client, chunk_index)
+	
+	client.send_packet(get_player_chunk_index_packet(player_chunk_index))
 	
 	for entity in world.entities.entities:
 		client.send_packet(get_create_entity_packet(entity))

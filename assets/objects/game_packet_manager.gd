@@ -20,18 +20,31 @@ func create_block_chunk(packet: GamePacket) -> void:
 	
 	scene.blocks_renderer.start_chunk(chunk)
 
+func create_block_heightmap(packet: GamePacket) -> void:
+	var chunk_x: int = packet.data[0]
+	var heightmap: PackedInt32Array = packet.data[1]
+	
+	scene.world.blocks.load_heightmap(heightmap, chunk_x)
+
 func load_player_chunk_index(packet: GamePacket) -> void:
 	var player_chunk_index: Vector2i = packet.data
 	var load_zone := GameServer.get_chunk_load_zone(player_chunk_index)
 	
 	var blocks := scene.world.blocks
 	 
-	# Unload out of range chunks, redraw new ones
+	# Unload out of range chunks
 	for chunk_index in blocks.chunk_map.keys():
 		if not load_zone.has_point(chunk_index):
 			blocks.destroy_chunk(chunk_index)
 	
+	for chunk_x in blocks.heightmap_map.keys():
+		if chunk_x < load_zone.position.x or chunk_x >= load_zone.end.x:
+			blocks.destroy_heightmap(chunk_x)
+	
 	last_chunk_index = player_chunk_index
+	
+	scene.lighting_display.chunk_index = player_chunk_index
+	scene.lighting_display.show_lightmap()
 
 func update_block(packet: GamePacket) -> void:
 	var blocks := scene.world.blocks
@@ -107,6 +120,9 @@ func recieve_packet(packet: GamePacket) -> void:
 	match packet.type:
 		Packets.ServerPacket.CREATE_BLOCK_CHUNK:
 			create_block_chunk(packet)
+		
+		Packets.ServerPacket.CREATE_BLOCK_HEIGHTMAP:
+			create_block_heightmap(packet)
 		
 		Packets.ServerPacket.PLAYER_CHUNK_INDEX:
 			load_player_chunk_index(packet)

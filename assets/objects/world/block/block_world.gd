@@ -116,7 +116,7 @@ func update_chunk(chunk: BlockChunk) -> void:
 	
 	create_colliders(chunk)
 
-func get_block_chunks(block_position: Vector2i) -> Array[BlockChunk]:
+func get_neighboring_chunks(block_position: Vector2i) -> Array[BlockChunk]:
 	var block_chunks: Array[BlockChunk] = []
 	
 	# Find chunks including neighbours
@@ -136,20 +136,59 @@ func get_block_chunks(block_position: Vector2i) -> Array[BlockChunk]:
 	
 	return block_chunks
 
-func update_block(block_position: Vector2i):
-	for chunk in get_block_chunks(block_position):
-		update_chunk(chunk)
+func is_block_opaque(block_id: int) -> bool:
+	return block_id != 0
+
+func update_heightmap(block_specifier: BlockSpecifier) -> void:
+	if not block_specifier.on_front_layer:
+		return
+	
+	var heightmap_address := \
+		get_heightmap_address(block_specifier.block_position.x)
+	
+	if heightmap_address == null:
+		return
+	
+	var height: int = heightmap_address.get_height()
+	
+	if height == block_specifier.block_position.y:
+		# Move height down
+		while true:
+			var below_block_position := \
+				Vector2(block_specifier.block_position.x, height)
+			
+			var below_block_address := get_block_address(below_block_position)
+			
+			if below_block_address == null:
+				break
+			
+			var below_block_id := \
+				below_block_address.chunk.front_ids[below_block_address.block_index]
+			
+			if is_block_opaque(below_block_id):
+				break
+			
+			height += 1
+	
+	elif height > block_specifier.block_position.y:
+		# Move height up
+		if not is_block_opaque(block_specifier.block_id):
+			return
+		
+		height = block_specifier.block_position.y
+	else:
+		return
+	
+	heightmap_address.set_height(height)
+
+func update_block(block_position: Vector2i) -> void:
+	var chunk_index := get_chunk_index(block_position)
+	var chunk := get_chunk(chunk_index)
+	
+	update_chunk(chunk)
 
 func get_block_id(block_name: String) -> int:
 	return block_type_map[block_name]
-
-func create_heightmap(chunk_x: int) -> PackedInt32Array:
-	var heightmap: PackedInt32Array = []
-	heightmap.resize(BlockChunk.CHUNK_SIZE.x)
-	
-	heightmap_map[chunk_x] = heightmap
-	
-	return heightmap
 
 func generate_column_height(chunk_column: Array[BlockChunk], x: int) -> int:
 	for chunk_y in range(WORLD_CHUNK_HEIGHT):
@@ -167,8 +206,11 @@ func generate_column_height(chunk_column: Array[BlockChunk], x: int) -> int:
 	
 	return HEIGHTMAP_BOTTOM
 
-func generate_heightmap(chunk_column: Array[BlockChunk], chunk_x: int) -> void:
-	var heightmap := create_heightmap(chunk_x)
+func create_heightmap(chunk_column: Array[BlockChunk], chunk_x: int) -> void:
+	var heightmap: PackedInt32Array = []
+	heightmap.resize(BlockChunk.CHUNK_SIZE.x)
+	
+	heightmap_map[chunk_x] = heightmap
 	
 	for x in range(BlockChunk.CHUNK_SIZE.x):
 		heightmap[x] = generate_column_height(chunk_column, x)
@@ -179,15 +221,34 @@ func get_heightmap(chunk_x: int) -> Variant:
 	
 	return heightmap_map[chunk_x]
 
-func get_block_height(block_x: int) -> int:
-	var chunk_x: int = floor(float(block_x) / float(BlockChunk.CHUNK_SIZE.x))
+func destroy_heightmap(chunk_x: int) -> void:
+	if get_heightmap(chunk_x) == null:
+		return
+	
+	heightmap_map.erase(chunk_x)
+
+func load_heightmap(heightmap: PackedInt32Array, chunk_x: int) -> void:
+	heightmap_map[chunk_x] = heightmap
+
+func get_chunk_x(block_x: int) -> int:
+	return floor(float(block_x) / float(BlockChunk.CHUNK_SIZE.x))
+
+func get_heightmap_address(block_x: int) -> HeightmapAddress:
+	var chunk_x: int = get_chunk_x(block_x)
 	var heightmap = get_heightmap(chunk_x)
 	
 	if heightmap == null:
-		return HEIGHTMAP_BOTTOM
+		return null
 	
-	var height_index := block_x - chunk_x * BlockChunk.CHUNK_SIZE.x
-	return heightmap[height_index]
+	var address := HeightmapAddress.new()
+	
+	address.heightmap = heightmap
+	address.height_index = block_x - chunk_x * BlockChunk.CHUNK_SIZE.x
+	
+	return address
+
+func get_block_height(block_x: int) -> int:
+	return get_heightmap_address(block_x).get_height()
 
 func _ready() -> void:
 	# Create block types

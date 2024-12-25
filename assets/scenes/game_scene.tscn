@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=18 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="2_d1sjh"]
@@ -6,7 +6,10 @@
 [ext_resource type="PackedScene" uid="uid://celyk57ifua4f" path="res://assets/objects/world/game_world.tscn" id="4_3hdty"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/block_world_renderer.gd" id="7_ddnpg"]
 [ext_resource type="PackedScene" uid="uid://qnuf5qyuxwxp" path="res://assets/objects/world/block/render/block_particle.tscn" id="8_in2xm"]
+[ext_resource type="Shader" path="res://assets/shaders/lighting_display.gdshader" id="9_owgvs"]
 [ext_resource type="PackedScene" uid="uid://c587sy0idbcjt" path="res://assets/objects/menu/hud/hud.tscn" id="10_0vvsh"]
+[ext_resource type="Script" path="res://assets/objects/world/lighting_display.gd" id="10_5ifsx"]
+[ext_resource type="Shader" path="res://assets/shaders/light_canvas.gdshader" id="10_nih1y"]
 [ext_resource type="Script" path="res://assets/objects/game_packet_manager.gd" id="10_wvv0v"]
 [ext_resource type="Script" path="res://assets/objects/world/entity/player/player_camera.gd" id="24_vgm8j"]
 
@@ -25,13 +28,24 @@ width = 1
 fill_from = Vector2(0, 1)
 fill_to = Vector2(0, 0)
 
-[node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "blocks_renderer", "packet_manager", "hud", "player_camera", "particles", "shadow_viewport")]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_k8a25"]
+shader = ExtResource("9_owgvs")
+shader_parameter/sample_round = 0.5
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_qaax0"]
+shader = ExtResource("10_nih1y")
+shader_parameter/heightmap = PackedInt32Array()
+shader_parameter/top_height = -1
+shader_parameter/sunlight_max = 12
+
+[node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "blocks_renderer", "packet_manager", "hud", "player_camera", "lighting_display", "particles", "shadow_viewport")]
 script = ExtResource("1_jdhth")
 world = NodePath("GameWorld")
 blocks_renderer = NodePath("BlockWorldRenderer")
 packet_manager = NodePath("GamePacketManager")
 hud = NodePath("CanvasLayer/HUD")
 player_camera = NodePath("PlayerCamera")
+lighting_display = NodePath("LightingDisplay")
 particles = NodePath("Particles")
 shadow_viewport = NodePath("ShadowViewport")
 shadow_shader = SubResource("ShaderMaterial_hm8g0")
@@ -78,6 +92,23 @@ render_target_update_mode = 4
 [node name="PlayerPositionTimer" type="Timer" parent="."]
 wait_time = 0.2
 autostart = true
+
+[node name="LightingDisplay" type="ColorRect" parent="." node_paths=PackedStringArray("world", "light_viewport", "light_canvas")]
+z_index = 1
+material = SubResource("ShaderMaterial_k8a25")
+offset_right = 512.0
+offset_bottom = 512.0
+script = ExtResource("10_5ifsx")
+world = NodePath("../GameWorld")
+light_viewport = NodePath("SubViewport")
+light_canvas = NodePath("SubViewport/LightCanvas")
+
+[node name="SubViewport" type="SubViewport" parent="LightingDisplay"]
+size = Vector2i(2, 2)
+render_target_update_mode = 4
+
+[node name="LightCanvas" type="ColorRect" parent="LightingDisplay/SubViewport"]
+material = SubResource("ShaderMaterial_qaax0")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
