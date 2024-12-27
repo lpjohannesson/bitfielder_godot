@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemType" load_steps=5 format=3 uid="uid://dafi2oe4guw6b"]
+
+[ext_resource type="Script" path="res://assets/objects/world/item/item_type.gd" id="1_7qhul"]
+[ext_resource type="Texture2D" uid="uid://cnb7weowgg3e2" path="res://assets/textures/items/torch.png" id="1_08nt6"]
+[ext_resource type="Script" path="res://assets/objects/world/item/properties/block_item_properties.gd" id="2_plaq2"]
+
+[sub_resource type="Resource" id="Resource_ovpnv"]
+script = ExtResource("2_plaq2")
+
+[resource]
+script = ExtResource("1_7qhul")
+item_name = "torch"
+item_texture = ExtResource("1_08nt6")
+properties = SubResource("Resource_ovpnv")

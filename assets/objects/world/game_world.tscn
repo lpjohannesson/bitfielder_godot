@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://celyk57ifua4f"]
+[gd_scene load_steps=36 format=3 uid="uid://celyk57ifua4f"]
 
 [ext_resource type="Script" path="res://assets/objects/world/game_world.gd" id="1_waysh"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_world.gd" id="2_3pcni"]
@@ -33,6 +33,8 @@
 [ext_resource type="Resource" uid="uid://dw2eqcb66nn1v" path="res://assets/resources/items/leaves.tres" id="25_tebgd"]
 [ext_resource type="Resource" uid="uid://b66ts0vonntho" path="res://assets/resources/items/stick.tres" id="26_xwre3"]
 [ext_resource type="Resource" uid="uid://ct1ykd6eghuc3" path="res://assets/resources/items/wood_planks.tres" id="28_jv7b0"]
+[ext_resource type="Resource" uid="uid://dafi2oe4guw6b" path="res://assets/resources/items/torch.tres" id="30_6ntpc"]
+[ext_resource type="Resource" uid="uid://bxsesftnrtau0" path="res://assets/resources/items/mushroom.tres" id="31_ebq75"]
 
 [node name="GameWorld" type="Node2D" node_paths=PackedStringArray("blocks", "items", "entities")]
 script = ExtResource("1_waysh")
@@ -58,7 +60,7 @@ blocks = NodePath("..")
 script = ExtResource("3_vg71c")
 world = NodePath("..")
 serializer = NodePath("ItemSerializer")
-item_types = Array[ExtResource("4_u7yh7")]([null, ExtResource("5_degwe"), ExtResource("24_xmnu3"), ExtResource("6_nqmh0"), ExtResource("25_bs7sh"), ExtResource("26_xwre3"), ExtResource("25_tebgd"), ExtResource("28_jv7b0")])
+item_types = Array[ExtResource("4_u7yh7")]([null, ExtResource("5_degwe"), ExtResource("24_xmnu3"), ExtResource("6_nqmh0"), ExtResource("25_bs7sh"), ExtResource("26_xwre3"), ExtResource("25_tebgd"), ExtResource("28_jv7b0"), ExtResource("30_6ntpc"), ExtResource("31_ebq75")])
 
 [node name="ItemSerializer" type="Node" parent="ItemManager" node_paths=PackedStringArray("items")]
 script = ExtResource("9_j762g")

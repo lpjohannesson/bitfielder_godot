@@ -30,13 +30,14 @@ fill_to = Vector2(0, 0)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_k8a25"]
 shader = ExtResource("9_owgvs")
-shader_parameter/sample_round = 2.0
+shader_parameter/sample_round = 1.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qaax0"]
 shader = ExtResource("10_nih1y")
+shader_parameter/sunlight_range = 12
+shader_parameter/block_light_range = 16
 shader_parameter/heightmap = PackedInt32Array()
 shader_parameter/top_height = -1
-shader_parameter/sunlight_max = 12
 
 [node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "blocks_renderer", "packet_manager", "hud", "player_camera", "lighting_display", "particles", "shadow_viewport")]
 script = ExtResource("1_jdhth")
@@ -68,6 +69,7 @@ expand_mode = 2
 [node name="Particles" type="Node2D" parent="."]
 
 [node name="PlayerCamera" type="Camera2D" parent="." node_paths=PackedStringArray("pan_timer")]
+zoom = Vector2(0.765, 0.765)
 process_callback = 0
 position_smoothing_enabled = true
 script = ExtResource("24_vgm8j")

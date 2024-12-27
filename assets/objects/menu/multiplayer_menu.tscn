@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://d4jfjxf7378j6"]
+[gd_scene load_steps=3 format=3 uid="uid://d4jfjxf7378j6"]
 
 [ext_resource type="Script" path="res://assets/objects/menu/multiplayer_menu.gd" id="1_47ovg"]
+[ext_resource type="Theme" uid="uid://wm8dstmgs0eu" path="res://assets/themes/menu_theme.tres" id="2_h8m51"]
 
 [node name="MultiplayerMenu" type="Control" node_paths=PackedStringArray("address_text")]
 layout_mode = 3
@@ -15,12 +16,14 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -91.0
-offset_right = 91.0
-offset_bottom = 31.0
+offset_left = -64.0
+offset_right = 64.0
+offset_bottom = 20.0
 grow_horizontal = 2
+theme = ExtResource("2_h8m51")
 text = "localhost"
 placeholder_text = "Server address"
+caret_blink = true
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -28,17 +31,19 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -36.0
-offset_top = 43.0
+offset_top = 32.0
 offset_right = 36.0
-offset_bottom = 144.0
+offset_bottom = 133.0
 grow_horizontal = 2
 
 [node name="ConnectButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme = ExtResource("2_h8m51")
 text = "Connect"
 
 [node name="CancelButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
+theme = ExtResource("2_h8m51")
 text = "Cancel"
 
 [connection signal="button_down" from="VBoxContainer/ConnectButton" to="." method="_on_connect_button_button_down"]

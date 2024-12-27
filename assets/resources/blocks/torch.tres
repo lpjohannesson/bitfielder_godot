@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=14 format=3 uid="uid://b0kv0610wegjy"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=16 format=3 uid="uid://b0kv0610wegjy"]
 
 [ext_resource type="Texture2D" uid="uid://dtr4vbkje7np6" path="res://assets/textures/blocks/particles/wood.png" id="1_nf3pu"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_color.gd" id="2_d3u7v"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="2_irsbv"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_n5wyv"]
 [ext_resource type="Texture2D" uid="uid://cp0b8r2o1md0q" path="res://assets/textures/blocks/torch1.png" id="3_4p5hp"]
@@ -10,10 +11,15 @@
 [ext_resource type="Texture2D" uid="uid://cq25nidmcnh75" path="res://assets/textures/blocks/torch4.png" id="6_fbrky"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/block_renderer_properties.gd" id="6_fpuft"]
 
+[sub_resource type="Resource" id="Resource_sauy0"]
+script = ExtResource("2_d3u7v")
+color = Color(1, 0.65665, 0.591657, 1)
+
 [sub_resource type="Resource" id="Resource_r47fy"]
 script = ExtResource("2_n5wyv")
 is_solid = false
 is_one_way = false
+block_color = SubResource("Resource_sauy0")
 
 [sub_resource type="AnimatedTexture" id="AnimatedTexture_3otmv"]
 frames = 4

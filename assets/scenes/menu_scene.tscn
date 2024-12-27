@@ -16,8 +16,6 @@ connection_timer = NodePath("ConnectionTimer")
 [node name="Menus" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
 
 [node name="MainMenu" parent="Menus" instance=ExtResource("2_elm5u")]
 
@@ -29,7 +27,6 @@ visible = false
 connection_timed_out_text = "Connection timed out."
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(2, 2)
 
 [node name="Logo" type="TextureRect" parent="."]
 anchors_preset = 7

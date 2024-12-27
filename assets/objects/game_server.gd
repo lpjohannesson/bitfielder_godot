@@ -300,12 +300,12 @@ func connect_client(client: ClientConnection) -> void:
 	client.chunk_load_position = player.global_position
 	var player_chunk_index = get_player_chunk_index(player.global_position)
 	
-	var chunk_load_zone = get_chunk_load_zone(player_chunk_index)
+	var load_zone = get_chunk_load_zone(player_chunk_index)
 	
-	for chunk_x in range(chunk_load_zone.position.x, chunk_load_zone.end.x):
+	for chunk_x in range(load_zone.position.x, load_zone.end.x):
 		update_player_heightmap(client, chunk_x)
 		
-		for chunk_y in range(chunk_load_zone.position.y, chunk_load_zone.end.y):
+		for chunk_y in range(load_zone.position.y, load_zone.end.y):
 			var chunk_index := Vector2i(chunk_x, chunk_y)
 			update_player_chunk(client, chunk_index)
 	
