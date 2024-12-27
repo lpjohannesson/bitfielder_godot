@@ -11,9 +11,9 @@ var chunk_index: Vector2i
 var shader_heightmap: PackedInt32Array
 var block_lightmap: Image
 
-func get_block_color(block_id: int) -> BlockColor:
+func get_block_light(block_id: int) -> BlockLight:
 	var block := world.blocks.block_types[block_id]
-	return block.properties.block_color
+	return block.properties.block_light
 
 func show_lightmap() -> void:
 	var load_zone := GameServer.get_chunk_load_zone(chunk_index)
@@ -52,9 +52,9 @@ func show_lightmap() -> void:
 					var chunk_position := Vector2i(x, y)
 					var block_index := BlockChunk.get_block_index(chunk_position)
 					
-					var front_color := get_block_color(load_chunk.front_ids[block_index])
+					var front_light := get_block_light(load_chunk.front_ids[block_index])
 					
-					if front_color == null:
+					if front_light == null:
 						continue
 					
 					var pixel_position := \
@@ -63,7 +63,7 @@ func show_lightmap() -> void:
 					block_lightmap.set_pixel(
 						pixel_position.x,
 						pixel_position.y,
-						front_color.color)
+						front_light.color)
 	
 	var block_lightmap_texture := ImageTexture.create_from_image(block_lightmap)
 	light_canvas.material.set_shader_parameter("block_lightmap", block_lightmap_texture)

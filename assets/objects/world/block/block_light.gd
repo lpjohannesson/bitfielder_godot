@@ -1,4 +1,4 @@
 extends Resource
-class_name BlockColor
+class_name BlockLight
 
 @export var color: Color

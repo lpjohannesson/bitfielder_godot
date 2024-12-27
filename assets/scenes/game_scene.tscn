@@ -69,7 +69,6 @@ expand_mode = 2
 [node name="Particles" type="Node2D" parent="."]
 
 [node name="PlayerCamera" type="Camera2D" parent="." node_paths=PackedStringArray("pan_timer")]
-zoom = Vector2(0.765, 0.765)
 process_callback = 0
 position_smoothing_enabled = true
 script = ExtResource("24_vgm8j")

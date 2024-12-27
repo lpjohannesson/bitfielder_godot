@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=14 format=3 uid="uid://bxbdoq7jf6a38"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=12 format=3 uid="uid://bxbdoq7jf6a38"]
 
 [ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="1_facif"]
 [ext_resource type="Texture2D" uid="uid://eer33eptpvf7" path="res://assets/textures/blocks/particles/stone.png" id="1_w0msj"]
@@ -8,12 +8,13 @@
 [ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="4_cl8ql"]
 [ext_resource type="Texture2D" uid="uid://s0y1cuhn426f" path="res://assets/textures/blocks/ore_coal.png" id="5_7a5ii"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/layered_block_renderer.gd" id="6_4fu4n"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/block_renderer_properties.gd" id="6_341pt"]
 
 [sub_resource type="Resource" id="Resource_7y3ed"]
 script = ExtResource("2_26gfx")
 is_solid = true
 is_one_way = false
+is_partial = false
+casts_shadow = true
 
 [sub_resource type="Resource" id="Resource_6ilo7"]
 script = ExtResource("4_cl8ql")
@@ -23,15 +24,9 @@ texture = ExtResource("5_7a5ii")
 script = ExtResource("6_4fu4n")
 renderers = Array[ExtResource("2_wl5bp")]([ExtResource("3_prq3y"), SubResource("Resource_6ilo7")])
 
-[sub_resource type="Resource" id="Resource_8aynk"]
-script = ExtResource("6_341pt")
-is_partial = false
-casts_shadow = true
-
 [resource]
 script = ExtResource("1_facif")
 block_name = "ore_coal"
 properties = SubResource("Resource_7y3ed")
 renderer = SubResource("Resource_u2k4d")
-renderer_properties = SubResource("Resource_8aynk")
 particle_texture = ExtResource("1_w0msj")

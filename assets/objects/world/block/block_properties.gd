@@ -3,4 +3,7 @@ class_name BlockProperties
 
 @export var is_solid := true
 @export var is_one_way := false
-@export var block_color: BlockColor
+
+@export var is_partial := false
+@export var casts_shadow := true
+@export var block_light: BlockLight

@@ -1,30 +1,25 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=10 format=3 uid="uid://dmgl8jsafc8o6"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=8 format=3 uid="uid://dmgl8jsafc8o6"]
 
 [ext_resource type="Texture2D" uid="uid://dtr4vbkje7np6" path="res://assets/textures/blocks/particles/wood.png" id="1_a31f6"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="1_avpja"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="2_woblg"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="3_8wcku"]
 [ext_resource type="Texture2D" uid="uid://bdo3id28653y6" path="res://assets/textures/blocks/stick.png" id="4_6k7u4"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/block_renderer_properties.gd" id="5_k1fms"]
 
 [sub_resource type="Resource" id="Resource_fgd1v"]
 script = ExtResource("1_avpja")
 is_solid = true
 is_one_way = true
+is_partial = true
+casts_shadow = true
 
 [sub_resource type="Resource" id="Resource_cwxme"]
 script = ExtResource("3_8wcku")
 texture = ExtResource("4_6k7u4")
-
-[sub_resource type="Resource" id="Resource_xh16t"]
-script = ExtResource("5_k1fms")
-is_partial = true
-casts_shadow = true
 
 [resource]
 script = ExtResource("2_woblg")
 block_name = "stick"
 properties = SubResource("Resource_fgd1v")
 renderer = SubResource("Resource_cwxme")
-renderer_properties = SubResource("Resource_xh16t")
 particle_texture = ExtResource("1_a31f6")

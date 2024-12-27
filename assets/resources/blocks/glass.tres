@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="BlockType" load_steps=8 format=3 uid="uid://d1jc08mmmb47s"]
+
+[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="1_l0w2h"]
+[ext_resource type="Texture2D" uid="uid://c7j0mohutqrgm" path="res://assets/textures/blocks/particles/wool.png" id="1_otpe0"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="1_rc35y"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="2_eesaw"]
+[ext_resource type="Texture2D" uid="uid://dnsvogetbxs3g" path="res://assets/textures/blocks/glass.png" id="3_sfy83"]
+
+[sub_resource type="Resource" id="Resource_ulw1m"]
+script = ExtResource("1_l0w2h")
+is_solid = true
+is_one_way = false
+is_partial = true
+casts_shadow = true
+
+[sub_resource type="Resource" id="Resource_5e07k"]
+script = ExtResource("2_eesaw")
+texture = ExtResource("3_sfy83")
+
+[resource]
+script = ExtResource("1_rc35y")
+block_name = "glass"
+properties = SubResource("Resource_ulw1m")
+renderer = SubResource("Resource_5e07k")
+particle_texture = ExtResource("1_otpe0")

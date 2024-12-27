@@ -1,30 +1,25 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=10 format=3 uid="uid://bbv4vutd5bnrl"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=8 format=3 uid="uid://bbv4vutd5bnrl"]
 
 [ext_resource type="Texture2D" uid="uid://3y74r12ljned" path="res://assets/textures/blocks/particles/leaves.png" id="1_me480"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_lm7f3"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="2_uxy03"]
 [ext_resource type="Texture2D" uid="uid://dck6lqh1cp6ya" path="res://assets/textures/blocks/bush.png" id="3_yhl64"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/block_renderer_properties.gd" id="4_1cc63"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="4_v1503"]
 
 [sub_resource type="Resource" id="Resource_fjn6q"]
 script = ExtResource("2_lm7f3")
 is_solid = false
 is_one_way = false
+is_partial = false
+casts_shadow = true
 
 [sub_resource type="Resource" id="Resource_h7uof"]
 script = ExtResource("2_uxy03")
 texture = ExtResource("3_yhl64")
-
-[sub_resource type="Resource" id="Resource_4g8c8"]
-script = ExtResource("4_1cc63")
-is_partial = true
-casts_shadow = true
 
 [resource]
 script = ExtResource("4_v1503")
 block_name = "bush"
 properties = SubResource("Resource_fjn6q")
 renderer = SubResource("Resource_h7uof")
-renderer_properties = SubResource("Resource_4g8c8")
 particle_texture = ExtResource("1_me480")

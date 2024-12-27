@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=14 format=3 uid="uid://7n2ngwx0enf7"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=12 format=3 uid="uid://7n2ngwx0enf7"]
 
 [ext_resource type="Texture2D" uid="uid://c7j0mohutqrgm" path="res://assets/textures/blocks/particles/wool.png" id="1_8bniy"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="2_7wrau"]
@@ -7,13 +7,14 @@
 [ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="4_81lat"]
 [ext_resource type="Texture2D" uid="uid://biijynwundait" path="res://assets/textures/blocks/water2.png" id="4_focds"]
 [ext_resource type="Texture2D" uid="uid://cxrmxtylltkfg" path="res://assets/textures/blocks/water3.png" id="5_l1owm"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/block_renderer_properties.gd" id="6_5a673"]
 [ext_resource type="Texture2D" uid="uid://c6bt1ruq7ry6v" path="res://assets/textures/blocks/water4.png" id="6_ansfs"]
 
 [sub_resource type="Resource" id="Resource_mn6ki"]
 script = ExtResource("2_olm3e")
 is_solid = false
 is_one_way = false
+is_partial = false
+casts_shadow = true
 
 [sub_resource type="AnimatedTexture" id="AnimatedTexture_ytxea"]
 frames = 4
@@ -30,15 +31,9 @@ frame_3/duration = 1.0
 script = ExtResource("2_7wrau")
 texture = SubResource("AnimatedTexture_ytxea")
 
-[sub_resource type="Resource" id="Resource_mm2lx"]
-script = ExtResource("6_5a673")
-is_partial = true
-casts_shadow = false
-
 [resource]
 script = ExtResource("4_81lat")
 block_name = "water"
 properties = SubResource("Resource_mn6ki")
 renderer = SubResource("Resource_k7p3y")
-renderer_properties = SubResource("Resource_mm2lx")
 particle_texture = ExtResource("1_8bniy")

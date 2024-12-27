@@ -1,6 +1,6 @@
 class_name ItemInventory
 
-const ITEM_COUNT = 10
+const ITEM_COUNT = 50
 
 var items: Array[ItemSlot]
 var selected_index: int

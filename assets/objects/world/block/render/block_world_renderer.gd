@@ -63,10 +63,10 @@ func draw_chunk_shadow(chunk: BlockChunk) -> void:
 			if block.renderer == null:
 				continue
 			
-			if not block.renderer_properties.casts_shadow:
+			if not block.properties.casts_shadow:
 				continue
 			
-			if block.renderer_properties.is_partial:
+			if block.properties.is_partial:
 				block.renderer.draw_block(render_data)
 			else:
 				var block_rect := Rect2(render_data.chunk_position, Vector2.ONE)
