@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemType" load_steps=5 format=3 uid="uid://cat1vma04b3n"]
+
+[ext_resource type="Texture2D" uid="uid://k3dqcoc3pf2" path="res://assets/textures/items/sand.png" id="1_j2j87"]
+[ext_resource type="Script" path="res://assets/objects/world/item/properties/block_item_properties.gd" id="2_s3wpg"]
+[ext_resource type="Script" path="res://assets/objects/world/item/item_type.gd" id="3_6gits"]
+
+[sub_resource type="Resource" id="Resource_uhf02"]
+script = ExtResource("2_s3wpg")
+
+[resource]
+script = ExtResource("3_6gits")
+item_name = "sand"
+item_texture = ExtResource("1_j2j87")
+properties = SubResource("Resource_uhf02")

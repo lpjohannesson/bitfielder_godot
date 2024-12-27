@@ -1,12 +1,16 @@
 extends CharacterBody2D
 class_name Player
 
-const ACCELERATION = 300.0
-const SPEED = 100.0
-const JUMP_VELOCITY = 150.0
-const GRAVITY_ACCELERATION = 300.0
-const GRAVITY_SPEED = 300.0
-const JUMP_MIDSTOP = 0.5
+enum PlayerState { GROUND, CLIMBING }
+
+const ACCELERATION := 300.0
+const SPEED := 100.0
+const JUMP_VELOCITY := 150.0
+const GRAVITY_ACCELERATION := 300.0
+const GRAVITY_SPEED := 300.0
+const JUMP_MIDSTOP := 0.5
+const CLIMB_SPEED := 50.0
+const CLIMB_JUMP_SPEED := 50.0
 
 @export var entity: GameEntity
 @export var coyote_timer: Timer
@@ -25,6 +29,7 @@ var inventory: ItemInventory
 
 var last_surface := 0.0
 var player_input := PlayerInput.new()
+var player_state := PlayerState.GROUND
 
 func get_facing_sign() -> float:
 	return -1.0 if entity.sprite.flip_h else 1.0
@@ -71,6 +76,10 @@ func try_jump_down() -> bool:
 	return true
 
 func jump() -> void:
+	velocity.y = -JUMP_VELOCITY
+	midstopped = false
+
+func try_jump() -> void:
 	if player_input.is_action_just_pressed("jump"):
 		jump_timer.start()
 	
@@ -83,8 +92,7 @@ func jump() -> void:
 	if try_jump_down():
 		return
 	
-	velocity.y = -JUMP_VELOCITY
-	midstopped = false
+	jump()
 
 func midstop_jump():
 	if not midstopped and \
@@ -370,6 +378,8 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	
 	entity.update_block(block_specifier, address)
 	
+	player_state = PlayerState.GROUND
+	
 	return true
 
 func modify_block_or_punch(block_id: int, use_data: ItemUseData) -> void:
@@ -403,30 +413,101 @@ func show_ground_effects() -> void:
 	entity.spawn_effect_sprite("ground", surface_point.global_position)
 	last_surface = surface
 
+func can_climb(blocks: BlockWorld, block_position: Vector2i) -> bool:
+	var address := blocks.get_block_address(block_position)
+	
+	if address == null:
+		return false
+	
+	var block_id := address.chunk.front_ids[address.block_index]
+	var block := blocks.block_types[block_id]
+	
+	return block.properties.is_climbable
+
+func try_climbing() -> bool:
+	if not (\
+			player_input.is_action_just_pressed("interact") or \
+			player_input.is_action_just_pressed("look_up") or \
+			player_input.is_action_just_pressed("look_down")):
+		
+		return false
+	
+	var blocks := entity.get_game_world().blocks
+	var block_position := blocks.world_to_block(global_position)
+	
+	if not can_climb(blocks, block_position):
+		return false
+	
+	# Start climbing
+	velocity = Vector2.ZERO
+	global_position.x = blocks.block_to_world(block_position, true).x
+	
+	player_state = PlayerState.CLIMBING
+	
+	return true
+
+func stop_climbing() -> void:
+	player_state = PlayerState.GROUND
+	
+func climb() -> void:
+	if player_input.is_action_just_pressed("interact"):
+		stop_climbing()
+		return
+	
+	if player_input.is_action_just_pressed("jump"):
+		stop_climbing()
+		jump()
+		
+		velocity.x = move_direction * CLIMB_JUMP_SPEED
+		
+		return
+	
+	var blocks := entity.get_game_world().blocks
+	var block_position := blocks.world_to_block(global_position)
+	
+	if not can_climb(blocks, block_position):
+		stop_climbing()
+		return
+	
+	velocity.y = look_direction * CLIMB_SPEED
+	
+	if look_direction == 0.0:
+		entity.animation_player.play("climb_idle")
+	else:
+		entity.animation_player.play("climb")
+
 func controls(delta: float) -> void:
+	aim()
 	try_use_item()
 	
 	if not modify_block_timer.is_stopped():
 		return
 	
-	velocity.y = Direction.target_axis(
-		velocity.y,
-		GRAVITY_SPEED,
-		GRAVITY_ACCELERATION * delta)
-	
-	aim()
-	walk(delta)
-	jump()
-	
-	if is_on_floor():
-		coyote_timer.start()
-	else:
-		midstop_jump()
+	match player_state:
+		PlayerState.GROUND:
+			if try_climbing():
+				return
+			
+			velocity.y = Direction.target_axis(
+				velocity.y,
+				GRAVITY_SPEED,
+				GRAVITY_ACCELERATION * delta)
+			
+			walk(delta)
+			try_jump()
+			
+			if is_on_floor():
+				coyote_timer.start()
+			else:
+				midstop_jump()
+		
+			show_ground_effects()
+			animate()
+		
+		PlayerState.CLIMBING:
+			climb()
 	
 	move_and_slide()
-	
-	show_ground_effects()
-	animate()
 
 func stop_modify_block() -> void:
 	if modify_block_tween != null:

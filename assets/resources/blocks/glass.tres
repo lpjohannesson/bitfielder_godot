@@ -10,6 +10,7 @@
 script = ExtResource("1_l0w2h")
 is_solid = true
 is_one_way = false
+is_climbable = false
 is_partial = true
 casts_shadow = true
 

@@ -1,20 +1,27 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=12 format=3 uid="uid://b0kv0610wegjy"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=14 format=3 uid="uid://b0kv0610wegjy"]
 
 [ext_resource type="Texture2D" uid="uid://dtr4vbkje7np6" path="res://assets/textures/blocks/particles/wood.png" id="1_nf3pu"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="2_irsbv"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_n5wyv"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_light.gd" id="2_opvly"]
 [ext_resource type="Texture2D" uid="uid://cp0b8r2o1md0q" path="res://assets/textures/blocks/torch1.png" id="3_4p5hp"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="4_2tkm8"]
 [ext_resource type="Texture2D" uid="uid://bjhmpt47srk17" path="res://assets/textures/blocks/torch2.png" id="4_pmef1"]
 [ext_resource type="Texture2D" uid="uid://brmxfhsfacv38" path="res://assets/textures/blocks/torch3.png" id="5_qxubi"]
 [ext_resource type="Texture2D" uid="uid://cq25nidmcnh75" path="res://assets/textures/blocks/torch4.png" id="6_fbrky"]
 
+[sub_resource type="Resource" id="Resource_ibmut"]
+script = ExtResource("2_opvly")
+color = Color(0.894379, 0.693232, 0.626264, 1)
+
 [sub_resource type="Resource" id="Resource_r47fy"]
 script = ExtResource("2_n5wyv")
 is_solid = false
 is_one_way = null
+is_climbable = false
 is_partial = true
 casts_shadow = true
+block_light = SubResource("Resource_ibmut")
 
 [sub_resource type="AnimatedTexture" id="AnimatedTexture_3otmv"]
 frames = 4

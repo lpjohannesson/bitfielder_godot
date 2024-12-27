@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemType" load_steps=5 format=3 uid="uid://cpjc2omyr43gi"]
+
+[ext_resource type="Texture2D" uid="uid://dn5tdtcmb1xmw" path="res://assets/textures/items/ladder.png" id="1_0awpa"]
+[ext_resource type="Script" path="res://assets/objects/world/item/properties/block_item_properties.gd" id="2_5bl53"]
+[ext_resource type="Script" path="res://assets/objects/world/item/item_type.gd" id="3_yvjae"]
+
+[sub_resource type="Resource" id="Resource_68nmg"]
+script = ExtResource("2_5bl53")
+
+[resource]
+script = ExtResource("3_yvjae")
+item_name = "ladder"
+item_texture = ExtResource("1_0awpa")
+properties = SubResource("Resource_68nmg")

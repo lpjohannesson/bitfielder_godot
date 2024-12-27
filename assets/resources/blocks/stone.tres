@@ -9,6 +9,7 @@
 script = ExtResource("2_jt0r1")
 is_solid = true
 is_one_way = false
+is_climbable = false
 is_partial = false
 casts_shadow = true
 

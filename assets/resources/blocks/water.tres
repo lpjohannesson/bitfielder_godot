@@ -13,6 +13,7 @@
 script = ExtResource("2_olm3e")
 is_solid = false
 is_one_way = false
+is_climbable = false
 is_partial = false
 casts_shadow = true
 
