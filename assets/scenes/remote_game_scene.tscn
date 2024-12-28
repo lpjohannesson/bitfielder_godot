@@ -4,13 +4,16 @@
 [ext_resource type="PackedScene" uid="uid://dofu8ik7dtua1" path="res://assets/scenes/game_scene.tscn" id="2_g7it3"]
 [ext_resource type="PackedScene" uid="uid://cbxga1xteuyhl" path="res://assets/objects/menu/pause/pause_screen.tscn" id="3_bcyw3"]
 
-[node name="RemoteGameScene" type="Node2D" node_paths=PackedStringArray("pause_screen")]
+[node name="RemoteGameScene" type="Node2D" node_paths=PackedStringArray("scene", "pause_screen")]
 script = ExtResource("1_r57ti")
+scene = NodePath("GameScene")
 pause_screen = NodePath("PauseScreen")
 
 [node name="GameScene" parent="." instance=ExtResource("2_g7it3")]
 
-[node name="PauseScreen" parent="." instance=ExtResource("3_bcyw3")]
+[node name="PauseScreen" parent="." node_paths=PackedStringArray("scene") instance=ExtResource("3_bcyw3")]
+visible = false
+scene = NodePath("../GameScene")
 
 [connection signal="continue_selected" from="PauseScreen" to="." method="_on_pause_screen_continue_selected"]
 [connection signal="quit_selected" from="PauseScreen" to="." method="_on_pause_screen_quit_selected"]

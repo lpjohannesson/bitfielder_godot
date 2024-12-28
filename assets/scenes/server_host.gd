@@ -10,7 +10,7 @@ var connection := ENetConnection.new()
 
 var peer_clients := {}
 
-func _ready():
+func start_host():
 	connection.create_host_bound("*", PORT, 32)
 
 func _process(_delta: float) -> void:

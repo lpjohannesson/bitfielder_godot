@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://ctmrd6lm4hbpt"]
+
+[ext_resource type="PackedScene" uid="uid://cbxga1xteuyhl" path="res://assets/objects/menu/pause/pause_screen.tscn" id="1_1tuxv"]
+[ext_resource type="Script" path="res://assets/objects/menu/pause/local_pause_screen.gd" id="2_ncs81"]
+[ext_resource type="Theme" uid="uid://wm8dstmgs0eu" path="res://assets/themes/menu_theme.tres" id="2_ob8uh"]
+
+[node name="LocalPauseScreen" node_paths=PackedStringArray("host_on_network_button") instance=ExtResource("1_1tuxv")]
+script = ExtResource("2_ncs81")
+host_on_network_button = NodePath("Menu/VBoxContainer/HostOnNetworkButton")
+
+[node name="HostOnNetworkButton" type="Button" parent="Menu/VBoxContainer" index="2"]
+layout_mode = 2
+theme = ExtResource("2_ob8uh")
+text = "Host on network"
+
+[connection signal="button_down" from="Menu/VBoxContainer/HostOnNetworkButton" to="." method="_on_host_on_network_button_button_down"]

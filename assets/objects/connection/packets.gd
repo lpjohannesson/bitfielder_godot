@@ -1,6 +1,7 @@
 class_name Packets
 
 enum ServerPacket {
+	SERVER_CLOSED,
 	CREATE_BLOCK_CHUNK,
 	CREATE_BLOCK_HEIGHTMAP,
 	PLAYER_CHUNK_INDEX,
@@ -14,6 +15,8 @@ enum ServerPacket {
 }
 
 enum ClientPacket {
+	QUIT_SERVER,
+	PAUSE_GAME,
 	ACTION_PRESSED,
 	ACTION_RELEASED,
 	CHECK_PLAYER_POSITION,

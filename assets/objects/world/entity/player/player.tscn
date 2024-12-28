@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://qhbwwmg422j6"]
+[gd_scene load_steps=23 format=3 uid="uid://qhbwwmg422j6"]
 
 [ext_resource type="Script" path="res://assets/objects/world/entity/player/player.gd" id="1_7uomn"]
 [ext_resource type="Shader" path="res://assets/shaders/player.gdshader" id="2_1ofg0"]
@@ -16,21 +16,6 @@ shader_parameter/skin_texture = ExtResource("3_rw5il")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i4kni"]
 size = Vector2(8, 13)
-
-[sub_resource type="Animation" id="Animation_yldd1"]
-length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [17]
-}
 
 [sub_resource type="Animation" id="Animation_blapl"]
 resource_name = "climb"
@@ -240,7 +225,6 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_whnse"]
 _data = {
-"RESET": SubResource("Animation_yldd1"),
 "climb": SubResource("Animation_blapl"),
 "climb_idle": SubResource("Animation_gn3gp"),
 "fall": SubResource("Animation_t7vn5"),
@@ -273,7 +257,6 @@ position = Vector2(0, -1)
 texture = ExtResource("3_4xs5l")
 hframes = 4
 vframes = 5
-frame = 17
 script = ExtResource("4_faxp7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -299,6 +282,7 @@ animation_player = NodePath("../AnimationPlayer")
 libraries = {
 "": SubResource("AnimationLibrary_whnse")
 }
+autoplay = "idle"
 
 [node name="CoyoteTimer" type="Timer" parent="."]
 wait_time = 0.1

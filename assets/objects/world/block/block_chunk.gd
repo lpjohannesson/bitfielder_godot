@@ -29,6 +29,6 @@ func redraw_chunk() -> void:
 	back_layer.queue_redraw()
 	shadow_layer.queue_redraw()
 
-func _enter_tree() -> void:
+func _init() -> void:
 	front_ids.resize(BLOCK_COUNT)
 	back_ids.resize(BLOCK_COUNT)

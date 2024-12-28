@@ -70,6 +70,9 @@ func get_block_address(block_position: Vector2i) -> BlockAddress:
 	return address
 
 func create_colliders(chunk: BlockChunk) -> void:
+	for collider in chunk.colliders.get_children():
+		collider.free()
+	
 	for y in range(BlockChunk.CHUNK_SIZE.y):
 		for x in range(BlockChunk.CHUNK_SIZE.x):
 			var chunk_position := Vector2i(x, y)
@@ -97,7 +100,6 @@ func create_chunk(chunk_index: Vector2i) -> BlockChunk:
 	chunks.add_child(chunk)
 	
 	chunk_map[chunk_index] = chunk
-	create_colliders(chunk)
 	
 	return chunk
 
@@ -111,9 +113,6 @@ func destroy_chunk(chunk_index: Vector2i) -> void:
 	chunk.queue_free()
 
 func update_chunk(chunk: BlockChunk) -> void:
-	for collider in chunk.colliders.get_children():
-		collider.free()
-	
 	create_colliders(chunk)
 
 func get_neighboring_chunks(block_position: Vector2i) -> Array[BlockChunk]:

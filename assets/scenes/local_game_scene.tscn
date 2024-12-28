@@ -2,19 +2,23 @@
 
 [ext_resource type="PackedScene" uid="uid://dofu8ik7dtua1" path="res://assets/scenes/game_scene.tscn" id="1_rbb3k"]
 [ext_resource type="Script" path="res://assets/scenes/local_game_scene.gd" id="1_tbd82"]
-[ext_resource type="PackedScene" uid="uid://dabfu1b4js5p2" path="res://assets/objects/game_server.tscn" id="2_xjlhy"]
-[ext_resource type="PackedScene" uid="uid://cbxga1xteuyhl" path="res://assets/objects/menu/pause/pause_screen.tscn" id="3_aa5yb"]
+[ext_resource type="PackedScene" uid="uid://dabfu1b4js5p2" path="res://assets/objects/server/game_server.tscn" id="2_xjlhy"]
+[ext_resource type="PackedScene" uid="uid://ctmrd6lm4hbpt" path="res://assets/objects/menu/pause/local_pause_screen.tscn" id="3_f3jxo"]
 
-[node name="LocalGameScene" type="Node2D" node_paths=PackedStringArray("local_server", "pause_screen")]
+[node name="LocalGameScene" type="Node2D" node_paths=PackedStringArray("scene", "local_server", "pause_screen")]
 process_mode = 3
 script = ExtResource("1_tbd82")
+scene = NodePath("GameScene")
 local_server = NodePath("ServerContainer/GameServer")
-pause_screen = NodePath("PauseScreen")
+pause_screen = NodePath("LocalPauseScreen")
 
 [node name="GameScene" parent="." instance=ExtResource("1_rbb3k")]
 process_mode = 1
 
-[node name="PauseScreen" parent="." instance=ExtResource("3_aa5yb")]
+[node name="LocalPauseScreen" parent="." node_paths=PackedStringArray("local_scene", "scene") instance=ExtResource("3_f3jxo")]
+visible = false
+local_scene = NodePath("..")
+scene = NodePath("../GameScene")
 
 [node name="ServerContainer" type="SubViewport" parent="."]
 size = Vector2i(2, 2)
@@ -24,5 +28,5 @@ render_target_update_mode = 4
 [node name="GameServer" parent="ServerContainer" instance=ExtResource("2_xjlhy")]
 process_mode = 1
 
-[connection signal="continue_selected" from="PauseScreen" to="." method="_on_pause_screen_continue_selected"]
-[connection signal="quit_selected" from="PauseScreen" to="." method="_on_pause_screen_quit_selected"]
+[connection signal="continue_selected" from="LocalPauseScreen" to="." method="_on_local_pause_screen_continue_selected"]
+[connection signal="quit_selected" from="LocalPauseScreen" to="." method="_on_local_pause_screen_quit_selected"]

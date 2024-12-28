@@ -15,12 +15,16 @@ func stop_server_connection() -> void:
 	if server == null:
 		return
 	
+	# Send final packets
+	if server.peer.is_active():
+		server.connection.service()
+	
 	server.connection.destroy()
 	RemoteServerConnection.instance = null
 
-func poll_server() -> bool:
+func poll_server(server: RemoteServerConnection) -> bool:
 	while true:
-		var peer_event: Array = get_server().connection.service()
+		var peer_event: Array = server.connection.service()
 		var event_type: ENetConnection.EventType = peer_event[0]
 		
 		match event_type:
@@ -42,8 +46,10 @@ func _ready() -> void:
 		stop_server_connection()
 
 func _process(_delta: float) -> void:
-	if get_server() != null:
-		if poll_server():
+	var server := get_server()
+	
+	if server != null:
+		if poll_server(server):
 			get_tree().change_scene_to_file(
 				"res://assets/scenes/remote_game_scene.tscn")
 

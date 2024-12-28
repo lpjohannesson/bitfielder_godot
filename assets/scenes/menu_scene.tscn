@@ -16,19 +16,10 @@ connection_timer = NodePath("ConnectionTimer")
 [node name="Menus" type="Control" parent="."]
 layout_mode = 3
 anchors_preset = 0
+scale = Vector2(3, 3)
 
-[node name="MainMenu" parent="Menus" instance=ExtResource("2_elm5u")]
-
-[node name="MultiplayerMenu" parent="Menus" instance=ExtResource("3_xkfv7")]
-visible = false
-
-[node name="ConnectionMenu" parent="Menus" instance=ExtResource("4_duo2n")]
-visible = false
-connection_timed_out_text = "Connection timed out."
-
-[node name="Camera2D" type="Camera2D" parent="."]
-
-[node name="Logo" type="TextureRect" parent="."]
+[node name="Logo" type="TextureRect" parent="Menus"]
+layout_mode = 1
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -40,6 +31,17 @@ offset_right = 80.0
 grow_horizontal = 2
 grow_vertical = 0
 texture = ExtResource("4_ofaut")
+
+[node name="MainMenu" parent="Menus" instance=ExtResource("2_elm5u")]
+
+[node name="MultiplayerMenu" parent="Menus" instance=ExtResource("3_xkfv7")]
+visible = false
+
+[node name="ConnectionMenu" parent="Menus" instance=ExtResource("4_duo2n")]
+visible = false
+connection_timed_out_text = "Connection timed out."
+
+[node name="Camera2D" type="Camera2D" parent="."]
 
 [node name="ConnectionTimer" type="Timer" parent="."]
 one_shot = true

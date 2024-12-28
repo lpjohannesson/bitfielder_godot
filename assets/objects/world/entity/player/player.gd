@@ -427,8 +427,7 @@ func can_climb(blocks: BlockWorld, block_position: Vector2i) -> bool:
 func try_climbing() -> bool:
 	if not (\
 			player_input.is_action_just_pressed("interact") or \
-			player_input.is_action_just_pressed("look_up") or \
-			player_input.is_action_just_pressed("look_down")):
+			player_input.is_action_just_pressed("look_up")):
 		
 		return false
 	
@@ -447,6 +446,7 @@ func try_climbing() -> bool:
 	return true
 
 func stop_climbing() -> void:
+	velocity.x = move_direction * CLIMB_JUMP_SPEED
 	player_state = PlayerState.GROUND
 	
 func climb() -> void:
@@ -457,8 +457,6 @@ func climb() -> void:
 	if player_input.is_action_just_pressed("jump"):
 		stop_climbing()
 		jump()
-		
-		velocity.x = move_direction * CLIMB_JUMP_SPEED
 		
 		return
 	

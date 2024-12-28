@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://cvvclvjf62j4p"]
+[gd_scene load_steps=3 format=3 uid="uid://cvvclvjf62j4p"]
 
 [ext_resource type="Script" path="res://assets/objects/menu/connection_menu.gd" id="1_jwr63"]
+[ext_resource type="Theme" uid="uid://wm8dstmgs0eu" path="res://assets/themes/menu_theme.tres" id="2_v4hwh"]
 
 [node name="ConnectionMenu" type="Control" node_paths=PackedStringArray("status_label")]
 layout_mode = 3
@@ -19,6 +20,7 @@ offset_left = -87.0
 offset_right = 87.0
 offset_bottom = 23.0
 grow_horizontal = 2
+theme = ExtResource("2_v4hwh")
 text = "Status text"
 horizontal_alignment = 1
 
@@ -28,10 +30,11 @@ anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -30.0
-offset_top = 33.0
+offset_top = 24.0
 offset_right = 30.0
-offset_bottom = 64.0
+offset_bottom = 48.0
 grow_horizontal = 2
+theme = ExtResource("2_v4hwh")
 text = "Back"
 
 [connection signal="button_down" from="BackButton" to="." method="_on_back_button_button_down"]

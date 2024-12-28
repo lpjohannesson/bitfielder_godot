@@ -1,18 +1,17 @@
 extends Node2D
 class_name RemoteGameScene
 
+@export var scene: GameScene
 @export var pause_screen: PauseScreen
+
 var paused := false
 
 func pause_game() -> void:
 	paused = not paused
 	pause_screen.visible = paused
 
-func disconnect_server() -> void:
-	get_tree().change_scene_to_file("res://assets/scenes/menu_scene.tscn")
-
 func _ready() -> void:
-	GameScene.instance.server = RemoteServerConnection.instance
+	scene.server = RemoteServerConnection.instance
 
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("pause"):
@@ -29,14 +28,14 @@ func _process(_delta: float) -> void:
 				break
 			
 			ENetConnection.EVENT_DISCONNECT:
-				disconnect_server()
+				scene.disconnect_server()
 			
 			ENetConnection.EVENT_RECEIVE:
 				var packet = GamePacket.from_bytes(server.peer.get_packet())
-				GameScene.instance.packet_manager.recieve_packet(packet)
+				scene.packet_manager.recieve_packet(packet)
 
 func _on_pause_screen_continue_selected() -> void:
 	pause_game()
 
 func _on_pause_screen_quit_selected() -> void:
-	disconnect_server()
+	scene.disconnect_server()
