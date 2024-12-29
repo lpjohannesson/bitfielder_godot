@@ -16,7 +16,7 @@ func stop_server_connection() -> void:
 		return
 	
 	# Send final packets
-	if server.peer.is_active():
+	if server.peer != null and server.peer.is_active():
 		server.connection.service()
 	
 	server.connection.destroy()
