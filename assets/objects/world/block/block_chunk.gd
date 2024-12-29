@@ -15,6 +15,8 @@ var back_ids: PackedInt32Array
 
 var chunk_index: Vector2i
 
+var redrawing_chunk := false
+
 static func get_block_index(chunk_position: Vector2i) -> int:
 	return chunk_position.y * CHUNK_SIZE.x + chunk_position.x
 
@@ -28,6 +30,10 @@ func redraw_chunk() -> void:
 	front_layer.queue_redraw()
 	back_layer.queue_redraw()
 	shadow_layer.queue_redraw()
+	
+	redrawing_chunk = true
+	await front_layer.draw
+	redrawing_chunk = false
 
 func _init() -> void:
 	front_ids.resize(BLOCK_COUNT)

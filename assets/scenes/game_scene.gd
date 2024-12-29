@@ -67,7 +67,7 @@ func update_block(
 	
 	for chunk in blocks.get_neighboring_chunks(block_specifier.block_position):
 		blocks.update_chunk(chunk)
-		chunk.redraw_chunk()
+		blocks_renderer.redraw_chunk(chunk)
 	
 	blocks.update_heightmap(block_specifier)
 	lighting_display.show_lightmap()
@@ -103,6 +103,9 @@ func try_select_items() -> void:
 
 func resize() -> void:
 	shadow_viewport.size = viewport.get_visible_rect().size
+	
+	for chunk in world.blocks.chunk_map.values():
+		blocks_renderer.redraw_chunk(chunk)
 
 func _init() -> void:
 	instance = self

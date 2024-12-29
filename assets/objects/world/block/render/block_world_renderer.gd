@@ -4,73 +4,97 @@ class_name BlockWorldRenderer
 @export var world: GameWorld
 @export var particle_scene: PackedScene
 
-func create_render_data(
-		chunk: BlockChunk,
-		block_ids: PackedInt32Array,
-		layer: Node2D,
-		on_front_layer: bool) -> BlockRenderData:
+func connect_chunk_signal(chunk_signal: Signal, callable: Callable) -> void:
+	chunk_signal.connect(callable, ConnectFlags.CONNECT_ONE_SHOT)
+
+func draw_block_sprites(layer: Node2D, sprites: Array[BlockSprite]) -> void:
+	for sprite in sprites:
+		if sprite.texture == null:
+			layer.draw_rect(sprite.rect, Color.WHITE)
+			continue
+		
+		layer.draw_texture_rect_region(
+			sprite.texture,
+			sprite.rect,
+			sprite.region)
+
+func redraw_chunk_async(chunk: BlockChunk) -> void:
+	var block_sample := BlockSample.sample_chunks(
+		chunk.chunk_index - Vector2i.ONE,
+		chunk.chunk_index + Vector2i.ONE,
+		world.blocks)
 	
 	var render_data := BlockRenderData.new()
+	
 	render_data.blocks = world.blocks
-	
+	render_data.block_sample = block_sample
 	render_data.chunk = chunk
-	render_data.block_ids = block_ids
 	
-	render_data.layer = layer
-	render_data.on_front_layer = on_front_layer
+	var front_sprites: Array[BlockSprite] = []
+	var back_sprites: Array[BlockSprite] = []
+	var shadow_sprites: Array[BlockSprite] = []
 	
-	return render_data
-
-func get_render_block(render_data: BlockRenderData) -> BlockType:
-	var block_index := \
-		BlockChunk.get_block_index(render_data.chunk_position)
-	
-	render_data.block_id = render_data.block_ids[block_index]
-	return world.blocks.block_types[render_data.block_id]
-
-func draw_chunk(render_data: BlockRenderData) -> void:
-	for y in range(BlockChunk.CHUNK_SIZE.y):
-		for x in range(BlockChunk.CHUNK_SIZE.x):
-			render_data.chunk_position = Vector2i(x, y)
-			var block := get_render_block(render_data)
-			
-			if block.renderer == null:
-				continue
-			
-			block.renderer.draw_block(render_data)
-
-func draw_chunk_front(chunk: BlockChunk) -> void:
-	var render_data := \
-		create_render_data(chunk, chunk.front_ids, chunk.front_layer, true)
-	
-	draw_chunk(render_data)
-
-func draw_chunk_back(chunk: BlockChunk) -> void:
-	var render_data := \
-		create_render_data(chunk, chunk.back_ids, chunk.back_layer, false)
-	
-	draw_chunk(render_data)
-
-func draw_chunk_shadow(chunk: BlockChunk) -> void:
-	var render_data := \
-		create_render_data(chunk, chunk.front_ids, chunk.shadow_layer, true)
+	var block_types := world.blocks.block_types
 	
 	for y in range(BlockChunk.CHUNK_SIZE.y):
 		for x in range(BlockChunk.CHUNK_SIZE.x):
-			render_data.chunk_position = Vector2i(x, y)
-			var block := get_render_block(render_data)
+			var chunk_position = Vector2i(x, y)
+			render_data.chunk_position = chunk_position
 			
-			if block.renderer == null:
-				continue
+			var block_index := BlockChunk.get_block_index(chunk_position)
 			
-			if not block.properties.casts_shadow:
-				continue
+			var front_id := chunk.front_ids[block_index]
+			var back_id := chunk.back_ids[block_index]
 			
-			if block.properties.is_partial:
-				block.renderer.draw_block(render_data)
-			else:
-				var block_rect := Rect2(render_data.chunk_position, Vector2.ONE)
-				render_data.layer.draw_rect(block_rect, Color.WHITE)
+			var front_block := block_types[front_id]
+			var back_block := block_types[back_id]
+			
+			# Draw front
+			if front_block.renderer != null:
+				render_data.block_id = front_id
+				render_data.on_front_layer = true
+				render_data.sprites = front_sprites
+				
+				front_block.renderer.draw_block(render_data)
+				
+				# Draw shadow
+				if front_block.properties.casts_shadow:
+					if front_block.properties.is_partial:
+						render_data.sprites = shadow_sprites
+						front_block.renderer.draw_block(render_data)
+					else:
+						var rect_sprite := BlockSprite.new()
+						rect_sprite.rect = Rect2(chunk_position, Vector2.ONE)
+						
+						shadow_sprites.push_back(rect_sprite)
+			
+			# Draw back
+			if back_block.renderer != null:
+				if front_block.properties.is_partial:
+					render_data.block_id = back_id
+					render_data.on_front_layer = false
+					render_data.sprites = back_sprites
+					
+					back_block.renderer.draw_block(render_data)
+	
+	connect_chunk_signal(chunk.front_layer.draw, func() -> void:
+		draw_block_sprites(chunk.front_layer, front_sprites))
+	
+	connect_chunk_signal(chunk.back_layer.draw, func() -> void:
+		draw_block_sprites(chunk.back_layer, back_sprites))
+	
+	connect_chunk_signal(chunk.shadow_layer.draw, func() -> void:
+		draw_block_sprites(chunk.shadow_layer, shadow_sprites))
+	
+	chunk.redraw_chunk()
+
+func redraw_chunk(chunk: BlockChunk) -> void:
+	if chunk.redrawing_chunk:
+		return
+	
+	redraw_chunk_async(chunk)
+	#var thread := Thread.new()
+	#thread.start(redraw_chunk_async.bind(chunk))
 
 func start_chunk(chunk: BlockChunk) -> void:
 	# Create shadow
@@ -82,10 +106,6 @@ func start_chunk(chunk: BlockChunk) -> void:
 	chunk.shadow_layer.global_transform = chunk.global_transform
 	
 	# Create signals
-	chunk.front_layer.draw.connect(func() -> void: draw_chunk_front(chunk))
-	chunk.back_layer.draw.connect(func() -> void: draw_chunk_back(chunk))
-	chunk.shadow_layer.draw.connect(func() -> void: draw_chunk_shadow(chunk))
-	
 	chunk.tree_exited.connect(chunk.shadow_layer.queue_free)
 	
 	# Update neighbors
@@ -96,7 +116,8 @@ func start_chunk(chunk: BlockChunk) -> void:
 		if neighbor_chunk == null:
 			continue
 		
-		neighbor_chunk.redraw_chunk()
+		# Update chunks after frame finished
+		call_deferred("redraw_chunk", neighbor_chunk)
 
 func spawn_particles(block_id: int, particle_position: Vector2):
 	var blocks := world.blocks

@@ -26,7 +26,7 @@ func get_neighbor_mask(
 	
 	# Get address
 	var neighbor_address := \
-		render_data.blocks.get_block_address(block_position + offset)
+		render_data.block_sample.get_block_address(block_position + offset)
 	
 	if neighbor_address == null:
 		return 0
@@ -47,13 +47,7 @@ func get_neighbor_mask(
 			return 1
 	
 	# Check same block on same layer
-	var neighbor_block_ids: PackedInt32Array
-	
-	if render_data.on_front_layer:
-		neighbor_block_ids = neighbor_address.chunk.front_ids
-	else:
-		neighbor_block_ids = neighbor_address.chunk.back_ids
-	
+	var neighbor_block_ids := neighbor_address.chunk.get_layer(render_data.on_front_layer)
 	var neighbor_block_id := neighbor_block_ids[neighbor_address.block_index]
 	
 	if render_data.block_id == neighbor_block_id:
@@ -62,16 +56,19 @@ func get_neighbor_mask(
 	return 0
 
 func draw_corner(render_data: BlockRenderData, frame: int, offset: Vector2) -> void:
-	var corner_position := \
-		Vector2(render_data.chunk_position) + offset * CORNER_SIZE
-	var corner_rect := Rect2(corner_position, CORNER_SIZE)
+	var block_sprite := BlockSprite.new()
 	
-	var corner_source_position := \
-		Vector2(offset.x + frame, offset.y) * CORNER_SOURCE_SIZE
-	var corner_source_rect := Rect2(corner_source_position, CORNER_SOURCE_SIZE)
+	block_sprite.texture = texture
 	
-	render_data.layer.draw_texture_rect_region(
-		texture, corner_rect, corner_source_rect)
+	block_sprite.rect = Rect2(
+		Vector2(render_data.chunk_position) + offset * CORNER_SIZE,
+		CORNER_SIZE)
+	
+	block_sprite.region = Rect2(
+		Vector2(offset.x + frame, offset.y) * CORNER_SOURCE_SIZE,
+		CORNER_SOURCE_SIZE)
+	
+	render_data.sprites.push_back(block_sprite)
 
 func draw_block(render_data: BlockRenderData) -> void:
 	# Create render data
