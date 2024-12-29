@@ -1,15 +1,16 @@
-[gd_scene load_steps=3 format=3 uid="uid://d4jfjxf7378j6"]
+[gd_scene load_steps=3 format=3 uid="uid://dugbp4m0fq71n"]
 
-[ext_resource type="Script" path="res://assets/objects/menu/multiplayer_menu.gd" id="1_47ovg"]
-[ext_resource type="Theme" uid="uid://wm8dstmgs0eu" path="res://assets/themes/menu_theme.tres" id="2_h8m51"]
+[ext_resource type="Script" path="res://assets/objects/menu/pages/remote_play_menu.gd" id="1_rgoh8"]
+[ext_resource type="Theme" uid="uid://wm8dstmgs0eu" path="res://assets/themes/menu_theme.tres" id="2_53u4g"]
 
-[node name="MultiplayerMenu" type="Control" node_paths=PackedStringArray("address_text")]
+[node name="RemotePlayMenu" type="Control" node_paths=PackedStringArray("address_text", "starting_button")]
 layout_mode = 3
 anchors_preset = 0
 size_flags_horizontal = 0
 size_flags_vertical = 0
-script = ExtResource("1_47ovg")
+script = ExtResource("1_rgoh8")
 address_text = NodePath("AddressText")
+starting_button = NodePath("VBoxContainer/CancelButton")
 
 [node name="AddressText" type="LineEdit" parent="."]
 layout_mode = 1
@@ -20,7 +21,7 @@ offset_left = -64.0
 offset_right = 64.0
 offset_bottom = 20.0
 grow_horizontal = 2
-theme = ExtResource("2_h8m51")
+theme = ExtResource("2_53u4g")
 text = "localhost"
 placeholder_text = "Server address"
 caret_blink = true
@@ -38,13 +39,13 @@ grow_horizontal = 2
 
 [node name="ConnectButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
-theme = ExtResource("2_h8m51")
+theme = ExtResource("2_53u4g")
 text = "Connect"
 
 [node name="CancelButton" type="Button" parent="VBoxContainer"]
 layout_mode = 2
-theme = ExtResource("2_h8m51")
+theme = ExtResource("2_53u4g")
 text = "Cancel"
 
-[connection signal="button_down" from="VBoxContainer/ConnectButton" to="." method="_on_connect_button_button_down"]
-[connection signal="button_down" from="VBoxContainer/CancelButton" to="." method="_on_cancel_button_button_down"]
+[connection signal="pressed" from="VBoxContainer/ConnectButton" to="." method="_on_connect_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/CancelButton" to="." method="_on_cancel_button_pressed"]

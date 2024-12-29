@@ -26,7 +26,7 @@ func host_on_network() -> void:
 
 func pause_game() -> void:
 	paused = not paused
-	pause_screen.visible = paused
+	pause_screen.show_screen(paused)
 	
 	if server_host == null:
 		get_tree().paused = paused

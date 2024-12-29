@@ -8,7 +8,7 @@ var paused := false
 
 func pause_game() -> void:
 	paused = not paused
-	pause_screen.visible = paused
+	pause_screen.show_screen(paused)
 
 func _ready() -> void:
 	scene.server = RemoteServerConnection.instance

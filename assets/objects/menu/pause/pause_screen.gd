@@ -3,9 +3,16 @@ class_name PauseScreen
 
 @export var scene: GameScene
 @export var skin_file_dialog: FileDialog
+@export var starting_button: Button
 
 signal continue_selected
 signal quit_selected
+
+func show_screen(paused: bool) -> void:
+	visible = paused
+	
+	if paused:
+		starting_button.grab_focus()
 
 func _on_continue_button_button_down() -> void:
 	continue_selected.emit()

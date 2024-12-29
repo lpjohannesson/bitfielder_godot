@@ -1,4 +1,4 @@
-extends Control
+extends MenuPage
 class_name ConnectionMenu
 
 @export var connecting_text: String
@@ -18,5 +18,5 @@ func show_connection_timed_out() -> void:
 func show_disconnected() -> void:
 	status_label.text = disconnected_text
 
-func _on_back_button_button_down() -> void:
+func _on_back_button_pressed() -> void:
 	back_selected.emit()

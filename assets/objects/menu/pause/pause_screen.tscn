@@ -4,9 +4,10 @@
 [ext_resource type="Script" path="res://assets/objects/menu/pause/pause_screen.gd" id="1_xu7lb"]
 [ext_resource type="Theme" uid="uid://wm8dstmgs0eu" path="res://assets/themes/menu_theme.tres" id="3_utxek"]
 
-[node name="PauseScreen" type="CanvasLayer" node_paths=PackedStringArray("skin_file_dialog")]
+[node name="PauseScreen" type="CanvasLayer" node_paths=PackedStringArray("skin_file_dialog", "starting_button")]
 script = ExtResource("1_xu7lb")
 skin_file_dialog = NodePath("SkinFileDialog")
+starting_button = NodePath("Menu/VBoxContainer/ContinueButton")
 
 [node name="Menu" type="Control" parent="."]
 layout_mode = 3

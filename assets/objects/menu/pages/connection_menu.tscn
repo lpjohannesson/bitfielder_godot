@@ -1,15 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://cvvclvjf62j4p"]
+[gd_scene load_steps=3 format=3 uid="uid://ew1cvbrifktc"]
 
-[ext_resource type="Script" path="res://assets/objects/menu/connection_menu.gd" id="1_jwr63"]
+[ext_resource type="Script" path="res://assets/objects/menu/pages/connection_menu.gd" id="1_jwr63"]
 [ext_resource type="Theme" uid="uid://wm8dstmgs0eu" path="res://assets/themes/menu_theme.tres" id="2_v4hwh"]
 
-[node name="ConnectionMenu" type="Control" node_paths=PackedStringArray("status_label")]
+[node name="ConnectionMenu" type="Control" node_paths=PackedStringArray("status_label", "starting_button")]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_jwr63")
 connecting_text = "Connecting..."
+connection_timed_out_text = "Connection timed out."
 disconnected_text = "Disconnected."
 status_label = NodePath("StatusLabel")
+starting_button = NodePath("BackButton")
 
 [node name="StatusLabel" type="Label" parent="."]
 layout_mode = 1
@@ -37,4 +39,4 @@ grow_horizontal = 2
 theme = ExtResource("2_v4hwh")
 text = "Back"
 
-[connection signal="button_down" from="BackButton" to="." method="_on_back_button_button_down"]
+[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
