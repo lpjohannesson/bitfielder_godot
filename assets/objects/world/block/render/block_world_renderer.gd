@@ -139,6 +139,9 @@ func start_chunk(chunk: BlockChunk) -> void:
 	# Create signals
 	chunk.tree_exited.connect(chunk.shadow_layer.queue_free)
 	
+	if chunk != null:
+		redraw_chunk(chunk)
+	
 	# Update neighbors
 	for chunk_offset in Direction.NEIGHBOR_OFFSETS_EIGHT:
 		var neighbor_chunk_index := chunk.chunk_index + chunk_offset
