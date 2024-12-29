@@ -498,8 +498,7 @@ func controls(delta: float) -> void:
 				coyote_timer.start()
 			else:
 				midstop_jump()
-		
-			show_ground_effects()
+			
 			animate()
 		
 		PlayerState.CLIMBING:
@@ -516,10 +515,11 @@ func _ready() -> void:
 	entity.position_changed.connect(stop_modify_block)
 
 func _physics_process(delta: float) -> void:
+	show_ground_effects()
+	
 	# Check if remote controlled player
 	if not entity.on_server and GameScene.instance.player != self:
 		move_and_slide()
-		show_ground_effects()
 		return
 	
 	if modify_block_timer.is_stopped():

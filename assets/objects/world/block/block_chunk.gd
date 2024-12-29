@@ -17,6 +17,8 @@ var chunk_index: Vector2i
 
 var redrawing_chunk := false
 
+signal chunk_done_drawing
+
 static func get_block_index(chunk_position: Vector2i) -> int:
 	return chunk_position.y * CHUNK_SIZE.x + chunk_position.x
 
@@ -33,6 +35,8 @@ func redraw_chunk() -> void:
 	
 	await front_layer.draw
 	redrawing_chunk = false
+	
+	chunk_done_drawing.emit()
 
 func _init() -> void:
 	front_ids.resize(BLOCK_COUNT)
