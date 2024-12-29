@@ -31,7 +31,6 @@ func redraw_chunk() -> void:
 	back_layer.queue_redraw()
 	shadow_layer.queue_redraw()
 	
-	redrawing_chunk = true
 	await front_layer.draw
 	redrawing_chunk = false
 

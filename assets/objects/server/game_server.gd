@@ -1,7 +1,7 @@
 extends Node
 class_name GameServer
 
-const CHUNK_LOAD_EXTENTS := Vector2i(5, 4)
+const CHUNK_LOAD_EXTENTS := Vector2i(1, 1)
 const BLOCK_CHECK_TIMEOUT := 0.25
 const CHUNK_LOAD_DISTANCE := 256.0
 const PLAYER_SPAWN_RANGE := 16

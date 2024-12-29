@@ -17,7 +17,9 @@ static func sample_chunks(
 	for y in range(chunk_start.y, chunk_end.y + 1):
 		for x in range(chunk_start.x, chunk_end.x + 1):
 			var chunk_index := Vector2i(x, y)
-			block_sample.chunks.push_back(blocks.get_chunk(chunk_index))
+			var chunk := blocks.get_chunk(chunk_index)
+			
+			block_sample.chunks.push_back(chunk)
 	
 	return block_sample
 

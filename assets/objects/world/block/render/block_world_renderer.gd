@@ -4,6 +4,8 @@ class_name BlockWorldRenderer
 @export var world: GameWorld
 @export var particle_scene: PackedScene
 
+var mutex := Mutex.new()
+
 func connect_chunk_signal(chunk_signal: Signal, callable: Callable) -> void:
 	chunk_signal.connect(callable, ConnectFlags.CONNECT_ONE_SHOT)
 
@@ -18,21 +20,22 @@ func draw_block_sprites(layer: Node2D, sprites: Array[BlockSprite]) -> void:
 			sprite.rect,
 			sprite.region)
 
-func redraw_chunk_async(chunk: BlockChunk) -> void:
-	var block_sample := BlockSample.sample_chunks(
-		chunk.chunk_index - Vector2i.ONE,
-		chunk.chunk_index + Vector2i.ONE,
-		world.blocks)
+func redraw_chunk_async(
+		thread: Thread,
+		chunk: BlockChunk,
+		block_sample: BlockSample) -> void:
+	
+	mutex.lock()
+	
+	var front_sprites: Array[BlockSprite] = []
+	var back_sprites: Array[BlockSprite] = []
+	var shadow_sprites: Array[BlockSprite] = []
 	
 	var render_data := BlockRenderData.new()
 	
 	render_data.blocks = world.blocks
 	render_data.block_sample = block_sample
 	render_data.chunk = chunk
-	
-	var front_sprites: Array[BlockSprite] = []
-	var back_sprites: Array[BlockSprite] = []
-	var shadow_sprites: Array[BlockSprite] = []
 	
 	var block_types := world.blocks.block_types
 	
@@ -77,6 +80,25 @@ func redraw_chunk_async(chunk: BlockChunk) -> void:
 					
 					back_block.renderer.draw_block(render_data)
 	
+	call_deferred(
+		"end_redraw_chunk_async",
+		thread,
+		chunk,
+		front_sprites,
+		back_sprites,
+		shadow_sprites)
+	
+	mutex.unlock()
+
+func end_redraw_chunk_async(
+		thread: Thread,
+		chunk: BlockChunk,
+		front_sprites: Array[BlockSprite],
+		back_sprites: Array[BlockSprite],
+		shadow_sprites: Array[BlockSprite]) -> void:
+	
+	thread.wait_to_finish()
+	
 	connect_chunk_signal(chunk.front_layer.draw, func() -> void:
 		draw_block_sprites(chunk.front_layer, front_sprites))
 	
@@ -88,13 +110,22 @@ func redraw_chunk_async(chunk: BlockChunk) -> void:
 	
 	chunk.redraw_chunk()
 
+func redraw_chunk_deferred(chunk: BlockChunk) -> void:
+	var block_sample := BlockSample.sample_chunks(
+		chunk.chunk_index - Vector2i.ONE,
+		chunk.chunk_index + Vector2i.ONE,
+		world.blocks)
+	
+	var thread := Thread.new()
+	thread.start(redraw_chunk_async.bind(thread, chunk, block_sample))
+
 func redraw_chunk(chunk: BlockChunk) -> void:
 	if chunk.redrawing_chunk:
 		return
 	
-	redraw_chunk_async(chunk)
-	#var thread := Thread.new()
-	#thread.start(redraw_chunk_async.bind(chunk))
+	chunk.redrawing_chunk = true
+	
+	call_deferred("redraw_chunk_deferred", chunk)
 
 func start_chunk(chunk: BlockChunk) -> void:
 	# Create shadow
@@ -117,7 +148,7 @@ func start_chunk(chunk: BlockChunk) -> void:
 			continue
 		
 		# Update chunks after frame finished
-		call_deferred("redraw_chunk", neighbor_chunk)
+		redraw_chunk(neighbor_chunk)
 
 func spawn_particles(block_id: int, particle_position: Vector2):
 	var blocks := world.blocks
