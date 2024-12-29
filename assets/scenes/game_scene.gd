@@ -24,12 +24,15 @@ var server: ServerConnection
 var player: Player
 
 func disconnect_server() -> void:
+	get_tree().change_scene_to_file("res://assets/scenes/menu_scene.tscn")
+
+func quit_server() -> void:
 	server.send_packet(GamePacket.create_packet(
 		Packets.ClientPacket.QUIT_SERVER,
 		null
 	))
 	
-	get_tree().change_scene_to_file("res://assets/scenes/menu_scene.tscn")
+	disconnect_server()
 
 func spawn_effect_sprite(effect_name: String, effect_position: Vector2) -> void:
 	var effect_sprite: EffectSprite = effect_sprite_scene.instantiate()

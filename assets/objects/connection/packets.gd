@@ -16,7 +16,6 @@ enum ServerPacket {
 
 enum ClientPacket {
 	QUIT_SERVER,
-	PAUSE_GAME,
 	ACTION_PRESSED,
 	ACTION_RELEASED,
 	CHECK_PLAYER_POSITION,

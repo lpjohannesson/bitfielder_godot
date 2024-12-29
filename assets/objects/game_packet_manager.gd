@@ -118,6 +118,9 @@ func recieve_packet(packet: GamePacket) -> void:
 	print(Packets.ServerPacket.find_key(packet.type), ": ", packet.data)
 	
 	match packet.type:
+		Packets.ServerPacket.SERVER_CLOSED:
+			scene.disconnect_server()
+		
 		Packets.ServerPacket.CREATE_BLOCK_CHUNK:
 			create_block_chunk(packet)
 		

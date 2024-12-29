@@ -106,11 +106,12 @@ func create_chunk(chunk_index: Vector2i) -> BlockChunk:
 func destroy_chunk(chunk_index: Vector2i) -> void:
 	var chunk := get_chunk(chunk_index)
 	
-	if chunk.redrawing_chunk:
-		await chunk.chunk_done_drawing
-	
 	if chunk == null:
 		return
+	
+	# Wait for chunk to finish drawing
+	if chunk.redrawing_chunk:
+		await chunk.chunk_done_drawing
 	
 	chunk_map.erase(chunk_index)
 	chunk.queue_free()

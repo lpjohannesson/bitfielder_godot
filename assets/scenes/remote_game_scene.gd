@@ -13,10 +13,11 @@ func pause_game() -> void:
 func _ready() -> void:
 	scene.server = RemoteServerConnection.instance
 
-func _process(_delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if Input.is_action_just_pressed("pause"):
 		pause_game()
-	
+
+func _process(_delta: float) -> void:
 	var server := RemoteServerConnection.instance
 	
 	while true:
@@ -38,4 +39,4 @@ func _on_pause_screen_continue_selected() -> void:
 	pause_game()
 
 func _on_pause_screen_quit_selected() -> void:
-	scene.disconnect_server()
+	scene.quit_server()

@@ -10,6 +10,8 @@ var client := LocalClientConnection.new()
 var server := LocalServerConnection.new()
 var server_host: ServerHost
 
+var paused := false
+
 func host_on_network() -> void:
 	if server_host != null:
 		return
@@ -19,12 +21,15 @@ func host_on_network() -> void:
 	
 	server_host.server = local_server
 	server_host.start_host()
+	
+	get_tree().paused = false
 
 func pause_game() -> void:
-	var paused := not get_tree().paused
-	get_tree().paused = paused
-	
+	paused = not paused
 	pause_screen.visible = paused
+	
+	if server_host == null:
+		get_tree().paused = paused
 
 func _ready() -> void:
 	# Attach local client and server connections
@@ -33,7 +38,7 @@ func _ready() -> void:
 	
 	local_server.connect_client(client)
 
-func _process(_delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if Input.is_action_just_pressed("pause"):
 		pause_game()
 
@@ -42,4 +47,8 @@ func _on_local_pause_screen_continue_selected() -> void:
 
 func _on_local_pause_screen_quit_selected() -> void:
 	get_tree().paused = false
-	scene.disconnect_server()
+	
+	local_server.close_server()
+	
+	if server_host != null:
+		server_host.connection.service()

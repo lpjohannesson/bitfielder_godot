@@ -14,6 +14,13 @@ static var instance: GameServer
 var clients: Array[ClientConnection] = []
 var next_entity_id := 1
 
+func close_server() -> void:
+	for client in clients:
+		client.send_packet(GamePacket.create_packet(
+			Packets.ServerPacket.SERVER_CLOSED,
+			null
+		))
+
 func add_entity(entity: GameEntity) -> void:
 	entity.entity_id = next_entity_id
 	entity.on_server = true
@@ -341,6 +348,9 @@ func connect_client(client: ClientConnection) -> void:
 	clients.push_back(client)
 
 func disconnect_client(client: ClientConnection) -> void:
+	if not clients.has(client):
+		return
+	
 	clients.erase(client)
 	
 	# Send removal to others
