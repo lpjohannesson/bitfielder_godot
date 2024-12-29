@@ -44,6 +44,7 @@ func save_entity_data(
 	if not request.always_write and request.entity.entity_data.get(data_type) == value:
 		return
 	
+	# Save data to request and entity
 	request.entity_data[data_type] = value
 	request.entity.entity_data[data_type] = value
 
@@ -76,6 +77,7 @@ func create_entity_data(entity: GameEntity) -> Dictionary:
 func create_entity_update_data(entity: GameEntity, spawning: bool) -> Dictionary:
 	var entity_data := create_entity_data(entity)
 	
+	# Write all data if spawning
 	var request := DataRequest.create(entity, entity_data, spawning)
 	
 	if entity.body != null:
