@@ -4,7 +4,7 @@ class_name GameServer
 const CHUNK_LOAD_EXTENTS := Vector2i(6, 5)
 const BLOCK_CHECK_TIMEOUT := 0.25
 const CHUNK_LOAD_DISTANCE := 256.0
-const PLAYER_SPAWN_RANGE := 16
+const PLAYER_SPAWN_RANGE := 8
 
 @export var world: GameWorld
 @export var block_generator: BlockGenerator
@@ -294,7 +294,6 @@ func recieve_packet(packet: GamePacket, client: ClientConnection) -> void:
 func connect_client(client: ClientConnection) -> void:
 	# Spawn player
 	var player: Player = world.entities.serializer.player_scene.instantiate()
-	add_entity(player.entity)
 	
 	client.player = player
 	
@@ -305,6 +304,8 @@ func connect_client(client: ClientConnection) -> void:
 	
 	player.global_position = \
 		world.blocks.block_to_world(player_ground_position, true)
+	
+	add_entity(player.entity)
 	
 	# Send initial packets
 	client.chunk_load_position = player.global_position

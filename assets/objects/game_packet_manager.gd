@@ -98,7 +98,7 @@ func assign_player(packet: GamePacket) -> void:
 	var entity := scene.world.entities.get_entity(packet.data)
 	scene.player = entity.entity_node
 	 
-	scene.player_camera.reset_camera()
+	scene.player_camera.call_deferred("reset_camera")
 
 func create_inventory(packet: GamePacket) -> void:
 	var inventory := ItemInventory.new()

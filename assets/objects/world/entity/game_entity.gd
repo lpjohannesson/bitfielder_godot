@@ -9,7 +9,7 @@ class_name GameEntity
 @export var animation_player: AnimationPlayer
 
 var entity_id := 0
-var entity_data := {}
+var entity_data: Dictionary
 var on_server = false
 
 signal position_changed

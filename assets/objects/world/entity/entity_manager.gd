@@ -10,6 +10,8 @@ func add_entity(entity: GameEntity) -> void:
 	entities.push_back(entity)
 	entity_id_map[entity.entity_id] = entity
 	
+	entity.entity_data = serializer.create_entity_spawn_data(entity)
+	
 	add_child(entity.entity_node)
 
 func remove_entity(entity: GameEntity) -> void:

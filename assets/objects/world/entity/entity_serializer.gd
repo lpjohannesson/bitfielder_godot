@@ -40,13 +40,15 @@ func save_entity_data(
 		data_type: String,
 		value: Variant) -> void:
 	
-	# Check if entity data already set
-	if not request.always_write and request.entity.entity_data.get(data_type) == value:
-		return
-	
-	# Save data to request and entity
-	request.entity_data[data_type] = value
-	request.entity.entity_data[data_type] = value
+	if request.always_write:
+		request.entity_data[data_type] = value
+	else:
+		# Check if entity data already set
+		if request.entity.entity_data.get(data_type) == value:
+			return
+		
+		request.entity.entity_data[data_type] = value
+		request.entity_data[data_type] = value
 
 func save_entity_position(request: DataRequest) -> void:
 	save_entity_data(request, DataType.POSITION,
@@ -134,8 +136,8 @@ func create_entity(entity_data: Dictionary) -> GameEntity:
 	var entity := create_entity_by_type(entity_type)
 	
 	entity.entity_id = entity_data[DataType.ID]
-	
-	load_entity_data(entity, entity_data)
 	entities.add_entity(entity)
+	
+	call_deferred("load_entity_data", entity, entity_data)
 	
 	return entity

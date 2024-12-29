@@ -38,14 +38,14 @@ func poll_server(server: RemoteServerConnection) -> bool:
 
 func _ready() -> void:
 	# Check if disconnected from server
-	if get_server() != null:
+	if get_server() == null:
+		main_menu.select_menu_page()
+	else:
 		main_menu.hide()
 		connection_menu.select_menu_page()
 		connection_menu.show_disconnected()
 		
 		stop_server_connection()
-	
-	main_menu.select_menu_page()
 
 func _process(_delta: float) -> void:
 	var server := get_server()
