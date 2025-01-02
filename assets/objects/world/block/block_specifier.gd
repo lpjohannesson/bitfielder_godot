@@ -4,6 +4,24 @@ var block_position: Vector2i
 var block_id: int
 var on_front_layer: bool
 
+static func is_data_valid(data: Variant) -> bool:
+	if not data is Array:
+		return false
+	
+	if data.size() != 3:
+		return false
+	
+	if not data[0] is Vector2i:
+		return false
+	
+	if not data[1] is int:
+		return false
+	
+	if not data[2] is bool:
+		return false
+	
+	return true
+
 static func from_data(data: Array, blocks: BlockWorld) -> BlockSpecifier:
 	var block_specifier := BlockSpecifier.new()
 	

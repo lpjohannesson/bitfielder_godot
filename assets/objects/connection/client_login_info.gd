@@ -1,7 +1,19 @@
 class_name ClientLoginInfo
 
+const LOGIN_PARAMS := ["user", "version"]
+
 var game_version: String
 var username: String
+
+static func is_data_valid(data: Variant) -> bool:
+	if not data is Dictionary:
+		return false
+	
+	for param in LOGIN_PARAMS:
+		if not data.has(param):
+			return false
+	
+	return true
 
 static func from_data(data: Dictionary) -> ClientLoginInfo:
 	var login_info := ClientLoginInfo.new()

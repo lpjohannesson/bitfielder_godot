@@ -27,7 +27,10 @@ func recieve_accepted_packet(packet: GamePacket, client: RemoteClientConnection)
 	server.recieve_packet(packet, client)
 
 func recieve_login_packet(packet: GamePacket, client: RemoteClientConnection) -> void:
-	var login_info = ClientLoginInfo.from_data(packet.data)
+	if not ClientLoginInfo.is_data_valid(packet.data):
+		return
+	
+	var login_info := ClientLoginInfo.from_data(packet.data)
 	
 	# Check for same version
 	var game_version := GameServer.get_game_version()
@@ -53,6 +56,9 @@ func recieve_login_packet(packet: GamePacket, client: RemoteClientConnection) ->
 func recieve_packet(peer: ENetPacketPeer) -> void:
 	var client: RemoteClientConnection = peer_clients[peer]
 	var packet := GamePacket.from_bytes(peer.get_packet())
+	
+	if packet == null:
+		return
 	
 	print(Packets.ClientPacket.find_key(packet.type), ": ", packet.data)
 	

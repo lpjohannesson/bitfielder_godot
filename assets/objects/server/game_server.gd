@@ -121,10 +121,13 @@ func rubberband_player(client: ClientConnection):
 	client.send_packet(get_entity_data_packet(entity_data))
 
 func check_player_position(packet: GamePacket, client: ClientConnection) -> void:
-	var position: Vector2 = packet.data
+	if not packet.data is Vector2:
+		return
+	
+	var sent_position: Vector2 = packet.data
 	
 	# Check if player needs to be teleported
-	if client.player.global_position.distance_to(position) > 12.0:
+	if client.player.global_position.distance_to(sent_position) > 12.0:
 		rubberband_player(client)
 
 func get_failed_block_packet(
@@ -141,6 +144,9 @@ func get_failed_block_packet(
 	return get_update_block_packet(new_block_specifier, false)
 
 func check_block_update(packet: GamePacket, client: ClientConnection) -> void:
+	if not BlockSpecifier.is_data_valid(packet.data):
+		return
+	
 	# Delay block check to wait for server-side changes
 	await get_tree().create_timer(BLOCK_CHECK_TIMEOUT).timeout
 	
@@ -162,10 +168,16 @@ func update_player_input(
 		client: ClientConnection,
 		input_state: bool) -> void:
 	
+	if not packet.data is String:
+		return
+	
 	var action: String = packet.data
 	client.player.player_input.set_action(action, input_state)
 
 func select_player_item(packet: GamePacket, client: ClientConnection) -> void:
+	if not packet.data is int:
+		return
+	
 	var selected_index: int = packet.data
 	
 	if selected_index < 0 or selected_index > ItemInventory.ITEM_COUNT:
@@ -180,6 +192,9 @@ func get_change_player_skin_packet(client: ClientConnection) -> GamePacket:
 	)
 
 func change_player_skin(packet: GamePacket, client: ClientConnection) -> void:
+	if not packet.data is PackedByteArray:
+		return
+	
 	var skin_bytes: PackedByteArray = packet.data
 	
 	# Check skin is valid
