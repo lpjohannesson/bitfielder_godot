@@ -9,6 +9,8 @@ signal cancel_selected
 
 func get_login_info() -> ClientLoginInfo:
 	var login_info := ClientLoginInfo.new()
+	
+	login_info.game_version = GameServer.get_game_version()
 	login_info.username = username_text.text
 	
 	return login_info

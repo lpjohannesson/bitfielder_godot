@@ -14,6 +14,9 @@ static var instance: GameServer
 var clients: Array[ClientConnection] = []
 var next_entity_id := 1
 
+static func get_game_version() -> String:
+	return ProjectSettings.get_setting("application/config/version")
+
 func close_server() -> void:
 	for client in clients:
 		client.send_packet(GamePacket.create_packet(

@@ -11,6 +11,9 @@ enum ConnectionState {
 @export var remote_play_menu: RemotePlayMenu
 @export var connection_menu: ConnectionMenu
 @export var connection_timer: Timer
+@export var copyright_label: Label
+
+@export var copyright_text: String
 
 var connection_state := ConnectionState.STOPPED
 
@@ -85,8 +88,13 @@ func show_server_rejection(packet: GamePacket) -> void:
 	match packet.type:
 		Packets.ServerPacket.REJECT_CONNECTION:
 			connection_menu.show_status(connection_menu.connection_rejected_text)
+		
 		Packets.ServerPacket.USERNAME_IN_USE:
 			connection_menu.show_status(connection_menu.username_in_use_text)
+		
+		Packets.ServerPacket.WRONG_GAME_VERSION:
+			connection_menu.show_status(
+				connection_menu.wrong_game_version_text % packet.data)
 
 func try_login_server() -> void:
 	var server := get_server()
@@ -95,21 +103,18 @@ func try_login_server() -> void:
 	if packet == null:
 		return
 	
-	match packet.type:
-		Packets.ServerPacket.ACCEPT_CONNECTION:
-			login_server()
-		
-		Packets.ServerPacket.REJECT_CONNECTION:
-			show_server_rejection(packet)
-		
-		Packets.ServerPacket.USERNAME_IN_USE:
-			show_server_rejection(packet)
+	if packet.type == Packets.ServerPacket.ACCEPT_CONNECTION:
+		login_server()
+	else:
+		show_server_rejection(packet)
 
 func login_server() -> void:
 	get_tree().change_scene_to_file(
 		"res://assets/scenes/remote_game_scene.tscn")
 
 func _ready() -> void:
+	copyright_label.text = copyright_text % GameServer.get_game_version()
+	
 	# Check if disconnected from server
 	if get_server() == null:
 		main_menu.select_menu_page()

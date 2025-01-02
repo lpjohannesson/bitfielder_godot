@@ -7,6 +7,7 @@ class_name ConnectionMenu
 @export var logging_in_text: String
 @export var connection_rejected_text: String
 @export var username_in_use_text: String
+@export var wrong_game_version_text: String
 
 @export var status_label: Label
 
