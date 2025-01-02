@@ -138,6 +138,6 @@ func create_entity(entity_data: Dictionary) -> GameEntity:
 	entity.entity_id = entity_data[DataType.ID]
 	entities.add_entity(entity)
 	
-	call_deferred("load_entity_data", entity, entity_data)
+	load_entity_data(entity, entity_data)
 	
 	return entity

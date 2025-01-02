@@ -27,6 +27,8 @@ func add_entity(entity: GameEntity) -> void:
 	
 	world.entities.add_entity(entity)
 	next_entity_id += 1
+	
+	entity.entity_data = world.entities.serializer.create_entity_spawn_data(entity)
 
 func get_block_chunk_packet(chunk: BlockChunk) -> GamePacket:
 	return GamePacket.create_packet(
@@ -76,7 +78,7 @@ func update_block(
 func get_create_entity_packet(entity: GameEntity) -> GamePacket:
 	return GamePacket.create_packet(
 		Packets.ServerPacket.CREATE_ENTITY,
-		world.entities.serializer.create_entity_spawn_data(entity)
+		entity.entity_data
 	)
 
 func get_destroy_entity_packet(entity: GameEntity) -> GamePacket:
@@ -291,23 +293,9 @@ func recieve_packet(packet: GamePacket, client: ClientConnection) -> void:
 		Packets.ClientPacket.CHANGE_SKIN:
 			change_player_skin(packet, client)
 
-func connect_client(client: ClientConnection) -> void:
-	# Spawn player
-	var player: Player = world.entities.serializer.player_scene.instantiate()
+func load_starting_chunks(client: ClientConnection) -> void:
+	var player := client.player
 	
-	client.player = player
-	
-	# Set player position
-	var player_ground_x := randi_range(-PLAYER_SPAWN_RANGE, PLAYER_SPAWN_RANGE)
-	var player_ground_y := world.blocks.get_block_height(player_ground_x) - 1
-	var player_ground_position := Vector2i(player_ground_x, player_ground_y)
-	
-	player.global_position = \
-		world.blocks.block_to_world(player_ground_position, true)
-	
-	add_entity(player.entity)
-	
-	# Send initial packets
 	client.chunk_load_position = player.global_position
 	var player_chunk_index = get_player_chunk_index(player.global_position)
 	
@@ -321,12 +309,33 @@ func connect_client(client: ClientConnection) -> void:
 			update_player_chunk(client, chunk_index)
 	
 	client.send_packet(get_player_chunk_index_packet(player_chunk_index))
+
+func connect_client(client: ClientConnection) -> void:
+	# Spawn player
+	var player: Player = world.entities.serializer.player_scene.instantiate()
+	client.player = player
 	
+	# Set player position
+	var player_ground_x := randi_range(-PLAYER_SPAWN_RANGE, PLAYER_SPAWN_RANGE)
+	var player_ground_y := world.blocks.get_block_height(player_ground_x) - 1
+	var player_ground_position := Vector2i(player_ground_x, player_ground_y)
+	
+	player.global_position = \
+		world.blocks.block_to_world(player_ground_position, true)
+	
+	add_entity(player.entity)
+	
+	# Send chunks
+	load_starting_chunks(client)
+	
+	# Send entities
 	for entity in world.entities.entities:
 		client.send_packet(get_create_entity_packet(entity))
 	
+	# Assign player entity
 	client.send_packet(get_assign_player_packet(client))
 	
+	# Create and send inventory
 	var inventory := ItemInventory.new()
 	client.player.inventory = inventory
 	
@@ -335,17 +344,18 @@ func connect_client(client: ClientConnection) -> void:
 	
 	client.send_packet(get_create_inventory_packet(client))
 	
-	# Add client and send to others
-	var create_player_packet := get_create_entity_packet(player.entity)
+	# Send player to others
+	var create_packet := get_create_entity_packet(player.entity)
 	
 	for other_client in clients:
-		other_client.send_packet(create_player_packet)
+		other_client.send_packet(create_packet)
 		
-		# Send other player's skins
+		# Send skins to new client
 		if other_client.skin_bytes.size() > 0:
 			var skin_packet := get_change_player_skin_packet(other_client)
 			client.send_packet(skin_packet)
 	
+	# Add client
 	clients.push_back(client)
 
 func disconnect_client(client: ClientConnection) -> void:

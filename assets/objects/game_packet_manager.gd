@@ -94,6 +94,15 @@ func load_entity_data(packet: GamePacket) -> void:
 	
 	entities.serializer.load_entity_data(entity, packet.data)
 
+func play_entity_sound(packet: GamePacket) -> void:
+	var entity := scene.world.entities.get_entity(packet.data[0])
+	
+	if entity == null:
+		return
+	
+	var sound_name: String = packet.data[1]
+	entity.play_sound(sound_name)
+
 func assign_player(packet: GamePacket) -> void:
 	var entity := scene.world.entities.get_entity(packet.data)
 	scene.player = entity.entity_node
@@ -141,6 +150,9 @@ func recieve_packet(packet: GamePacket) -> void:
 		
 		Packets.ServerPacket.ENTITY_DATA:
 			load_entity_data(packet)
+		
+		Packets.ServerPacket.PLAY_ENTITY_SOUND:
+			play_entity_sound(packet)
 		
 		Packets.ServerPacket.ASSIGN_PLAYER:
 			assign_player(packet)

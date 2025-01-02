@@ -564,11 +564,11 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	# Check if remote controlled player
 	if not entity.on_server:
+		show_ground_effects()
+		
 		if GameScene.instance.player != self:
 			move_and_slide()
 			return
-		
-		show_ground_effects()
 	
 	if modify_block_timer.is_stopped():
 		controls(delta)

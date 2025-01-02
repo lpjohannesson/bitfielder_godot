@@ -35,7 +35,18 @@ func update_block(block_specifier: BlockSpecifier, address: BlockAddress) -> voi
 		GameScene.instance.packet_manager.send_check_block_update(block_specifier)
 
 func play_sound(sound_name: String) -> void:
-	if not on_server:
+	if on_server:
+		var sound_packet := GamePacket.create_packet(
+			Packets.ServerPacket.PLAY_ENTITY_SOUND,
+			[entity_id, sound_name]
+		)
+		
+		for client in GameServer.instance.clients:
+			if client.player == entity_node:
+				continue
+			
+			client.send_packet(sound_packet)
+	else:
 		if not sound_map.has(sound_name):
 			return
 		
