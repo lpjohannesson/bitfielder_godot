@@ -31,6 +31,7 @@ func stop_server_connection() -> void:
 	RemoteServerConnection.instance = null
 	
 	connection_state = ConnectionState.STOPPED
+	connection_timer.stop()
 
 func poll_server(server: RemoteServerConnection) -> bool:
 	while true:
