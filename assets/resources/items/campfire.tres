@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemType" load_steps=5 format=3 uid="uid://da65gp1v6cab1"]
+
+[ext_resource type="Texture2D" uid="uid://jrt6mijpe8k6" path="res://assets/textures/blocks/campfire1.png" id="1_fvqhk"]
+[ext_resource type="Script" path="res://assets/objects/world/item/properties/block_item_properties.gd" id="2_pca66"]
+[ext_resource type="Script" path="res://assets/objects/world/item/item_type.gd" id="3_hnaig"]
+
+[sub_resource type="Resource" id="Resource_ovpnv"]
+script = ExtResource("2_pca66")
+
+[resource]
+script = ExtResource("3_hnaig")
+item_name = "campfire"
+item_texture = ExtResource("1_fvqhk")
+properties = SubResource("Resource_ovpnv")

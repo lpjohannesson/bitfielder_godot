@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="BlockType" load_steps=15 format=3 uid="uid://colek0rqe5fnn"]
+
+[ext_resource type="Resource" uid="uid://hnkss3xm4ob8" path="res://assets/resources/blocks/sounds/wood.tres" id="1_5p6ea"]
+[ext_resource type="Texture2D" uid="uid://dtr4vbkje7np6" path="res://assets/textures/blocks/particles/wood.png" id="2_xsjes"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_light.gd" id="3_mh6sb"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="4_uygot"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="5_trq5r"]
+[ext_resource type="Texture2D" uid="uid://jrt6mijpe8k6" path="res://assets/textures/blocks/campfire1.png" id="6_ugiil"]
+[ext_resource type="Texture2D" uid="uid://c1mkispt1htio" path="res://assets/textures/blocks/campfire2.png" id="7_i6x10"]
+[ext_resource type="Texture2D" uid="uid://bl43ej0idhlse" path="res://assets/textures/blocks/campfire3.png" id="8_ap8e3"]
+[ext_resource type="Texture2D" uid="uid://bbtv7d17r4j2d" path="res://assets/textures/blocks/campfire4.png" id="9_hgvk8"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="10_8evbt"]
+
+[sub_resource type="Resource" id="Resource_ibmut"]
+script = ExtResource("3_mh6sb")
+color = Color(0.894379, 0.693232, 0.626264, 1)
+
+[sub_resource type="Resource" id="Resource_r47fy"]
+script = ExtResource("4_uygot")
+is_solid = false
+is_one_way = null
+is_climbable = false
+is_partial = true
+casts_shadow = true
+block_light = SubResource("Resource_ibmut")
+
+[sub_resource type="AnimatedTexture" id="AnimatedTexture_oajp4"]
+frames = 4
+speed_scale = 8.0
+frame_0/texture = ExtResource("6_ugiil")
+frame_1/texture = ExtResource("7_i6x10")
+frame_1/duration = 1.0
+frame_2/texture = ExtResource("8_ap8e3")
+frame_2/duration = 1.0
+frame_3/texture = ExtResource("9_hgvk8")
+frame_3/duration = 1.0
+
+[sub_resource type="Resource" id="Resource_2h6c5"]
+script = ExtResource("5_trq5r")
+texture = SubResource("AnimatedTexture_oajp4")
+
+[resource]
+script = ExtResource("10_8evbt")
+block_name = "campfire"
+properties = SubResource("Resource_r47fy")
+renderer = SubResource("Resource_2h6c5")
+particle_texture = ExtResource("2_xsjes")
+block_sounds = ExtResource("1_5p6ea")

@@ -1,8 +1,8 @@
 [gd_resource type="Resource" script_class="BlockType" load_steps=9 format=3 uid="uid://d3uhgvnen6sq7"]
 
-[ext_resource type="Texture2D" uid="uid://coiww15bo3bl2" path="res://assets/textures/blocks/particles/dirt.png" id="1_7bqvs"]
 [ext_resource type="Resource" uid="uid://c357dgj1ic7w1" path="res://assets/resources/blocks/sounds/dirt.tres" id="1_7qcxi"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_5gwfl"]
+[ext_resource type="Texture2D" uid="uid://b7wqgx6qkjr1f" path="res://assets/textures/blocks/particles/sand.png" id="2_l4qd8"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="3_tmuox"]
 [ext_resource type="Texture2D" uid="uid://v0dfaracm2st" path="res://assets/textures/blocks/sand.png" id="4_owqjr"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="5_jk61b"]
@@ -24,5 +24,5 @@ script = ExtResource("5_jk61b")
 block_name = "sand"
 properties = SubResource("Resource_t4ghm")
 renderer = SubResource("Resource_u3py1")
-particle_texture = ExtResource("1_7bqvs")
+particle_texture = ExtResource("2_l4qd8")
 block_sounds = ExtResource("1_7qcxi")

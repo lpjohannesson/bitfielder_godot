@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=12 format=3 uid="uid://bxbdoq7jf6a38"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=13 format=3 uid="uid://bxbdoq7jf6a38"]
 
+[ext_resource type="Resource" uid="uid://dd8dq6svx8xar" path="res://assets/resources/blocks/sounds/stone.tres" id="1_1dv1b"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="1_facif"]
 [ext_resource type="Texture2D" uid="uid://eer33eptpvf7" path="res://assets/textures/blocks/particles/stone.png" id="1_w0msj"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_26gfx"]
@@ -31,3 +32,4 @@ block_name = "ore_coal"
 properties = SubResource("Resource_7y3ed")
 renderer = SubResource("Resource_u2k4d")
 particle_texture = ExtResource("1_w0msj")
+block_sounds = ExtResource("1_1dv1b")

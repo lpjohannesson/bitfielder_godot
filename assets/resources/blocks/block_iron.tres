@@ -1,5 +1,6 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=8 format=3 uid="uid://cc4a5c0ma4x6y"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=9 format=3 uid="uid://cc4a5c0ma4x6y"]
 
+[ext_resource type="Resource" uid="uid://bieekdnf2l1uh" path="res://assets/resources/blocks/sounds/metal.tres" id="1_hfgx5"]
 [ext_resource type="Texture2D" uid="uid://bpt2ln2avgl8s" path="res://assets/textures/blocks/particles/block_iron.png" id="1_s1iwu"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_upjfa"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="3_mkehi"]
@@ -24,3 +25,4 @@ block_name = "block_iron"
 properties = SubResource("Resource_bu2ry")
 renderer = SubResource("Resource_cp2yv")
 particle_texture = ExtResource("1_s1iwu")
+block_sounds = ExtResource("1_hfgx5")

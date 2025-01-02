@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="BlockType" load_steps=13 format=3 uid="uid://b25rl5nhi241b"]
+
+[ext_resource type="Resource" uid="uid://dd8dq6svx8xar" path="res://assets/resources/blocks/sounds/stone.tres" id="1_37t1w"]
+[ext_resource type="Texture2D" uid="uid://eer33eptpvf7" path="res://assets/textures/blocks/particles/stone.png" id="1_xl2rd"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_kr6wq"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/block_renderer.gd" id="3_vf13k"]
+[ext_resource type="Resource" uid="uid://cci2gglggfno4" path="res://assets/resources/blocks/renderers/stone.tres" id="4_3flke"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="5_mb7ou"]
+[ext_resource type="Texture2D" uid="uid://bea5dcsws30yu" path="res://assets/textures/blocks/ore_sulfur.png" id="6_hn3de"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/layered_block_renderer.gd" id="7_crdq0"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="8_sstfq"]
+
+[sub_resource type="Resource" id="Resource_7y3ed"]
+script = ExtResource("2_kr6wq")
+is_solid = true
+is_one_way = false
+is_climbable = false
+is_partial = false
+casts_shadow = true
+
+[sub_resource type="Resource" id="Resource_6ilo7"]
+script = ExtResource("5_mb7ou")
+texture = ExtResource("6_hn3de")
+
+[sub_resource type="Resource" id="Resource_u2k4d"]
+script = ExtResource("7_crdq0")
+renderers = Array[ExtResource("3_vf13k")]([ExtResource("4_3flke"), SubResource("Resource_6ilo7")])
+
+[resource]
+script = ExtResource("8_sstfq")
+block_name = "ore_sulfur"
+properties = SubResource("Resource_7y3ed")
+renderer = SubResource("Resource_u2k4d")
+particle_texture = ExtResource("1_xl2rd")
+block_sounds = ExtResource("1_37t1w")

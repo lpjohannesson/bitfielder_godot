@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="BlockType" load_steps=9 format=3 uid="uid://6f7vm5etschx"]
+
+[ext_resource type="Resource" uid="uid://hnkss3xm4ob8" path="res://assets/resources/blocks/sounds/wood.tres" id="1_r02u1"]
+[ext_resource type="Texture2D" uid="uid://dtr4vbkje7np6" path="res://assets/textures/blocks/particles/wood.png" id="2_8tih5"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_mjahu"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="3_o7hxy"]
+[ext_resource type="Texture2D" uid="uid://c18arkr0fqc2t" path="res://assets/textures/blocks/chest.png" id="4_nsh5y"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="5_n0lfb"]
+
+[sub_resource type="Resource" id="Resource_wtfib"]
+script = ExtResource("2_mjahu")
+is_solid = false
+is_one_way = false
+is_climbable = false
+is_partial = true
+casts_shadow = true
+
+[sub_resource type="Resource" id="Resource_b8nxn"]
+script = ExtResource("3_o7hxy")
+texture = ExtResource("4_nsh5y")
+
+[resource]
+script = ExtResource("5_n0lfb")
+block_name = "chest"
+properties = SubResource("Resource_wtfib")
+renderer = SubResource("Resource_b8nxn")
+particle_texture = ExtResource("2_8tih5")
+block_sounds = ExtResource("1_r02u1")

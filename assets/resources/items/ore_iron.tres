@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemType" load_steps=5 format=3 uid="uid://d34pcihijjeam"]
+
+[ext_resource type="Texture2D" uid="uid://sl6xnofu66o6" path="res://assets/textures/blocks/ore_iron.png" id="1_o7ba7"]
+[ext_resource type="Script" path="res://assets/objects/world/item/properties/block_item_properties.gd" id="2_icphv"]
+[ext_resource type="Script" path="res://assets/objects/world/item/item_type.gd" id="3_n8eyy"]
+
+[sub_resource type="Resource" id="Resource_e4a6s"]
+script = ExtResource("2_icphv")
+
+[resource]
+script = ExtResource("3_n8eyy")
+item_name = "ore_iron"
+item_texture = ExtResource("1_o7ba7")
+properties = SubResource("Resource_e4a6s")

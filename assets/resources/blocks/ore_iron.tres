@@ -1,0 +1,35 @@
+[gd_resource type="Resource" script_class="BlockType" load_steps=13 format=3 uid="uid://dk0ypur05u404"]
+
+[ext_resource type="Resource" uid="uid://dd8dq6svx8xar" path="res://assets/resources/blocks/sounds/stone.tres" id="1_0s8q2"]
+[ext_resource type="Texture2D" uid="uid://eer33eptpvf7" path="res://assets/textures/blocks/particles/stone.png" id="1_e6tk7"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_lpng8"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/block_renderer.gd" id="3_us2jv"]
+[ext_resource type="Resource" uid="uid://cci2gglggfno4" path="res://assets/resources/blocks/renderers/stone.tres" id="4_vt2sk"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="5_eudff"]
+[ext_resource type="Texture2D" uid="uid://sl6xnofu66o6" path="res://assets/textures/blocks/ore_iron.png" id="6_222jt"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/layered_block_renderer.gd" id="7_1525n"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="8_ch8kf"]
+
+[sub_resource type="Resource" id="Resource_7y3ed"]
+script = ExtResource("2_lpng8")
+is_solid = true
+is_one_way = false
+is_climbable = false
+is_partial = false
+casts_shadow = true
+
+[sub_resource type="Resource" id="Resource_6ilo7"]
+script = ExtResource("5_eudff")
+texture = ExtResource("6_222jt")
+
+[sub_resource type="Resource" id="Resource_u2k4d"]
+script = ExtResource("7_1525n")
+renderers = Array[ExtResource("3_us2jv")]([ExtResource("4_vt2sk"), SubResource("Resource_6ilo7")])
+
+[resource]
+script = ExtResource("8_ch8kf")
+block_name = "ore_iron"
+properties = SubResource("Resource_7y3ed")
+renderer = SubResource("Resource_u2k4d")
+particle_texture = ExtResource("1_e6tk7")
+block_sounds = ExtResource("1_0s8q2")

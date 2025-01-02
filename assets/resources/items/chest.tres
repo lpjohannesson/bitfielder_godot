@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemType" load_steps=5 format=3 uid="uid://dkuaaa5y7o60n"]
+
+[ext_resource type="Texture2D" uid="uid://c18arkr0fqc2t" path="res://assets/textures/blocks/chest.png" id="1_cu71q"]
+[ext_resource type="Script" path="res://assets/objects/world/item/properties/block_item_properties.gd" id="2_gy5fq"]
+[ext_resource type="Script" path="res://assets/objects/world/item/item_type.gd" id="3_n3xs0"]
+
+[sub_resource type="Resource" id="Resource_e4a6s"]
+script = ExtResource("2_gy5fq")
+
+[resource]
+script = ExtResource("3_n3xs0")
+item_name = "chest"
+item_texture = ExtResource("1_cu71q")
+properties = SubResource("Resource_e4a6s")

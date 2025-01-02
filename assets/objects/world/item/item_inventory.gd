@@ -1,7 +1,7 @@
 class_name ItemInventory
 
 const ROW_ITEM_COUNT = 10
-const ROW_COUNT = 2
+const ROW_COUNT = 3
 const ITEM_COUNT = ROW_ITEM_COUNT * ROW_COUNT
 
 var items: Array[ItemSlot]
