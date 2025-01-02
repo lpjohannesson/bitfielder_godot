@@ -207,21 +207,6 @@ func animate() -> void:
 	
 	entity.animation_player.play(animation_name)
 
-func is_block_breakable(block_id: int) -> bool:
-	return block_id != 0
-
-func is_front_block_breakable(address: BlockAddress) -> bool:
-	return is_block_breakable(address.chunk.front_ids[address.block_index])
-
-func is_back_block_breakable(address: BlockAddress) -> bool:
-	return is_block_breakable(address.chunk.back_ids[address.block_index])
-
-func is_block_placeable(block_id: int) -> bool:
-	return block_id == 0
-
-func is_block_attachable(block_id: int) -> bool:
-	return block_id != 0
-
 func block_has_neighbors(block_position: Vector2i, on_front_layer: bool) -> bool:
 	var blocks := entity.get_game_world().blocks
 	
@@ -274,6 +259,12 @@ func is_entity_above_block(block_position: Vector2i) -> bool:
 	
 	return false
 
+func is_block_placeable(block_id: int) -> bool:
+	return block_id == 0
+
+func is_block_attachable(block_id: int) -> bool:
+	return block_id != 0
+
 func is_front_block_placeable(address: BlockAddress, block_position: Vector2i) -> bool:
 	if not is_block_placeable(address.chunk.front_ids[address.block_index]):
 		return false
@@ -305,89 +296,12 @@ func end_modify_block() -> void:
 	player_state = PlayerState.GROUND
 	entity.collider.disabled = false
 
-func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
-	if modify_block_tween != null:
-		return false
+func modify_block(
+		address: BlockAddress,
+		block_specifier: BlockSpecifier,
+		blocks: BlockWorld,
+		forward_block_position: Vector2i) -> void:
 	
-	# Get block position
-	var blocks := entity.get_game_world().blocks
-	
-	var center_block_position := blocks.world_to_block(global_position)
-	var forward_block_position := center_block_position
-	
-	if look_direction == 0.0:
-		forward_block_position.x += int(get_facing_sign())
-	else:
-		forward_block_position.y += int(look_direction)
-	
-	# Get block addresses
-	var center_address := blocks.get_block_address(center_block_position)
-	var forward_address := blocks.get_block_address(forward_block_position)
-	
-	# Determine if placing or breaking
-	var breaking: bool
-	
-	if on_front_layer:
-		if center_address == null:
-			if forward_address == null:
-				return false
-			
-			if not is_front_block_breakable(forward_address):
-				return false
-			
-			breaking = true
-		elif forward_address == null:
-			breaking = false
-		else:
-			breaking = is_front_block_breakable(forward_address)
-	else:
-		if center_address == null:
-			return false
-		
-		# Check for blocks in front
-		if forward_address != null:
-			var forward_front_ids := forward_address.chunk.front_ids
-			var forward_front_id := forward_front_ids[forward_address.block_index]
-			var forward_front_block := blocks.block_types[forward_front_id]
-			
-			if forward_front_block.properties.is_solid:
-				return false
-		
-		breaking = is_back_block_breakable(center_address)
-	
-	# Place or break
-	var block_specifier := BlockSpecifier.new()
-	block_specifier.on_front_layer = on_front_layer
-	
-	var address: BlockAddress
-	
-	if breaking:
-		if on_front_layer:
-			address = forward_address
-			block_specifier.block_position = forward_block_position
-		else:
-			address = center_address
-			block_specifier.block_position = center_block_position
-		
-		block_specifier.block_id = 0
-	else:
-		# Skip if placing air
-		if block_id == 0:
-			return false
-		
-		if on_front_layer:
-			if not is_front_block_placeable(center_address, center_block_position):
-				return false
-		else:
-			if not is_back_block_placeable(center_address, center_block_position):
-				return false
-		
-		address = center_address
-		
-		block_specifier.block_position = center_block_position
-		block_specifier.block_id = block_id
-	
-	# Start movement
 	velocity = Vector2.ZERO
 	
 	modify_block_tween = create_tween()\
@@ -406,9 +320,97 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	modify_block_timer.start()
 	entity.collider.disabled = true
 	
-	entity.update_block(block_specifier, address)
-	
 	player_state = PlayerState.MODIFYING_BLOCK
+	
+	# Update block
+	entity.update_block(block_specifier, address)
+
+func can_modify_forward_block(
+		address: BlockAddress,
+		blocks: BlockWorld) -> bool:
+	
+	if address == null:
+		return false
+	
+	var front_id := address.chunk.front_ids[address.block_index]
+	var front_block := blocks.block_types[front_id]
+	
+	return front_block.properties.is_solid
+
+func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
+	if modify_block_tween != null:
+		return false
+	
+	# Get block positions
+	var blocks := entity.get_game_world().blocks
+	
+	var center_block_position := blocks.world_to_block(global_position)
+	var forward_block_position := center_block_position
+	
+	if look_direction == 0.0:
+		forward_block_position.x += int(get_facing_sign())
+	else:
+		forward_block_position.y += int(look_direction)
+	
+	# Determine if placing or breaking
+	var block_specifier := BlockSpecifier.new()
+	block_specifier.on_front_layer = on_front_layer
+	
+	var forward_address := blocks.get_block_address(forward_block_position)
+	
+	if can_modify_forward_block(forward_address, blocks):
+		# Skip if back modification blocked
+		if not on_front_layer:
+			return false
+		
+		# Break forward
+		block_specifier.block_position = forward_block_position
+		
+		modify_block(
+			forward_address,
+			block_specifier,
+			blocks,
+			forward_block_position)
+		
+		return true
+	
+	# Try modifying center block
+	var center_address := blocks.get_block_address(center_block_position)
+	
+	if center_address == null:
+		return false
+	
+	block_specifier.block_position = center_block_position
+	
+	# Check if on air
+	if block_specifier.read_address(center_address) == 0:
+		# Skip if not placing
+		if block_id == 0:
+			return false
+		
+		# Skip if can't place block
+		if on_front_layer:
+			if not is_front_block_placeable(
+					center_address,
+					center_block_position):
+				
+				return false
+		else:
+			if not is_back_block_placeable(
+					center_address,
+					center_block_position):
+				
+				return false
+		
+		# Set placing block
+		block_specifier.block_id = block_id
+	
+	# Place or break center
+	modify_block(
+		center_address,
+		block_specifier,
+		blocks,
+		forward_block_position)
 	
 	return true
 
