@@ -151,10 +151,7 @@ func start_chunk(chunk: BlockChunk) -> void:
 		# Update chunks after frame finished
 		redraw_chunk(neighbor_chunk)
 
-func spawn_particles(block_id: int, particle_position: Vector2):
-	var blocks := world.blocks
-	var block := blocks.block_types[block_id]
-	
+func spawn_particles(block: BlockType, particle_position: Vector2):
 	if block.particle_texture == null:
 		return
 	

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="BlockSounds" load_steps=5 format=3 uid="uid://c357dgj1ic7w1"]
+
+[ext_resource type="Script" path="res://assets/objects/world/block/block_sounds.gd" id="1_ml1uo"]
+[ext_resource type="AudioStream" uid="uid://c665u0q58ba1j" path="res://assets/sounds/block/dirt1.wav" id="2_aqgx2"]
+[ext_resource type="AudioStream" uid="uid://b7iaxy5jxacmr" path="res://assets/sounds/block/dirt2.wav" id="3_8u3kx"]
+[ext_resource type="AudioStream" uid="uid://iewgjbh11xfu" path="res://assets/sounds/block/dirt3.wav" id="4_a6c67"]
+
+[resource]
+script = ExtResource("1_ml1uo")
+sounds = Array[AudioStream]([ExtResource("2_aqgx2"), ExtResource("3_8u3kx"), ExtResource("4_a6c67")])

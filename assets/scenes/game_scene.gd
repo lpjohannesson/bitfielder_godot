@@ -2,6 +2,7 @@ extends Node2D
 class_name GameScene
 
 const SHADOW_TRANSFORM := Transform2D(0.0, Vector2.ONE * 2.0)
+const SOUND_PITCH_RANGE := 0.1
 
 static var instance: GameScene
 
@@ -17,6 +18,9 @@ static var instance: GameScene
 @export var shadow_shader: ShaderMaterial
 
 @export var effect_sprite_scene: PackedScene
+
+@export var break_sound: AudioStream
+@export var place_sound: AudioStream
 
 @onready var viewport := get_viewport()
 
@@ -41,6 +45,29 @@ func spawn_effect_sprite(effect_name: String, effect_position: Vector2) -> void:
 	effect_sprite.global_position = effect_position
 	effect_sprite.play(effect_name)
 
+func spawn_world_sound(
+		sound_stream: AudioStream, 
+		sound_position: Vector2) -> AudioStreamPlayer2D:
+	
+	var world_sound := AudioStreamPlayer2D.new()
+	add_child(world_sound)
+	
+	world_sound.finished.connect(world_sound.queue_free)
+	
+	world_sound.global_position = sound_position
+	world_sound.stream = sound_stream
+	world_sound.pitch_scale = randf_range(1.0 - SOUND_PITCH_RANGE, 1.0 + SOUND_PITCH_RANGE)
+	world_sound.play()
+	
+	return world_sound
+
+func spawn_block_sound(block: BlockType, sound_position: Vector2) -> AudioStreamPlayer2D:
+	if block.block_sounds == null:
+		return null
+	
+	var sound_stream: AudioStream = block.block_sounds.sounds.pick_random()
+	return spawn_world_sound(sound_stream, sound_position)
+
 func update_block(
 		block_specifier: BlockSpecifier,
 		address: BlockAddress,
@@ -55,16 +82,25 @@ func update_block(
 	var blocks := world.blocks
 	
 	if show_effects:
+		var block: BlockType
+		
 		var effect_position := blocks.block_to_world(
 			block_specifier.block_position, true)
 		
 		if block_specifier.block_id == 0:
-			blocks_renderer.spawn_particles(
-				block_id, effect_position)
+			block = blocks.block_types[block_id]
+			
+			blocks_renderer.spawn_particles(block, effect_position)
 			
 			spawn_effect_sprite("break", effect_position)
+			spawn_world_sound(break_sound, effect_position)
 		else:
+			block = blocks.block_types[block_specifier.block_id]
+			
 			spawn_effect_sprite("place", effect_position)
+			spawn_world_sound(place_sound, effect_position)
+		
+		spawn_block_sound(block, effect_position)
 	
 	block_specifier.write_address(address)
 	

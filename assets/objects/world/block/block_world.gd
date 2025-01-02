@@ -83,7 +83,11 @@ func create_colliders(chunk: BlockChunk) -> void:
 			if not block.properties.is_solid:
 				continue
 			
-			var collider := CollisionShape2D.new()
+			var collider := BlockCollider.new()
+			
+			collider.block_position = \
+				get_block_position(chunk_position, chunk.chunk_index)
+			
 			chunk.colliders.add_child(collider)
 			
 			collider.position = Vector2(chunk_position) + Vector2.ONE * 0.5

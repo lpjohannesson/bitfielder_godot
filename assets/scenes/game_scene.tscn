@@ -1,9 +1,11 @@
-[gd_scene load_steps=18 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=20 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="2_d1sjh"]
 [ext_resource type="PackedScene" uid="uid://dpmf4snl7yob2" path="res://assets/objects/world/effects/effect_sprite.tscn" id="3_k32od"]
+[ext_resource type="AudioStream" uid="uid://dqqgsvp4lycgf" path="res://assets/sounds/break.wav" id="4_0vcd0"]
 [ext_resource type="PackedScene" uid="uid://celyk57ifua4f" path="res://assets/objects/world/game_world.tscn" id="4_3hdty"]
+[ext_resource type="AudioStream" uid="uid://y6i3cpd0jrtq" path="res://assets/sounds/place.wav" id="5_tjk8f"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/block_world_renderer.gd" id="7_ddnpg"]
 [ext_resource type="PackedScene" uid="uid://qnuf5qyuxwxp" path="res://assets/objects/world/block/render/block_particle.tscn" id="8_in2xm"]
 [ext_resource type="Shader" path="res://assets/shaders/lighting_display.gdshader" id="9_owgvs"]
@@ -51,6 +53,8 @@ particles = NodePath("Particles")
 shadow_viewport = NodePath("ShadowViewport")
 shadow_shader = SubResource("ShaderMaterial_hm8g0")
 effect_sprite_scene = ExtResource("3_k32od")
+break_sound = ExtResource("4_0vcd0")
+place_sound = ExtResource("5_tjk8f")
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 

@@ -6,3 +6,4 @@ class_name BlockType
 
 @export var renderer: BlockRenderer
 @export var particle_texture: Texture2D
+@export var block_sounds: BlockSounds

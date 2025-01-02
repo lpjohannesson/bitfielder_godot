@@ -1,12 +1,31 @@
-[gd_scene load_steps=23 format=3 uid="uid://qhbwwmg422j6"]
+[gd_scene load_steps=30 format=3 uid="uid://qhbwwmg422j6"]
 
 [ext_resource type="Script" path="res://assets/objects/world/entity/player/player.gd" id="1_7uomn"]
 [ext_resource type="Shader" path="res://assets/shaders/player.gdshader" id="2_1ofg0"]
 [ext_resource type="Texture2D" uid="uid://bsvrr5o1bqqyo" path="res://assets/textures/player/overlay.png" id="3_4xs5l"]
+[ext_resource type="Script" path="res://assets/objects/world/entity/entity_sound.gd" id="3_5garv"]
 [ext_resource type="Texture2D" uid="uid://ra74cdvlyfue" path="res://assets/textures/player/skin_uv.png" id="3_8trt0"]
 [ext_resource type="Texture2D" uid="uid://doj1kdvxq24lv" path="res://assets/textures/player/default_skin.png" id="3_rw5il"]
 [ext_resource type="Script" path="res://assets/objects/world/entity/game_entity.gd" id="4_1rk0b"]
+[ext_resource type="AudioStream" uid="uid://baml44otoqdur" path="res://assets/sounds/jump.wav" id="4_e4021"]
 [ext_resource type="Script" path="res://assets/objects/world/shadowed_sprite.gd" id="4_faxp7"]
+[ext_resource type="AudioStream" uid="uid://dak8wkerhgy6s" path="res://assets/sounds/slide.wav" id="5_ta6vj"]
+[ext_resource type="AudioStream" uid="uid://d25x0e25g7514" path="res://assets/sounds/ground.wav" id="6_re4h7"]
+
+[sub_resource type="Resource" id="Resource_w02ct"]
+script = ExtResource("3_5garv")
+sound_name = "jump"
+sound_stream = ExtResource("4_e4021")
+
+[sub_resource type="Resource" id="Resource_6oscl"]
+script = ExtResource("3_5garv")
+sound_name = "slide"
+sound_stream = ExtResource("5_ta6vj")
+
+[sub_resource type="Resource" id="Resource_7vdfh"]
+script = ExtResource("3_5garv")
+sound_name = "ground"
+sound_stream = ExtResource("6_re4h7")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_2p0m6"]
 resource_local_to_scene = true
@@ -239,17 +258,27 @@ _data = {
 "walk": SubResource("Animation_bdjc4")
 }
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("entity", "coyote_timer", "jump_timer", "modify_block_timer", "slide_effect_timer", "punch_timer", "floor_point", "ceiling_point")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("entity", "floor_point", "ceiling_point", "coyote_timer", "jump_timer", "modify_block_timer", "slide_effect_timer", "punch_timer")]
 collision_mask = 2
 script = ExtResource("1_7uomn")
 entity = NodePath("GameEntity")
+floor_point = NodePath("FloorPoint")
+ceiling_point = NodePath("CeilingPoint")
 coyote_timer = NodePath("CoyoteTimer")
 jump_timer = NodePath("JumpTimer")
 modify_block_timer = NodePath("ModifyBlockTimer")
 slide_effect_timer = NodePath("SlideEffectTimer")
 punch_timer = NodePath("PunchTimer")
-floor_point = NodePath("FloorPoint")
-ceiling_point = NodePath("CeilingPoint")
+
+[node name="GameEntity" type="Node" parent="." node_paths=PackedStringArray("entity_node", "body", "sprite", "collider", "animation_player")]
+script = ExtResource("4_1rk0b")
+entity_type = "player"
+entity_node = NodePath("..")
+body = NodePath("..")
+sprite = NodePath("../Sprite2D")
+collider = NodePath("../CollisionShape2D")
+animation_player = NodePath("../AnimationPlayer")
+sounds = Array[ExtResource("3_5garv")]([SubResource("Resource_w02ct"), SubResource("Resource_6oscl"), SubResource("Resource_7vdfh")])
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_2p0m6")
@@ -268,15 +297,6 @@ position = Vector2(0, 6)
 
 [node name="CeilingPoint" type="Node2D" parent="."]
 position = Vector2(0, -7)
-
-[node name="GameEntity" type="Node" parent="." node_paths=PackedStringArray("entity_node", "body", "sprite", "collider", "animation_player")]
-script = ExtResource("4_1rk0b")
-entity_type = "player"
-entity_node = NodePath("..")
-body = NodePath("..")
-sprite = NodePath("../Sprite2D")
-collider = NodePath("../CollisionShape2D")
-animation_player = NodePath("../AnimationPlayer")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {

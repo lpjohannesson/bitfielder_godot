@@ -11,15 +11,17 @@ const GRAVITY_SPEED := 300.0
 const JUMP_MIDSTOP := 0.5
 const CLIMB_SPEED := 50.0
 const CLIMB_JUMP_SPEED := 50.0
+const GROUND_VOLUME := -12.0
 
 @export var entity: GameEntity
+@export var floor_point: Node2D
+@export var ceiling_point: Node2D
+
 @export var coyote_timer: Timer
 @export var jump_timer: Timer
 @export var modify_block_timer: Timer
 @export var slide_effect_timer: Timer
 @export var punch_timer: Timer
-@export var floor_point: Node2D
-@export var ceiling_point: Node2D
 
 var move_direction := 0.0
 var look_direction := 0.0
@@ -28,13 +30,15 @@ var modify_block_tween: Tween
 var inventory: ItemInventory
 
 var last_surface := 0.0
+var last_is_sliding := false
+
 var player_input := PlayerInput.new()
 var player_state := PlayerState.GROUND
 
 func get_facing_sign() -> float:
 	return -1.0 if entity.sprite.flip_h else 1.0
 
-func is_sliding() -> bool:
+func get_is_sliding() -> bool:
 	return velocity.x != 0.0 and sign(velocity.x) != get_facing_sign()
 
 func walk(delta: float) -> void:
@@ -73,11 +77,14 @@ func try_jump_down() -> bool:
 			return false
 	
 	global_position.y += 1.0
+	entity.play_sound("jump")
+	
 	return true
 
 func jump() -> void:
 	velocity.y = -JUMP_VELOCITY
 	midstopped = false
+	entity.play_sound("jump")
 
 func try_jump() -> void:
 	if player_input.is_action_just_pressed("jump"):
@@ -164,8 +171,6 @@ func animate() -> void:
 	var animation_name: String
 	
 	if is_on_floor():
-		
-		
 		if move_direction == 0.0 or velocity.x == 0.0:
 			if look_direction < 0.0:
 				animation_name = "look_up"
@@ -174,7 +179,7 @@ func animate() -> void:
 			else:
 				animation_name = "idle"
 		else:
-			if is_sliding():
+			if get_is_sliding():
 				animation_name = "slide"
 			else:
 				animation_name = "walk"
@@ -396,9 +401,17 @@ func show_ground_effects() -> void:
 		surface = 1.0
 		surface_point = floor_point
 		
-		if slide_effect_timer.is_stopped() and is_sliding():
-			entity.spawn_effect_sprite("slide", floor_point.global_position)
-			slide_effect_timer.start()
+		var is_sliding := get_is_sliding()
+		
+		if is_sliding:
+			if not last_is_sliding:
+				entity.play_sound("slide")
+			
+			if slide_effect_timer.is_stopped():
+				entity.spawn_effect_sprite("slide", floor_point.global_position)
+				slide_effect_timer.start()
+		
+		last_is_sliding = is_sliding
 		
 	elif is_on_ceiling():
 		surface = -1.0
@@ -411,18 +424,50 @@ func show_ground_effects() -> void:
 		return
 	
 	entity.spawn_effect_sprite("ground", surface_point.global_position)
+	
+	entity.play_sound("ground")
+	
+	for i in range(get_slide_collision_count()):
+		var collision := get_slide_collision(i)
+		
+		if collision.get_normal().y == 0.0:
+			continue
+		
+		var shape := collision.get_collider_shape()
+		
+		if not shape is BlockCollider:
+			continue
+		
+		var block_position: Vector2i = shape.block_position
+		
+		var blocks := entity.get_game_world().blocks
+		var address := blocks.get_block_address(block_position)
+		var block_id := address.chunk.front_ids[address.block_index]
+		var block := blocks.block_types[block_id]
+		
+		var sound := GameScene.instance.spawn_block_sound(
+			block, surface_point.global_position)
+		
+		if sound != null:
+			sound.volume_db = GROUND_VOLUME
+		
+		break
+	
 	last_surface = surface
 
-func can_climb(blocks: BlockWorld, block_position: Vector2i) -> bool:
+func get_climbable_block(blocks: BlockWorld, block_position: Vector2i) -> BlockType:
 	var address := blocks.get_block_address(block_position)
 	
 	if address == null:
-		return false
+		return null
 	
 	var block_id := address.chunk.front_ids[address.block_index]
 	var block := blocks.block_types[block_id]
 	
-	return block.properties.is_climbable
+	if block.properties.is_climbable:
+		return block
+	else:
+		return null
 
 func try_climbing() -> bool:
 	if not (\
@@ -433,8 +478,9 @@ func try_climbing() -> bool:
 	
 	var blocks := entity.get_game_world().blocks
 	var block_position := blocks.world_to_block(global_position)
+	var block := get_climbable_block(blocks, block_position)
 	
-	if not can_climb(blocks, block_position):
+	if block == null:
 		return false
 	
 	# Start climbing
@@ -462,8 +508,9 @@ func climb() -> void:
 	
 	var blocks := entity.get_game_world().blocks
 	var block_position := blocks.world_to_block(global_position)
+	var block := get_climbable_block(blocks, block_position)
 	
-	if not can_climb(blocks, block_position):
+	if block == null:
 		stop_climbing()
 		return
 	
@@ -515,12 +562,13 @@ func _ready() -> void:
 	entity.position_changed.connect(stop_modify_block)
 
 func _physics_process(delta: float) -> void:
-	show_ground_effects()
-	
 	# Check if remote controlled player
-	if not entity.on_server and GameScene.instance.player != self:
-		move_and_slide()
-		return
+	if not entity.on_server:
+		if GameScene.instance.player != self:
+			move_and_slide()
+			return
+		
+		show_ground_effects()
 	
 	if modify_block_timer.is_stopped():
 		controls(delta)
