@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://qhbwwmg422j6"]
+[gd_scene load_steps=33 format=3 uid="uid://qhbwwmg422j6"]
 
 [ext_resource type="Script" path="res://assets/objects/world/entity/player/player.gd" id="1_7uomn"]
 [ext_resource type="Shader" path="res://assets/shaders/player.gdshader" id="2_1ofg0"]
@@ -11,6 +11,8 @@
 [ext_resource type="Script" path="res://assets/objects/world/shadowed_sprite.gd" id="4_faxp7"]
 [ext_resource type="AudioStream" uid="uid://dak8wkerhgy6s" path="res://assets/sounds/slide.wav" id="5_ta6vj"]
 [ext_resource type="AudioStream" uid="uid://d25x0e25g7514" path="res://assets/sounds/ground.wav" id="6_re4h7"]
+[ext_resource type="Script" path="res://assets/objects/world/entity/player/player_hover_area.gd" id="12_0labo"]
+[ext_resource type="Theme" uid="uid://wm8dstmgs0eu" path="res://assets/themes/menu_theme.tres" id="12_xroha"]
 
 [sub_resource type="Resource" id="Resource_w02ct"]
 script = ExtResource("3_5garv")
@@ -258,19 +260,22 @@ _data = {
 "walk": SubResource("Animation_bdjc4")
 }
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("entity", "floor_point", "ceiling_point", "coyote_timer", "jump_timer", "modify_block_timer", "slide_effect_timer", "punch_timer")]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_hettc"]
+
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("entity", "floor_point", "ceiling_point", "username_display", "coyote_timer", "jump_timer", "modify_block_timer", "slide_effect_timer", "punch_timer")]
 collision_mask = 2
 script = ExtResource("1_7uomn")
 entity = NodePath("GameEntity")
 floor_point = NodePath("FloorPoint")
 ceiling_point = NodePath("CeilingPoint")
+username_display = NodePath("UsernameDisplay")
 coyote_timer = NodePath("CoyoteTimer")
 jump_timer = NodePath("JumpTimer")
 modify_block_timer = NodePath("ModifyBlockTimer")
 slide_effect_timer = NodePath("SlideEffectTimer")
 punch_timer = NodePath("PunchTimer")
 
-[node name="GameEntity" type="Node" parent="." node_paths=PackedStringArray("entity_node", "body", "sprite", "collider", "animation_player")]
+[node name="GameEntity" type="Node" parent="." node_paths=PackedStringArray("entity_node", "body", "sprite", "collider", "animation_player", "player")]
 script = ExtResource("4_1rk0b")
 entity_type = "player"
 entity_node = NodePath("..")
@@ -278,6 +283,7 @@ body = NodePath("..")
 sprite = NodePath("../Sprite2D")
 collider = NodePath("../CollisionShape2D")
 animation_player = NodePath("../AnimationPlayer")
+player = NodePath("..")
 sounds = Array[ExtResource("3_5garv")]([SubResource("Resource_w02ct"), SubResource("Resource_6oscl"), SubResource("Resource_7vdfh")])
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
@@ -314,7 +320,7 @@ one_shot = true
 
 [node name="ModifyBlockTimer" type="Timer" parent="."]
 process_callback = 0
-wait_time = 0.3
+wait_time = 0.4
 one_shot = true
 
 [node name="SlideEffectTimer" type="Timer" parent="."]
@@ -325,4 +331,31 @@ one_shot = true
 wait_time = 0.3
 one_shot = true
 
-[connection signal="timeout" from="ModifyBlockTimer" to="." method="_on_modify_block_timer_timeout"]
+[node name="UsernameDisplay" type="Area2D" parent="." node_paths=PackedStringArray("label")]
+z_index = 6
+z_as_relative = false
+script = ExtResource("12_0labo")
+label = NodePath("Label")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="UsernameDisplay"]
+shape = SubResource("RectangleShape2D_hettc")
+
+[node name="Label" type="Label" parent="UsernameDisplay"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -25.0
+offset_top = -25.0
+offset_right = 25.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("12_xroha")
+text = "Username"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="mouse_entered" from="UsernameDisplay" to="UsernameDisplay" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="UsernameDisplay" to="UsernameDisplay" method="_on_mouse_exited"]

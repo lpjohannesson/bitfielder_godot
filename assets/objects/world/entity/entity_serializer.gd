@@ -30,6 +30,7 @@ class DataType:
 	const FLIP_X = "flipx"
 	const ANIMATION = "anim"
 	const COLLIDING = "col"
+	const USERNAME = "user"
 
 @export var entities: EntityManager
 
@@ -70,6 +71,10 @@ func save_entity_colliding(request: DataRequest) -> void:
 	save_entity_data(request, DataType.COLLIDING,
 		not request.entity.collider.disabled)
 
+func save_entity_username(request: DataRequest) -> void:
+	save_entity_data(request, DataType.USERNAME,
+		request.entity.player.username)
+
 func create_entity_data(entity: GameEntity) -> Dictionary:
 	var entity_data := {}
 	entity_data[DataType.ID] = entity.entity_id
@@ -95,6 +100,9 @@ func create_entity_update_data(entity: GameEntity, spawning: bool) -> Dictionary
 	
 	if entity.collider != null:
 		save_entity_colliding(request)
+	
+	if entity.player != null:
+		save_entity_username(request)
 	
 	return entity_data
 
@@ -122,6 +130,9 @@ func load_entity_data(entity: GameEntity, entity_data: Dictionary) -> void:
 			
 			DataType.COLLIDING:
 				entity.collider.disabled = not entity_data[DataType.COLLIDING]
+			
+			DataType.USERNAME:
+				entity.player.show_username(entity_data[DataType.USERNAME])
 
 func create_entity_by_type(entity_type: String) -> GameEntity:
 	match entity_type:

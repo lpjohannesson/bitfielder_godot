@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name Player
 
-enum PlayerState { GROUND, CLIMBING }
+enum PlayerState { GROUND, MODIFYING_BLOCK, CLIMBING }
 
 const ACCELERATION := 300.0
 const SPEED := 100.0
@@ -12,10 +12,12 @@ const JUMP_MIDSTOP := 0.5
 const CLIMB_SPEED := 50.0
 const CLIMB_JUMP_SPEED := 50.0
 const GROUND_VOLUME := -12.0
+const MODIFY_BLOCK_TWEEN_TIME := 0.35
 
 @export var entity: GameEntity
 @export var floor_point: Node2D
 @export var ceiling_point: Node2D
+@export var username_display: UsernameDisplay
 
 @export var coyote_timer: Timer
 @export var jump_timer: Timer
@@ -28,12 +30,25 @@ var look_direction := 0.0
 var midstopped := false
 var modify_block_tween: Tween
 var inventory: ItemInventory
+var username: String
 
 var last_surface := 0.0
 var last_is_sliding := false
 
 var player_input := PlayerInput.new()
 var player_state := PlayerState.GROUND
+
+func show_username(new_username: String) -> void:
+	username = new_username
+	
+	var username_text: String
+	
+	if GameScene.instance.player == self:
+		username_text = username + " (You)"
+	else:
+		username_text = username
+	
+	username_display.label.text = username_text
 
 func get_facing_sign() -> float:
 	return -1.0 if entity.sprite.flip_h else 1.0
@@ -86,10 +101,11 @@ func jump() -> void:
 	midstopped = false
 	entity.play_sound("jump")
 
-func try_jump() -> void:
+func update_jump_timer() -> void:
 	if player_input.is_action_just_pressed("jump"):
 		jump_timer.start()
-	
+
+func try_jump() -> void:
 	if jump_timer.is_stopped() or coyote_timer.is_stopped():
 		return
 	
@@ -282,8 +298,15 @@ func is_back_block_placeable(address: BlockAddress, block_position: Vector2i) ->
 	
 	return false
 
+func end_modify_block_tween() -> void:
+	modify_block_tween = null
+
+func end_modify_block() -> void:
+	player_state = PlayerState.GROUND
+	entity.collider.disabled = false
+
 func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
-	if not modify_block_timer.is_stopped():
+	if modify_block_tween != null:
 		return false
 	
 	# Get block position
@@ -373,7 +396,9 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	
 	modify_block_tween.tween_property(self, "global_position",
 		blocks.block_to_world(forward_block_position, true),
-		modify_block_timer.wait_time)
+		MODIFY_BLOCK_TWEEN_TIME)
+	
+	modify_block_tween.finished.connect(end_modify_block_tween)
 	
 	play_punch_animation()
 	entity.animation_player.queue("fall")
@@ -383,7 +408,7 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	
 	entity.update_block(block_specifier, address)
 	
-	player_state = PlayerState.GROUND
+	player_state = PlayerState.MODIFYING_BLOCK
 	
 	return true
 
@@ -523,10 +548,8 @@ func climb() -> void:
 
 func controls(delta: float) -> void:
 	aim()
+	update_jump_timer()
 	try_use_item()
-	
-	if not modify_block_timer.is_stopped():
-		return
 	
 	match player_state:
 		PlayerState.GROUND:
@@ -547,6 +570,16 @@ func controls(delta: float) -> void:
 				midstop_jump()
 			
 			animate()
+		
+		PlayerState.MODIFYING_BLOCK:
+			if modify_block_tween == null:
+				# Jump midair after block
+				if player_input.is_action_pressed("jump"):
+					jump()
+					end_modify_block()
+			
+			if modify_block_timer.is_stopped():
+				end_modify_block()
 		
 		PlayerState.CLIMBING:
 			climb()
@@ -570,11 +603,6 @@ func _physics_process(delta: float) -> void:
 			move_and_slide()
 			return
 	
-	if modify_block_timer.is_stopped():
-		controls(delta)
+	controls(delta)
 	
 	player_input.update_inputs()
-
-func _on_modify_block_timer_timeout() -> void:
-	entity.collider.disabled = false
-	aim()

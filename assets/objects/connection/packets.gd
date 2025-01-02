@@ -1,6 +1,9 @@
 class_name Packets
 
 enum ServerPacket {
+	ACCEPT_CONNECTION,
+	REJECT_CONNECTION,
+	USERNAME_IN_USE,
 	SERVER_CLOSED,
 	CREATE_BLOCK_CHUNK,
 	CREATE_BLOCK_HEIGHTMAP,
@@ -16,6 +19,7 @@ enum ServerPacket {
 }
 
 enum ClientPacket {
+	LOGIN_INFO,
 	QUIT_SERVER,
 	ACTION_PRESSED,
 	ACTION_RELEASED,

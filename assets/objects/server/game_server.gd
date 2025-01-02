@@ -224,6 +224,23 @@ func update_player_heightmap(client: ClientConnection, chunk_x: int) -> void:
 	var heightmap_packet := get_block_heightmap_packet(heightmap, chunk_x)
 	client.send_packet(heightmap_packet)
 
+func create_player_chunks(client: ClientConnection) -> void:
+	var player := client.player
+	
+	client.chunk_load_position = player.global_position
+	var player_chunk_index = get_player_chunk_index(player.global_position)
+	
+	var load_zone = get_chunk_load_zone(player_chunk_index)
+	
+	for chunk_x in range(load_zone.position.x, load_zone.end.x):
+		update_player_heightmap(client, chunk_x)
+		
+		for chunk_y in range(load_zone.position.y, load_zone.end.y):
+			var chunk_index := Vector2i(chunk_x, chunk_y)
+			update_player_chunk(client, chunk_index)
+	
+	client.send_packet(get_player_chunk_index_packet(player_chunk_index))
+
 func update_player_chunks(client: ClientConnection) -> void:
 	var player_position := client.player.global_position
 	
@@ -293,27 +310,12 @@ func recieve_packet(packet: GamePacket, client: ClientConnection) -> void:
 		Packets.ClientPacket.CHANGE_SKIN:
 			change_player_skin(packet, client)
 
-func load_starting_chunks(client: ClientConnection) -> void:
-	var player := client.player
-	
-	client.chunk_load_position = player.global_position
-	var player_chunk_index = get_player_chunk_index(player.global_position)
-	
-	var load_zone = get_chunk_load_zone(player_chunk_index)
-	
-	for chunk_x in range(load_zone.position.x, load_zone.end.x):
-		update_player_heightmap(client, chunk_x)
-		
-		for chunk_y in range(load_zone.position.y, load_zone.end.y):
-			var chunk_index := Vector2i(chunk_x, chunk_y)
-			update_player_chunk(client, chunk_index)
-	
-	client.send_packet(get_player_chunk_index_packet(player_chunk_index))
-
-func connect_client(client: ClientConnection) -> void:
+func connect_client(client: ClientConnection, login_info: ClientLoginInfo) -> void:
 	# Spawn player
 	var player: Player = world.entities.serializer.player_scene.instantiate()
 	client.player = player
+	
+	player.username = login_info.username
 	
 	# Set player position
 	var player_ground_x := randi_range(-PLAYER_SPAWN_RANGE, PLAYER_SPAWN_RANGE)
@@ -326,7 +328,7 @@ func connect_client(client: ClientConnection) -> void:
 	add_entity(player.entity)
 	
 	# Send chunks
-	load_starting_chunks(client)
+	create_player_chunks(client)
 	
 	# Send entities
 	for entity in world.entities.entities:

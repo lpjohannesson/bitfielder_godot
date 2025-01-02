@@ -7,6 +7,7 @@ class_name GameEntity
 @export var sprite: Sprite2D
 @export var collider: CollisionShape2D
 @export var animation_player: AnimationPlayer
+@export var player: Player
 @export var sounds: Array[EntitySound]
 
 var entity_id := 0
@@ -41,6 +42,7 @@ func play_sound(sound_name: String) -> void:
 			[entity_id, sound_name]
 		)
 		
+		# Send sound to others
 		for client in GameServer.instance.clients:
 			if client.player == entity_node:
 				continue

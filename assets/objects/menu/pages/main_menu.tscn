@@ -31,5 +31,12 @@ layout_mode = 2
 theme = ExtResource("2_xkevt")
 text = "Remote play"
 
+[node name="QuitButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("2_xkevt")
+text = "Quit
+"
+
 [connection signal="pressed" from="VBoxContainer/LocalPlayButton" to="." method="_on_local_play_button_pressed"]
 [connection signal="pressed" from="VBoxContainer/RemotePlayButton" to="." method="_on_remote_play_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]

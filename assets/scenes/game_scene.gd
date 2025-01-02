@@ -120,8 +120,7 @@ func select_item(item_index: int) -> void:
 	
 	var packet := GamePacket.create_packet(
 		Packets.ClientPacket.SELECT_ITEM,
-		item_index
-	)
+		item_index)
 	
 	server.send_packet(packet)
 
@@ -168,7 +167,7 @@ func _on_player_position_timer_timeout() -> void:
 	if player != null:
 		packet_manager.send_check_player_position()
 
-func _on_click_surface_gui_input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if not event is InputEventMouseButton:
 		return
 	

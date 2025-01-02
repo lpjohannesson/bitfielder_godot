@@ -8,8 +8,9 @@ layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_jwr63")
 connecting_text = "Connecting..."
-connection_timed_out_text = "Connection timed out."
 disconnected_text = "Disconnected."
+connection_timed_out_text = "Connection timed out."
+logging_in_text = "Logging in..."
 status_label = NodePath("StatusLabel")
 starting_button = NodePath("BackButton")
 

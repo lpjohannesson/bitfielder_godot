@@ -107,6 +107,8 @@ func assign_player(packet: GamePacket) -> void:
 	var entity := scene.world.entities.get_entity(packet.data)
 	scene.player = entity.entity_node
 	 
+	# Update username and camera
+	scene.player.show_username(scene.player.username)
 	scene.player_camera.call_deferred("reset_camera")
 
 func create_inventory(packet: GamePacket) -> void:

@@ -13,6 +13,35 @@ var peer_clients := {}
 func start_host():
 	connection.create_host_bound("*", PORT, 32)
 
+func accept_client(client: RemoteClientConnection, login_info: ClientLoginInfo):
+	client.client_accepted = true
+	
+	client.send_packet(GamePacket.create_packet(
+		Packets.ServerPacket.ACCEPT_CONNECTION,
+		null
+	))
+	
+	server.connect_client(client, login_info)
+
+func recieve_accepted_packet(packet: GamePacket, client: RemoteClientConnection) -> void:
+	print(Packets.ClientPacket.find_key(packet.type), ": ", packet.data)
+	
+	server.recieve_packet(packet, client)
+
+func recieve_login_packet(packet: GamePacket, client: RemoteClientConnection) -> void:
+	var login_info = ClientLoginInfo.from_data(packet.data)
+	
+	# Check for existing username
+	for other_client in server.clients:
+		if other_client.player.username == login_info.username:
+			client.send_packet(GamePacket.create_packet(
+				Packets.ServerPacket.USERNAME_IN_USE,
+				null))
+			
+			return
+	
+	accept_client(client, login_info)
+
 func _process(_delta: float) -> void:
 	while true:
 		var event := connection.service()
@@ -25,19 +54,21 @@ func _process(_delta: float) -> void:
 			
 			ENetConnection.EVENT_CONNECT:
 				var client := RemoteClientConnection.new()
+				
 				client.peer = peer
 				peer_clients[peer] = client
-				
-				server.connect_client(client)
 			
 			ENetConnection.EVENT_DISCONNECT:
-				var client: ClientConnection = peer_clients[peer]
+				var client: RemoteClientConnection = peer_clients[peer]
 				
 				server.disconnect_client(client)
 				peer_clients.erase(peer)
 			
 			ENetConnection.EVENT_RECEIVE:
+				var client: RemoteClientConnection = peer_clients[peer]
 				var packet := GamePacket.from_bytes(peer.get_packet())
-				print(Packets.ClientPacket.find_key(packet.type), ": ", packet.data)
 				
-				server.recieve_packet(packet, peer_clients[peer])
+				if client.client_accepted:
+					recieve_accepted_packet(packet, client)
+				else:
+					recieve_login_packet(packet, client)

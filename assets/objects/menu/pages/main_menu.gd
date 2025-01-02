@@ -9,3 +9,6 @@ func _on_local_play_button_pressed() -> void:
 
 func _on_remote_play_button_pressed() -> void:
 	remote_play_selected.emit()
+
+func _on_quit_button_pressed() -> void:
+	get_tree().quit()

@@ -3,49 +3,76 @@
 [ext_resource type="Script" path="res://assets/objects/menu/pages/remote_play_menu.gd" id="1_rgoh8"]
 [ext_resource type="Theme" uid="uid://wm8dstmgs0eu" path="res://assets/themes/menu_theme.tres" id="2_53u4g"]
 
-[node name="RemotePlayMenu" type="Control" node_paths=PackedStringArray("address_text", "starting_button")]
+[node name="RemotePlayMenu" type="Control" node_paths=PackedStringArray("address_text", "username_text", "starting_button")]
 layout_mode = 3
 anchors_preset = 0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 script = ExtResource("1_rgoh8")
-address_text = NodePath("AddressText")
-starting_button = NodePath("VBoxContainer/CancelButton")
+address_text = NodePath("Inputs/AddressRow/AddressText")
+username_text = NodePath("Inputs/UsernameRow/UsernameText")
+starting_button = NodePath("Buttons/CancelButton")
 
-[node name="AddressText" type="LineEdit" parent="."]
+[node name="Inputs" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -64.0
-offset_right = 64.0
-offset_bottom = 20.0
+offset_left = -128.0
+offset_right = 128.0
+offset_bottom = 46.0
 grow_horizontal = 2
+
+[node name="AddressRow" type="HBoxContainer" parent="Inputs"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Inputs/AddressRow"]
+layout_mode = 2
+theme = ExtResource("2_53u4g")
+text = "Server address:"
+
+[node name="AddressText" type="LineEdit" parent="Inputs/AddressRow"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme = ExtResource("2_53u4g")
 text = "localhost"
-placeholder_text = "Server address"
 caret_blink = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="UsernameRow" type="HBoxContainer" parent="Inputs"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Inputs/UsernameRow"]
+layout_mode = 2
+theme = ExtResource("2_53u4g")
+text = "Username:"
+
+[node name="UsernameText" type="LineEdit" parent="Inputs/UsernameRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("2_53u4g")
+text = "Player"
+caret_blink = true
+
+[node name="Buttons" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
 offset_left = -36.0
-offset_top = 32.0
+offset_top = 52.0
 offset_right = 36.0
-offset_bottom = 133.0
+offset_bottom = 104.0
 grow_horizontal = 2
 
-[node name="ConnectButton" type="Button" parent="VBoxContainer"]
+[node name="ConnectButton" type="Button" parent="Buttons"]
 layout_mode = 2
 theme = ExtResource("2_53u4g")
 text = "Connect"
 
-[node name="CancelButton" type="Button" parent="VBoxContainer"]
+[node name="CancelButton" type="Button" parent="Buttons"]
 layout_mode = 2
 theme = ExtResource("2_53u4g")
 text = "Cancel"
 
-[connection signal="pressed" from="VBoxContainer/ConnectButton" to="." method="_on_connect_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/CancelButton" to="." method="_on_cancel_button_pressed"]
+[connection signal="pressed" from="Buttons/ConnectButton" to="." method="_on_connect_button_pressed"]
+[connection signal="pressed" from="Buttons/CancelButton" to="." method="_on_cancel_button_pressed"]

@@ -36,7 +36,10 @@ func _ready() -> void:
 	scene.server = server
 	server.client = client
 	
-	local_server.connect_client(client)
+	var login_info := ClientLoginInfo.new()
+	login_info.username = "Player"
+	
+	local_server.connect_client(client, login_info)
 
 func _physics_process(_delta: float) -> void:
 	if Input.is_action_just_pressed("pause"):
