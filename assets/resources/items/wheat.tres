@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemType" load_steps=5 format=3 uid="uid://b3udi1n5qd6lx"]
+
+[ext_resource type="Texture2D" uid="uid://ccqxd3u7mbj30" path="res://assets/textures/blocks/wheat.png" id="1_wclmp"]
+[ext_resource type="Script" path="res://assets/objects/world/item/properties/block_item_properties.gd" id="2_w0lde"]
+[ext_resource type="Script" path="res://assets/objects/world/item/item_type.gd" id="3_qgrkb"]
+
+[sub_resource type="Resource" id="Resource_ew82o"]
+script = ExtResource("2_w0lde")
+
+[resource]
+script = ExtResource("3_qgrkb")
+item_name = "wheat"
+item_texture = ExtResource("1_wclmp")
+properties = SubResource("Resource_ew82o")

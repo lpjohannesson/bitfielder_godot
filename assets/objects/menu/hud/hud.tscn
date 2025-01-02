@@ -13,6 +13,7 @@ item_bar = NodePath("ItemBar")
 [node name="ItemBar" parent="." instance=ExtResource("1_ppg0x")]
 
 [node name="TestIcons" type="TextureRect" parent="."]
+visible = false
 layout_mode = 0
 offset_left = -83.0
 offset_top = -23.0

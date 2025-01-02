@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3 uid="uid://celyk57ifua4f"]
+[gd_scene load_steps=47 format=3 uid="uid://celyk57ifua4f"]
 
 [ext_resource type="Script" path="res://assets/objects/world/game_world.gd" id="1_waysh"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_world.gd" id="2_3pcni"]
@@ -31,6 +31,8 @@
 [ext_resource type="PackedScene" uid="uid://omkj7o5gbs7m" path="res://assets/objects/world/block/block_chunk.tscn" id="19_qsv6g"]
 [ext_resource type="Resource" uid="uid://d3uhgvnen6sq7" path="res://assets/resources/blocks/sand.tres" id="20_014mw"]
 [ext_resource type="Resource" uid="uid://b4aqfr2yiet2c" path="res://assets/resources/blocks/ladder.tres" id="21_b2opd"]
+[ext_resource type="Resource" uid="uid://cc4a5c0ma4x6y" path="res://assets/resources/blocks/block_iron.tres" id="22_4shq2"]
+[ext_resource type="Resource" uid="uid://gbqa31fnpnep" path="res://assets/resources/blocks/block_gold.tres" id="23_6dd02"]
 [ext_resource type="Resource" uid="uid://bk7ovjdedqhol" path="res://assets/resources/items/grass.tres" id="24_xmnu3"]
 [ext_resource type="Resource" uid="uid://d0kfvaxqq26ha" path="res://assets/resources/items/wood_log.tres" id="25_bs7sh"]
 [ext_resource type="Resource" uid="uid://dw2eqcb66nn1v" path="res://assets/resources/items/leaves.tres" id="25_tebgd"]
@@ -39,8 +41,11 @@
 [ext_resource type="Resource" uid="uid://dafi2oe4guw6b" path="res://assets/resources/items/torch.tres" id="30_6ntpc"]
 [ext_resource type="Resource" uid="uid://bxsesftnrtau0" path="res://assets/resources/items/mushroom.tres" id="31_ebq75"]
 [ext_resource type="Resource" uid="uid://bpmftavfm1cr" path="res://assets/resources/items/glass.tres" id="33_87c5q"]
+[ext_resource type="Resource" uid="uid://b3udi1n5qd6lx" path="res://assets/resources/items/wheat.tres" id="35_rgp5i"]
 [ext_resource type="Resource" uid="uid://cat1vma04b3n" path="res://assets/resources/items/sand.tres" id="36_mdga1"]
 [ext_resource type="Resource" uid="uid://cpjc2omyr43gi" path="res://assets/resources/items/ladder.tres" id="37_dehta"]
+[ext_resource type="Resource" uid="uid://dyvbxk6g2g1c2" path="res://assets/resources/items/block_iron.tres" id="41_j132l"]
+[ext_resource type="Resource" uid="uid://ciqxxvoyjitom" path="res://assets/resources/items/block_gold.tres" id="42_gxuda"]
 
 [node name="GameWorld" type="Node2D" node_paths=PackedStringArray("blocks", "items", "entities")]
 script = ExtResource("1_waysh")
@@ -51,7 +56,7 @@ entities = NodePath("EntityManager")
 [node name="BlockWorld" type="Node2D" parent="." node_paths=PackedStringArray("chunks", "serializer")]
 scale = Vector2(16, 16)
 script = ExtResource("2_3pcni")
-block_types = Array[ExtResource("3_bdl7w")]([ExtResource("4_x6ly3"), ExtResource("5_bxmfp"), ExtResource("6_486s4"), ExtResource("7_rr82n"), ExtResource("8_re7ou"), ExtResource("9_j7cik"), ExtResource("10_eitd2"), ExtResource("11_o3qxe"), ExtResource("12_4pbjl"), ExtResource("13_04xow"), ExtResource("14_wlrim"), ExtResource("15_sfhs0"), ExtResource("16_k2bey"), ExtResource("17_nq8w5"), ExtResource("18_v0tft"), ExtResource("19_mc014"), ExtResource("20_014mw"), ExtResource("21_b2opd")])
+block_types = Array[ExtResource("3_bdl7w")]([ExtResource("4_x6ly3"), ExtResource("5_bxmfp"), ExtResource("6_486s4"), ExtResource("7_rr82n"), ExtResource("8_re7ou"), ExtResource("9_j7cik"), ExtResource("10_eitd2"), ExtResource("11_o3qxe"), ExtResource("12_4pbjl"), ExtResource("13_04xow"), ExtResource("14_wlrim"), ExtResource("15_sfhs0"), ExtResource("16_k2bey"), ExtResource("17_nq8w5"), ExtResource("18_v0tft"), ExtResource("19_mc014"), ExtResource("20_014mw"), ExtResource("21_b2opd"), ExtResource("22_4shq2"), ExtResource("23_6dd02")])
 chunk_scene = ExtResource("19_qsv6g")
 chunks = NodePath("Chunks")
 serializer = NodePath("BlockSerializer")
@@ -66,7 +71,7 @@ blocks = NodePath("..")
 script = ExtResource("3_vg71c")
 world = NodePath("..")
 serializer = NodePath("ItemSerializer")
-item_types = Array[ExtResource("4_u7yh7")]([null, ExtResource("5_degwe"), ExtResource("24_xmnu3"), ExtResource("6_nqmh0"), ExtResource("25_bs7sh"), ExtResource("26_xwre3"), ExtResource("25_tebgd"), ExtResource("28_jv7b0"), ExtResource("30_6ntpc"), ExtResource("31_ebq75"), ExtResource("33_87c5q"), ExtResource("36_mdga1"), ExtResource("37_dehta")])
+item_types = Array[ExtResource("4_u7yh7")]([null, ExtResource("5_degwe"), ExtResource("24_xmnu3"), ExtResource("6_nqmh0"), ExtResource("25_bs7sh"), ExtResource("26_xwre3"), ExtResource("25_tebgd"), ExtResource("28_jv7b0"), ExtResource("30_6ntpc"), ExtResource("31_ebq75"), ExtResource("35_rgp5i"), ExtResource("33_87c5q"), ExtResource("36_mdga1"), ExtResource("37_dehta"), ExtResource("41_j132l"), ExtResource("42_gxuda")])
 
 [node name="ItemSerializer" type="Node" parent="ItemManager" node_paths=PackedStringArray("items")]
 script = ExtResource("9_j762g")

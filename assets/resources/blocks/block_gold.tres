@@ -1,0 +1,26 @@
+[gd_resource type="Resource" script_class="BlockType" load_steps=8 format=3 uid="uid://gbqa31fnpnep"]
+
+[ext_resource type="Texture2D" uid="uid://t8s214m5k8ra" path="res://assets/textures/blocks/particles/block_gold.png" id="1_wreci"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="3_6k1yc"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="4_ewbob"]
+[ext_resource type="Texture2D" uid="uid://bh4fv7ihl5hsk" path="res://assets/textures/blocks/block_gold.png" id="4_himu5"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="6_exylv"]
+
+[sub_resource type="Resource" id="Resource_bu2ry"]
+script = ExtResource("3_6k1yc")
+is_solid = true
+is_one_way = false
+is_climbable = false
+is_partial = false
+casts_shadow = true
+
+[sub_resource type="Resource" id="Resource_cp2yv"]
+script = ExtResource("4_ewbob")
+texture = ExtResource("4_himu5")
+
+[resource]
+script = ExtResource("6_exylv")
+block_name = "block_gold"
+properties = SubResource("Resource_bu2ry")
+renderer = SubResource("Resource_cp2yv")
+particle_texture = ExtResource("1_wreci")

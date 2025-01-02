@@ -111,33 +111,44 @@ func update_block(
 	blocks.update_heightmap(block_specifier)
 	lighting_display.show_lightmap()
 
-func select_item(item_index: int) -> void:
+func update_item_selection() -> void:
+
+	var packet := GamePacket.create_packet(
+		Packets.ClientPacket.SELECT_ITEM,
+		player.inventory.selected_index)
+	
+	server.send_packet(packet)
+	
+	var page_item_index := player.inventory.get_page_item_index()
+	hud.item_bar.show_item_arrow(page_item_index)
+
+func move_page_item(direction: int) -> void:
+	player.inventory.move_page_item(direction)
+	update_item_selection()
+
+func move_item_page(direction: int) -> void:
+	player.inventory.move_item_page(direction)
+	
+	hud.item_bar.show_inventory(player.inventory)
+	update_item_selection()
+
+func try_select_items() -> void:
 	if player.inventory == null:
 		return
 	
-	player.inventory.selected_index = item_index
-	hud.item_bar.show_item_arrow(item_index)
+	var page_direction = \
+		int(Input.is_action_just_pressed("item_page_right")) - \
+		int(Input.is_action_just_pressed("item_page_left"))
 	
-	var packet := GamePacket.create_packet(
-		Packets.ClientPacket.SELECT_ITEM,
-		item_index)
+	if page_direction != 0:
+		move_item_page(page_direction)
 	
-	server.send_packet(packet)
-
-func move_item_selection(select_direction: int) -> void:
-	select_item(posmod(
-		player.inventory.selected_index + select_direction,
-		ItemInventory.ITEM_COUNT))
-
-func try_select_items() -> void:
 	var select_direction = \
 		int(Input.is_action_just_pressed("select_right")) - \
 		int(Input.is_action_just_pressed("select_left"))
 	
-	if select_direction == 0:
-		return
-	
-	move_item_selection(select_direction)
+	if select_direction != 0:
+		move_page_item(select_direction)
 
 func resize() -> void:
 	shadow_viewport.size = viewport.get_visible_rect().size
