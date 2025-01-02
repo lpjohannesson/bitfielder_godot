@@ -71,9 +71,11 @@ func try_connect_server() -> void:
 		return
 	
 	# Start login
+	var login_info := remote_play_menu.get_login_info()
+	
 	server.send_packet(GamePacket.create_packet(
 		Packets.ClientPacket.LOGIN_INFO,
-		remote_play_menu.get_login_info().to_data()))
+		login_info.to_data()))
 	
 	connection_state = ConnectionState.LOGGING_IN
 	connection_timer.start()

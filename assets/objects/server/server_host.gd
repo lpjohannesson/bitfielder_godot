@@ -27,10 +27,10 @@ func recieve_accepted_packet(packet: GamePacket, client: RemoteClientConnection)
 	server.recieve_packet(packet, client)
 
 func recieve_login_packet(packet: GamePacket, client: RemoteClientConnection) -> void:
-	if not ClientLoginInfo.is_data_valid(packet.data):
-		return
-	
 	var login_info := ClientLoginInfo.from_data(packet.data)
+	
+	if login_info == null:
+		return
 	
 	# Check for same version
 	var game_version := GameServer.get_game_version()

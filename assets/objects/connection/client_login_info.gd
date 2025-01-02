@@ -9,13 +9,18 @@ static func is_data_valid(data: Variant) -> bool:
 	if not data is Dictionary:
 		return false
 	
-	for param in LOGIN_PARAMS:
-		if not data.has(param):
-			return false
+	if not data.get("user") is String:
+		return false
+	
+	if not data.get("version") is String:
+		return false
 	
 	return true
 
 static func from_data(data: Dictionary) -> ClientLoginInfo:
+	if not is_data_valid(data):
+		return null
+	
 	var login_info := ClientLoginInfo.new()
 	login_info.game_version = data["version"]
 	login_info.username = data["user"]
