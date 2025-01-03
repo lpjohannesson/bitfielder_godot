@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=24 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="2_d1sjh"]
@@ -6,7 +6,10 @@
 [ext_resource type="AudioStream" uid="uid://dqqgsvp4lycgf" path="res://assets/sounds/break.wav" id="4_0vcd0"]
 [ext_resource type="PackedScene" uid="uid://celyk57ifua4f" path="res://assets/objects/world/game_world.tscn" id="4_3hdty"]
 [ext_resource type="AudioStream" uid="uid://y6i3cpd0jrtq" path="res://assets/sounds/place.wav" id="5_tjk8f"]
+[ext_resource type="Script" path="res://assets/objects/world/game_input_manager.gd" id="6_ly1vx"]
+[ext_resource type="Texture2D" uid="uid://ddcuuu17cbn7c" path="res://assets/textures/backgrounds/cloud_small.png" id="7_4mou1"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/block_world_renderer.gd" id="7_ddnpg"]
+[ext_resource type="Texture2D" uid="uid://cdugor2xiwl1w" path="res://assets/textures/backgrounds/cloud_big.png" id="7_yfnxb"]
 [ext_resource type="PackedScene" uid="uid://qnuf5qyuxwxp" path="res://assets/objects/world/block/render/block_particle.tscn" id="8_in2xm"]
 [ext_resource type="Shader" path="res://assets/shaders/lighting_display.gdshader" id="9_owgvs"]
 [ext_resource type="PackedScene" uid="uid://c587sy0idbcjt" path="res://assets/objects/menu/hud/hud.tscn" id="10_0vvsh"]
@@ -29,6 +32,9 @@ gradient = SubResource("Gradient_7u5hj")
 width = 1
 fill_from = Vector2(0, 1)
 fill_to = Vector2(0, 0)
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_avmq0"]
+blend_mode = 1
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_k8a25"]
 shader = ExtResource("9_owgvs")
@@ -57,6 +63,11 @@ effect_sprite_scene = ExtResource("3_k32od")
 break_sound = ExtResource("4_0vcd0")
 place_sound = ExtResource("5_tjk8f")
 
+[node name="GameInputManager" type="Node" parent="." node_paths=PackedStringArray("scene")]
+process_mode = 3
+script = ExtResource("6_ly1vx")
+scene = NodePath("..")
+
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
 [node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
@@ -68,6 +79,70 @@ offset_right = 512.0
 offset_bottom = 896.0
 texture = SubResource("GradientTexture2D_uk2xc")
 expand_mode = 2
+
+[node name="Clouds" type="Node2D" parent="."]
+modulate = Color(0.509286, 0.509286, 0.509286, 1)
+material = SubResource("CanvasItemMaterial_avmq0")
+
+[node name="Big" type="Parallax2D" parent="Clouds"]
+use_parent_material = true
+scroll_scale = Vector2(0.5, 0.5)
+repeat_size = Vector2(200, 200)
+autoscroll = Vector2(10, 0)
+repeat_times = 16
+
+[node name="Sprite2D" type="Sprite2D" parent="Clouds/Big"]
+use_parent_material = true
+texture = ExtResource("7_yfnxb")
+
+[node name="Sprite2D2" type="Sprite2D" parent="Clouds/Big"]
+use_parent_material = true
+position = Vector2(137, 73)
+texture = ExtResource("7_yfnxb")
+
+[node name="Big2" type="Parallax2D" parent="Clouds"]
+use_parent_material = true
+scroll_scale = Vector2(0.25, 0.25)
+repeat_size = Vector2(200, 200)
+autoscroll = Vector2(5, 0)
+repeat_times = 16
+
+[node name="Sprite2D3" type="Sprite2D" parent="Clouds/Big2"]
+use_parent_material = true
+position = Vector2(92, 92)
+texture = ExtResource("7_yfnxb")
+
+[node name="Sprite2D" type="Sprite2D" parent="Clouds/Big2"]
+use_parent_material = true
+position = Vector2(74, 36)
+texture = ExtResource("7_yfnxb")
+
+[node name="Sprite2D2" type="Sprite2D" parent="Clouds/Big2"]
+use_parent_material = true
+position = Vector2(32, 130)
+texture = ExtResource("7_yfnxb")
+
+[node name="Small" type="Parallax2D" parent="Clouds"]
+use_parent_material = true
+scroll_scale = Vector2(0.3, 0.3)
+repeat_size = Vector2(200, 200)
+autoscroll = Vector2(8, 0)
+repeat_times = 16
+
+[node name="Sprite2D" type="Sprite2D" parent="Clouds/Small"]
+use_parent_material = true
+position = Vector2(32, 35)
+texture = ExtResource("7_4mou1")
+
+[node name="Sprite2D2" type="Sprite2D" parent="Clouds/Small"]
+use_parent_material = true
+position = Vector2(108, 68)
+texture = ExtResource("7_4mou1")
+
+[node name="Sprite2D3" type="Sprite2D" parent="Clouds/Small"]
+use_parent_material = true
+position = Vector2(163, -15)
+texture = ExtResource("7_4mou1")
 
 [node name="GameWorld" parent="." instance=ExtResource("4_3hdty")]
 
@@ -115,6 +190,7 @@ script = ExtResource("10_5ifsx")
 world = NodePath("../GameWorld")
 light_viewport = NodePath("SubViewport")
 light_canvas = NodePath("SubViewport/LightCanvas")
+metadata/_edit_lock_ = true
 
 [node name="SubViewport" type="SubViewport" parent="LightingDisplay"]
 size = Vector2i(2, 2)

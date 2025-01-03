@@ -1,4 +1,4 @@
-extends Node2D
+extends Control
 class_name MenuBackground
 
 const BOARD_SIZE := Vector2i(32, 24)

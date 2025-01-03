@@ -453,7 +453,6 @@ func show_ground_effects() -> void:
 		return
 	
 	entity.spawn_effect_sprite("ground", surface_point.global_position)
-	
 	entity.play_sound("ground")
 	
 	for i in range(get_slide_collision_count()):

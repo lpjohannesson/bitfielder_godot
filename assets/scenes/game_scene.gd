@@ -183,7 +183,6 @@ func _process(_delta: float) -> void:
 	
 	if player != null:
 		try_select_items()
-		player.player_input.read_inputs(server)
 
 func _on_player_position_timer_timeout() -> void:
 	if player != null:

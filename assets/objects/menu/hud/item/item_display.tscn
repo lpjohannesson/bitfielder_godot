@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://boent3mjk48ko"]
+[gd_scene load_steps=2 format=3 uid="uid://boent3mjk48ko"]
 
 [ext_resource type="Script" path="res://assets/objects/menu/hud/item/item_display.gd" id="1_gacnf"]
-[ext_resource type="Texture2D" uid="uid://cnb7weowgg3e2" path="res://assets/textures/items/torch.png" id="2_2qb0d"]
 
 [node name="ItemDisplay" type="Control" node_paths=PackedStringArray("texture_display", "arrow_point")]
 layout_mode = 3
@@ -23,7 +22,6 @@ offset_right = 8.0
 offset_bottom = 8.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("2_2qb0d")
 
 [node name="ArrowPoint" type="Control" parent="."]
 anchors_preset = 0

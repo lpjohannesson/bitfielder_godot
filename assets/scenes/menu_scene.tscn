@@ -8,7 +8,15 @@
 [ext_resource type="Texture2D" uid="uid://cnxn7meqpnyf1" path="res://assets/textures/menu/logos/title.png" id="4_ofaut"]
 [ext_resource type="Theme" uid="uid://wm8dstmgs0eu" path="res://assets/themes/menu_theme.tres" id="6_borcq"]
 
-[node name="MenuScene" type="Node2D" node_paths=PackedStringArray("main_menu", "remote_play_menu", "connection_menu", "connection_timer", "copyright_label")]
+[node name="MenuScene" type="Control" node_paths=PackedStringArray("main_menu", "remote_play_menu", "connection_menu", "connection_timer", "copyright_label")]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_5k21t")
 main_menu = NodePath("CanvasLayer/Menus/MainMenu")
 remote_play_menu = NodePath("CanvasLayer/Menus/RemotePlayMenu")
@@ -17,9 +25,16 @@ connection_timer = NodePath("ConnectionTimer")
 copyright_label = NodePath("CanvasLayer/CopyrightLabel")
 copyright_text = "Game version %s. Copyright 2025 Crossfrog Media."
 
-[node name="MenuBackground" parent="." instance=ExtResource("2_fk3s5")]
-
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="MenuBackground" parent="CanvasLayer" instance=ExtResource("2_fk3s5")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Menus" type="Control" parent="CanvasLayer"]
 layout_mode = 3
