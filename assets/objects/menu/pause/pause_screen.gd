@@ -6,7 +6,6 @@ class_name PauseScreen
 @export var starting_button: Button
 
 signal continue_selected
-signal quit_selected
 
 func show_screen(paused: bool) -> void:
 	visible = paused
@@ -14,14 +13,15 @@ func show_screen(paused: bool) -> void:
 	if paused:
 		starting_button.grab_focus()
 
-func _on_continue_button_button_down() -> void:
+func _on_continue_button_pressed() -> void:
 	continue_selected.emit()
 
-func _on_change_skin_button_button_down() -> void:
+func _on_change_skin_button_pressed() -> void:
 	skin_file_dialog.popup()
 
-func _on_quit_button_button_down() -> void:
-	quit_selected.emit()
+func _on_quit_button_pressed() -> void:
+	get_tree().paused = false
+	scene.return_to_menu()
 
 func _on_skin_file_dialog_file_selected(path: String) -> void:
 	PlayerSkinManager.change_skin(scene.player, path)

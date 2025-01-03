@@ -16,4 +16,3 @@ visible = false
 scene = NodePath("../GameScene")
 
 [connection signal="continue_selected" from="PauseScreen" to="." method="_on_pause_screen_continue_selected"]
-[connection signal="quit_selected" from="PauseScreen" to="." method="_on_pause_screen_quit_selected"]

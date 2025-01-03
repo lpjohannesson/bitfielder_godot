@@ -54,7 +54,3 @@ func _exit_tree() -> void:
 
 func _on_local_pause_screen_continue_selected() -> void:
 	pause_game()
-
-func _on_local_pause_screen_quit_selected() -> void:
-	get_tree().paused = false
-	scene.return_to_menu()

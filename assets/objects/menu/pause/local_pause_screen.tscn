@@ -13,4 +13,4 @@ layout_mode = 2
 theme = ExtResource("2_ob8uh")
 text = "Host on network"
 
-[connection signal="button_down" from="Menu/VBoxContainer/HostOnNetworkButton" to="." method="_on_host_on_network_button_button_down"]
+[connection signal="pressed" from="Menu/VBoxContainer/HostOnNetworkButton" to="." method="_on_host_on_network_button_pressed"]

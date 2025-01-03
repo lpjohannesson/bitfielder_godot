@@ -29,4 +29,3 @@ render_target_update_mode = 4
 process_mode = 1
 
 [connection signal="continue_selected" from="LocalPauseScreen" to="." method="_on_local_pause_screen_continue_selected"]
-[connection signal="quit_selected" from="LocalPauseScreen" to="." method="_on_local_pause_screen_quit_selected"]

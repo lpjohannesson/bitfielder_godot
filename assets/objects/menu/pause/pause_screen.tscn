@@ -69,7 +69,7 @@ access = 2
 filters = PackedStringArray("*.png")
 use_native_dialog = true
 
-[connection signal="button_down" from="Menu/VBoxContainer/ContinueButton" to="." method="_on_continue_button_button_down"]
-[connection signal="button_down" from="Menu/VBoxContainer/ChangeSkinButton" to="." method="_on_change_skin_button_button_down"]
-[connection signal="button_down" from="Menu/VBoxContainer/QuitButton" to="." method="_on_quit_button_button_down"]
+[connection signal="pressed" from="Menu/VBoxContainer/ContinueButton" to="." method="_on_continue_button_pressed"]
+[connection signal="pressed" from="Menu/VBoxContainer/ChangeSkinButton" to="." method="_on_change_skin_button_pressed"]
+[connection signal="pressed" from="Menu/VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]
 [connection signal="file_selected" from="SkinFileDialog" to="." method="_on_skin_file_dialog_file_selected"]
