@@ -157,8 +157,7 @@ func check_block_update(packet: GamePacket, client: ClientConnection) -> void:
 		return
 	
 	# Re-update block on client if not matching
-	var block_ids := block_specifier.get_layer(address.chunk)
-	var block_id := block_ids[address.block_index]
+	var block_id := block_specifier.read_address(address)
 	
 	if block_id != block_specifier.block_id:
 		client.send_packet(get_failed_block_packet(block_specifier, block_id))

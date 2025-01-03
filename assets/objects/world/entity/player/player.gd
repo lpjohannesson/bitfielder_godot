@@ -337,7 +337,7 @@ func can_modify_forward_block(
 	var front_id := address.chunk.front_ids[address.block_index]
 	var front_block := blocks.block_types[front_id]
 	
-	return front_block.properties.is_solid
+	return front_block.properties.is_solid and not front_block.properties.is_one_way
 
 func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	if modify_block_tween != null:
