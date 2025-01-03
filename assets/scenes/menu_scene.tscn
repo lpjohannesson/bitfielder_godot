@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://bgj63tpb1tesm"]
+[gd_scene load_steps=8 format=3 uid="uid://bgj63tpb1tesm"]
 
 [ext_resource type="Script" path="res://assets/scenes/menu_scene.gd" id="1_5k21t"]
 [ext_resource type="PackedScene" uid="uid://d0xrvqr6fldti" path="res://assets/objects/menu/pages/main_menu.tscn" id="2_elm5u"]
+[ext_resource type="PackedScene" uid="uid://dir0jqqd3acgu" path="res://assets/objects/menu/background/menu_background.tscn" id="2_fk3s5"]
 [ext_resource type="PackedScene" uid="uid://dugbp4m0fq71n" path="res://assets/objects/menu/pages/remote_play_menu.tscn" id="4_cq8eo"]
 [ext_resource type="PackedScene" uid="uid://ew1cvbrifktc" path="res://assets/objects/menu/pages/connection_menu.tscn" id="4_duo2n"]
 [ext_resource type="Texture2D" uid="uid://cnxn7meqpnyf1" path="res://assets/textures/menu/logos/title.png" id="4_ofaut"]
@@ -15,6 +16,8 @@ connection_menu = NodePath("CanvasLayer/Menus/ConnectionMenu")
 connection_timer = NodePath("ConnectionTimer")
 copyright_label = NodePath("CanvasLayer/CopyrightLabel")
 copyright_text = "Game version %s. Copyright 2025 Crossfrog Media."
+
+[node name="MenuBackground" parent="." instance=ExtResource("2_fk3s5")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
