@@ -41,7 +41,7 @@ shader_parameter/block_light_range = 16
 shader_parameter/heightmap = PackedInt32Array()
 shader_parameter/top_height = -1
 
-[node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "blocks_renderer", "packet_manager", "hud", "player_camera", "lighting_display", "particles", "shadow_viewport")]
+[node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "blocks_renderer", "packet_manager", "hud", "player_camera", "lighting_display", "item_page_timer", "particles", "shadow_viewport")]
 script = ExtResource("1_jdhth")
 world = NodePath("GameWorld")
 blocks_renderer = NodePath("BlockWorldRenderer")
@@ -49,6 +49,7 @@ packet_manager = NodePath("GamePacketManager")
 hud = NodePath("CanvasLayer/HUD")
 player_camera = NodePath("PlayerCamera")
 lighting_display = NodePath("LightingDisplay")
+item_page_timer = NodePath("ItemPageTimer")
 particles = NodePath("Particles")
 shadow_viewport = NodePath("ShadowViewport")
 shadow_shader = SubResource("ShaderMaterial_hm8g0")
@@ -137,4 +138,9 @@ grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(3, 3)
 
+[node name="ItemPageTimer" type="Timer" parent="."]
+wait_time = 0.4
+one_shot = true
+
 [connection signal="timeout" from="PlayerPositionTimer" to="." method="_on_player_position_timer_timeout"]
+[connection signal="timeout" from="ItemPageTimer" to="." method="_on_item_page_timer_timeout"]

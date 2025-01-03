@@ -144,9 +144,11 @@ func try_use_item() -> void:
 	if player_input.is_action_pressed("use_front"):
 		on_front_layer = true
 		pressed_action = "use_front"
+	
 	elif player_input.is_action_pressed("use_back"):
 		on_front_layer = false
 		pressed_action = "use_back"
+	
 	else:
 		return
 	

@@ -12,6 +12,7 @@ static var instance: GameScene
 @export var hud: HUD
 @export var player_camera: PlayerCamera
 @export var lighting_display: LightingDisplay
+@export var item_page_timer: Timer
 
 @export var particles: Node2D
 @export var shadow_viewport: SubViewport
@@ -112,7 +113,6 @@ func update_block(
 	lighting_display.show_lightmap()
 
 func update_item_selection() -> void:
-
 	var packet := GamePacket.create_packet(
 		Packets.ClientPacket.SELECT_ITEM,
 		player.inventory.selected_index)
@@ -132,23 +132,34 @@ func move_item_page(direction: int) -> void:
 	hud.item_bar.show_inventory(player.inventory)
 	update_item_selection()
 
+func get_pressed_select_direction() -> int:
+	return \
+		int(Input.is_action_pressed("select_right")) - \
+		int(Input.is_action_pressed("select_left"))
+
 func try_select_items() -> void:
 	if player.inventory == null:
 		return
 	
-	var page_direction = \
+	var page_direction := \
 		int(Input.is_action_just_pressed("item_page_right")) - \
 		int(Input.is_action_just_pressed("item_page_left"))
 	
 	if page_direction != 0:
 		move_item_page(page_direction)
 	
-	var select_direction = \
+	var select_direction := \
 		int(Input.is_action_just_pressed("select_right")) - \
 		int(Input.is_action_just_pressed("select_left"))
 	
 	if select_direction != 0:
 		move_page_item(select_direction)
+	
+	if get_pressed_select_direction() == 0:
+		item_page_timer.stop()
+	else:
+		if item_page_timer.is_stopped():
+			item_page_timer.start()
 
 func resize() -> void:
 	shadow_viewport.size = viewport.get_visible_rect().size
@@ -200,3 +211,6 @@ func _unhandled_input(event: InputEvent) -> void:
 		Input.action_press(action)
 	else:
 		Input.action_release(action)
+
+func _on_item_page_timer_timeout() -> void:
+	move_item_page(get_pressed_select_direction())
