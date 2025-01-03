@@ -1,9 +1,25 @@
-[gd_resource type="Theme" load_steps=10 format=3 uid="uid://wm8dstmgs0eu"]
+[gd_resource type="Theme" load_steps=14 format=3 uid="uid://wm8dstmgs0eu"]
 
 [ext_resource type="FontFile" uid="uid://jrf87qe0jg4e" path="res://assets/fonts/font.tres" id="1_7rf6o"]
+[ext_resource type="Texture2D" uid="uid://lr5cfn7amolq" path="res://assets/textures/menu/borders/button_disabled.png" id="1_tq5p8"]
+[ext_resource type="Texture2D" uid="uid://vhvmobpphnkq" path="res://assets/textures/menu/borders/button_focus.png" id="2_7od5a"]
 [ext_resource type="Texture2D" uid="uid://8cr7a25fheqc" path="res://assets/textures/menu/borders/button.png" id="2_2636e"]
 [ext_resource type="Texture2D" uid="uid://c1aahftx7iyce" path="res://assets/textures/menu/borders/button_hover.png" id="2_ps21n"]
 [ext_resource type="Texture2D" uid="uid://c68wg44go53ni" path="res://assets/textures/menu/borders/line_edit.png" id="2_yi1g5"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_k1ux8"]
+texture = ExtResource("1_tq5p8")
+texture_margin_left = 5.0
+texture_margin_top = 5.0
+texture_margin_right = 5.0
+texture_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_x02hn"]
+texture = ExtResource("2_7od5a")
+texture_margin_left = 5.0
+texture_margin_top = 5.0
+texture_margin_right = 5.0
+texture_margin_bottom = 5.0
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_kma5t"]
 texture = ExtResource("2_ps21n")
@@ -40,6 +56,8 @@ texture_margin_bottom = 5.0
 
 [resource]
 default_font = ExtResource("1_7rf6o")
+Button/styles/disabled = SubResource("StyleBoxTexture_k1ux8")
+Button/styles/focus = SubResource("StyleBoxTexture_x02hn")
 Button/styles/hover = SubResource("StyleBoxTexture_kma5t")
 Button/styles/normal = SubResource("StyleBoxTexture_n4jbu")
 LineEdit/colors/caret_color = Color(0.95, 0.95, 0.95, 1)

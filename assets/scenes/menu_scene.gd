@@ -26,10 +26,6 @@ func stop_server_connection() -> void:
 	if server == null:
 		return
 	
-	# Send final packets
-	if server.peer != null and server.peer.is_active():
-		server.connection.service()
-	
 	server.connection.destroy()
 	RemoteServerConnection.instance = null
 	

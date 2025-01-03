@@ -45,13 +45,16 @@ func _physics_process(_delta: float) -> void:
 	if Input.is_action_just_pressed("pause"):
 		pause_game()
 
+func _exit_tree() -> void:
+	scene.quit_server()
+	local_server.close_server()
+	
+	if server_host != null:
+		server_host.connection.service()
+
 func _on_local_pause_screen_continue_selected() -> void:
 	pause_game()
 
 func _on_local_pause_screen_quit_selected() -> void:
 	get_tree().paused = false
-	
-	local_server.close_server()
-	
-	if server_host != null:
-		server_host.connection.service()
+	scene.return_to_menu()

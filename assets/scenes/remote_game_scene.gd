@@ -6,6 +6,9 @@ class_name RemoteGameScene
 
 var paused := false
 
+func get_server() -> RemoteServerConnection:
+	return RemoteServerConnection.instance
+
 func pause_game() -> void:
 	paused = not paused
 	pause_screen.show_screen(paused)
@@ -18,7 +21,7 @@ func _physics_process(_delta: float) -> void:
 		pause_game()
 
 func _process(_delta: float) -> void:
-	var server := RemoteServerConnection.instance
+	var server := get_server()
 	
 	while true:
 		var peer_event: Array = server.connection.service()
@@ -29,14 +32,21 @@ func _process(_delta: float) -> void:
 				break
 			
 			ENetConnection.EVENT_DISCONNECT:
-				scene.disconnect_server()
+				scene.return_to_menu()
 			
 			ENetConnection.EVENT_RECEIVE:
 				var packet = GamePacket.from_bytes(server.peer.get_packet())
 				scene.packet_manager.recieve_packet(packet)
 
+func _exit_tree() -> void:
+	var server := get_server()
+	
+	if server.peer.is_active():
+		scene.quit_server()
+		server.connection.service()
+
 func _on_pause_screen_continue_selected() -> void:
 	pause_game()
 
 func _on_pause_screen_quit_selected() -> void:
-	scene.quit_server()
+	scene.return_to_menu()

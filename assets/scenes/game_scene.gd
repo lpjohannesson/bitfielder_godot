@@ -28,7 +28,7 @@ static var instance: GameScene
 var server: ServerConnection
 var player: Player
 
-func disconnect_server() -> void:
+func return_to_menu() -> void:
 	get_tree().change_scene_to_file("res://assets/scenes/menu_scene.tscn")
 
 func quit_server() -> void:
@@ -36,8 +36,6 @@ func quit_server() -> void:
 		Packets.ClientPacket.QUIT_SERVER,
 		null
 	))
-	
-	disconnect_server()
 
 func spawn_effect_sprite(effect_name: String, effect_position: Vector2) -> void:
 	var effect_sprite: EffectSprite = effect_sprite_scene.instantiate()

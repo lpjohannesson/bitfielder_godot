@@ -130,7 +130,7 @@ func recieve_packet(packet: GamePacket) -> void:
 	
 	match packet.type:
 		Packets.ServerPacket.SERVER_CLOSED:
-			scene.disconnect_server()
+			scene.return_to_menu()
 		
 		Packets.ServerPacket.CREATE_BLOCK_CHUNK:
 			create_block_chunk(packet)
