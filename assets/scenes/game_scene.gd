@@ -117,30 +117,36 @@ func update_block(
 	blocks.update_heightmap(block_specifier)
 	lighting_display.show_lightmap()
 
-func update_item_selection() -> void:
+func send_item_selection() -> void:
 	var packet := GamePacket.create_packet(
 		Packets.ClientPacket.SELECT_ITEM,
 		player.inventory.selected_index)
 	
 	server.send_packet(packet)
+
+func update_page_item() -> void:
+	send_item_selection()
 	
 	var page_item_index := player.inventory.get_page_item_index()
 	hud.item_bar.show_item_arrow(page_item_index)
-
-func move_page_item(direction: int) -> void:
-	player.inventory.move_page_item(direction)
-	update_item_selection()
 	
 	if select_item_sound_timer.is_stopped():
 		select_item_sound_timer.start()
 		select_item_sound.play()
 
+func select_page_item(item_index: int) -> void:
+	player.inventory.select_page_item(item_index)
+	update_page_item()
+
+func move_page_item(direction: int) -> void:
+	player.inventory.move_page_item(direction)
+	update_page_item()
+
 func move_item_page(direction: int) -> void:
 	player.inventory.move_item_page(direction)
+	send_item_selection()
 	
 	hud.item_bar.show_inventory(player.inventory)
-	update_item_selection()
-	
 	select_page_sound.play()
 
 func get_pressed_select_direction() -> int:

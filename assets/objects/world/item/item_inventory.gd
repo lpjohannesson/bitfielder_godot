@@ -17,6 +17,10 @@ func get_page_item_index() -> int:
 	var page_start := get_item_page_start()
 	return posmod(selected_index - page_start, ROW_ITEM_COUNT)
 
+func select_page_item(item_index: int) -> void:
+	var page_start := get_item_page_start()
+	selected_index = page_start + item_index
+
 func move_page_item(direction: int) -> void:
 	var page_start := get_item_page_start()
 	

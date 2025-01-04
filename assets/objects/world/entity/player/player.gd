@@ -524,7 +524,7 @@ func try_climbing() -> bool:
 func stop_climbing() -> void:
 	velocity.x = move_direction * CLIMB_JUMP_SPEED
 	player_state = PlayerState.GROUND
-	
+
 func climb() -> void:
 	if player_input.is_action_just_pressed("interact"):
 		stop_climbing()
