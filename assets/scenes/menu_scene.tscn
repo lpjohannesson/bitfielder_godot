@@ -23,7 +23,7 @@ remote_play_menu = NodePath("CanvasLayer/Menus/RemotePlayMenu")
 connection_menu = NodePath("CanvasLayer/Menus/ConnectionMenu")
 connection_timer = NodePath("ConnectionTimer")
 copyright_label = NodePath("CanvasLayer/CopyrightLabel")
-copyright_text = "Game version %s. Copyright 2025 Crossfrog Media."
+copyright_text = "Game version %s. Created by Leif Johannesson."
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
