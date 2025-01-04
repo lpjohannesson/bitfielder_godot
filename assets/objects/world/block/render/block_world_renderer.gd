@@ -55,6 +55,7 @@ func redraw_chunk_async(
 			# Draw front
 			if front_block.renderer != null:
 				render_data.block_id = front_id
+				render_data.block = front_block
 				render_data.on_front_layer = true
 				render_data.sprites = front_sprites
 				
@@ -75,6 +76,7 @@ func redraw_chunk_async(
 			if back_block.renderer != null:
 				if front_block.properties.is_partial:
 					render_data.block_id = back_id
+					render_data.block = back_block
 					render_data.on_front_layer = false
 					render_data.sprites = back_sprites
 					

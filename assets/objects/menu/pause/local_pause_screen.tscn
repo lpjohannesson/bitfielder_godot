@@ -6,11 +6,11 @@
 
 [node name="LocalPauseScreen" node_paths=PackedStringArray("host_on_network_button") instance=ExtResource("1_1tuxv")]
 script = ExtResource("2_ncs81")
-host_on_network_button = NodePath("Menu/VBoxContainer/HostOnNetworkButton")
+host_on_network_button = NodePath("Menu/Buttons/HostOnNetworkButton")
 
-[node name="HostOnNetworkButton" type="Button" parent="Menu/VBoxContainer" index="2"]
+[node name="HostOnNetworkButton" type="Button" parent="Menu/Buttons" index="2"]
 layout_mode = 2
 theme = ExtResource("2_ob8uh")
 text = "Host on network"
 
-[connection signal="pressed" from="Menu/VBoxContainer/HostOnNetworkButton" to="." method="_on_host_on_network_button_pressed"]
+[connection signal="pressed" from="Menu/Buttons/HostOnNetworkButton" to="." method="_on_host_on_network_button_pressed"]

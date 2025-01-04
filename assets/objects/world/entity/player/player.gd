@@ -131,6 +131,8 @@ func punch() -> void:
 	
 	play_punch_animation()
 	punch_timer.start()
+	
+	entity.play_sound("punch")
 
 func try_use_item() -> void:
 	if inventory == null:

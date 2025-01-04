@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="AutoBlockRenderer" load_steps=3 format=3 uid="uid://crrg4xv7qi7b7"]
+
+[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="1_ets4k"]
+[ext_resource type="Texture2D" uid="uid://elh7ruh3dmor" path="res://assets/textures/blocks/leaves.png" id="2_ryb0o"]
+
+[resource]
+script = ExtResource("1_ets4k")
+texture = ExtResource("2_ryb0o")

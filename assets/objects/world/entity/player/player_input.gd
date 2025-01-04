@@ -27,33 +27,15 @@ func update_inputs() -> void:
 	for action in PLAYER_ACTIONS:
 		last_input_map[action] = input_map[action]
 
-func read_inputs(server: ServerConnection) -> void:
-	for action in PLAYER_ACTIONS:
-		if Input.is_action_just_pressed(action):
-			input_map[action] = true
-			
-			var packet := GamePacket.create_packet(
-				Packets.ClientPacket.ACTION_PRESSED,
-				action
-			)
-			
-			server.send_packet(packet)
-		
-		if Input.is_action_just_released(action):
-			input_map[action] = false
-			
-			var packet := GamePacket.create_packet(
-				Packets.ClientPacket.ACTION_RELEASED,
-				action
-			)
-			
-			server.send_packet(packet)
-
 func set_action(action: String, value: bool) -> void:
 	if not action in input_map:
 		return
 	
 	input_map[action] = value
+
+func reset_inputs() -> void:
+	for action in PLAYER_ACTIONS:
+		input_map[action] = false
 
 func _init() -> void:
 	for action in PLAYER_ACTIONS:

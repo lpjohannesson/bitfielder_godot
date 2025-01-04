@@ -12,6 +12,7 @@ static var instance: GameScene
 @export var hud: HUD
 @export var player_camera: PlayerCamera
 @export var lighting_display: LightingDisplay
+@export var input_manager: GameInputManager
 @export var item_page_timer: Timer
 
 @export var particles: Node2D
@@ -23,10 +24,16 @@ static var instance: GameScene
 @export var break_sound: AudioStream
 @export var place_sound: AudioStream
 
+@export var select_item_sound: AudioStreamPlayer
+@export var select_page_sound: AudioStreamPlayer
+@export var select_item_sound_timer: Timer
+
 @onready var viewport := get_viewport()
 
 var server: ServerConnection
 var player: Player
+
+var paused := false
 
 func return_to_menu() -> void:
 	get_tree().change_scene_to_file("res://assets/scenes/menu_scene.tscn")
@@ -123,12 +130,18 @@ func update_item_selection() -> void:
 func move_page_item(direction: int) -> void:
 	player.inventory.move_page_item(direction)
 	update_item_selection()
+	
+	if select_item_sound_timer.is_stopped():
+		select_item_sound_timer.start()
+		select_item_sound.play()
 
 func move_item_page(direction: int) -> void:
 	player.inventory.move_item_page(direction)
 	
 	hud.item_bar.show_inventory(player.inventory)
 	update_item_selection()
+	
+	select_page_sound.play()
 
 func get_pressed_select_direction() -> int:
 	return \
@@ -136,6 +149,12 @@ func get_pressed_select_direction() -> int:
 		int(Input.is_action_pressed("select_left"))
 
 func try_select_items() -> void:
+	if paused:
+		return
+	
+	if player == null:
+		return
+	
 	if player.inventory == null:
 		return
 	
@@ -179,8 +198,7 @@ func _process(_delta: float) -> void:
 	shadow_viewport.canvas_transform = \
 		viewport.canvas_transform * SHADOW_TRANSFORM
 	
-	if player != null:
-		try_select_items()
+	try_select_items()
 
 func _on_player_position_timer_timeout() -> void:
 	if player != null:

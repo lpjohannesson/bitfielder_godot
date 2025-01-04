@@ -1,10 +1,10 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=9 format=3 uid="uid://2m1yu75b8ebw"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=8 format=3 uid="uid://2m1yu75b8ebw"]
 
 [ext_resource type="Texture2D" uid="uid://3y74r12ljned" path="res://assets/textures/blocks/particles/leaves.png" id="1_kua5h"]
 [ext_resource type="Resource" uid="uid://kdgxxud1ojcu" path="res://assets/resources/blocks/sounds/leaves.tres" id="1_qopnw"]
+[ext_resource type="Resource" uid="uid://bhu0yhmfkppte" path="res://assets/resources/blocks/categories/leaves.tres" id="2_6rlo0"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_46l47"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="2_ukisy"]
-[ext_resource type="Texture2D" uid="uid://elh7ruh3dmor" path="res://assets/textures/blocks/leaves.png" id="3_ecmn1"]
+[ext_resource type="Resource" uid="uid://crrg4xv7qi7b7" path="res://assets/resources/blocks/renderers/leaves.tres" id="4_0odfd"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="4_lqudk"]
 
 [sub_resource type="Resource" id="Resource_rol5m"]
@@ -15,14 +15,11 @@ is_climbable = false
 is_partial = true
 casts_shadow = true
 
-[sub_resource type="Resource" id="Resource_k7p3y"]
-script = ExtResource("2_ukisy")
-texture = ExtResource("3_ecmn1")
-
 [resource]
 script = ExtResource("4_lqudk")
+category = ExtResource("2_6rlo0")
 block_name = "leaves"
 properties = SubResource("Resource_rol5m")
-renderer = SubResource("Resource_k7p3y")
+renderer = ExtResource("4_0odfd")
 particle_texture = ExtResource("1_kua5h")
 block_sounds = ExtResource("1_qopnw")

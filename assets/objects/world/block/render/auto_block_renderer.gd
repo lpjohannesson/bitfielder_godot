@@ -47,10 +47,18 @@ func get_neighbor_mask(
 			return 1
 	
 	# Check same block on same layer
-	var neighbor_block_ids := neighbor_address.chunk.get_layer(render_data.on_front_layer)
-	var neighbor_block_id := neighbor_block_ids[neighbor_address.block_index]
+	var neighbor_ids := neighbor_address.chunk.get_layer(render_data.on_front_layer)
+	var neighbor_id := neighbor_ids[neighbor_address.block_index]
 	
-	if render_data.block_id == neighbor_block_id:
+	if render_data.block_id == neighbor_id:
+		return 1
+	
+	# Check same category
+	var neighbor_block := render_data.blocks.block_types[neighbor_id]
+	
+	var category := render_data.block.category
+	
+	if category != null and category == neighbor_block.category:
 		return 1
 	
 	return 0

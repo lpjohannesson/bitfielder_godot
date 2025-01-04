@@ -173,6 +173,9 @@ func update_player_input(
 	var action: String = packet.data
 	client.player.player_input.set_action(action, input_state)
 
+func reset_player_inputs(client: ClientConnection) -> void:
+	client.player.player_input.reset_inputs()
+
 func select_player_item(packet: GamePacket, client: ClientConnection) -> void:
 	if not packet.data is int:
 		return
@@ -320,6 +323,9 @@ func recieve_packet(packet: GamePacket, client: ClientConnection) -> void:
 		
 		Packets.ClientPacket.ACTION_RELEASED:
 			update_player_input(packet, client, false)
+		
+		Packets.ClientPacket.RESET_INPUTS:
+			reset_player_inputs(client)
 		
 		Packets.ClientPacket.SELECT_ITEM:
 			select_player_item(packet, client)

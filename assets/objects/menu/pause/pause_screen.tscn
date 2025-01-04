@@ -1,13 +1,41 @@
-[gd_scene load_steps=4 format=3 uid="uid://cbxga1xteuyhl"]
+[gd_scene load_steps=7 format=3 uid="uid://cbxga1xteuyhl"]
 
 [ext_resource type="Texture2D" uid="uid://bs7u1xhbaxll0" path="res://assets/textures/menu/logos/paused.png" id="1_72k38"]
 [ext_resource type="Script" path="res://assets/objects/menu/pause/pause_screen.gd" id="1_xu7lb"]
+[ext_resource type="Shader" path="res://assets/shaders/pause_overlay.gdshader" id="2_4i33p"]
 [ext_resource type="Theme" uid="uid://wm8dstmgs0eu" path="res://assets/themes/menu_theme.tres" id="3_utxek"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5gvka"]
+shader = ExtResource("2_4i33p")
+shader_parameter/overlay_color = Color(0.64, 0.88, 1, 1)
+
+[sub_resource type="GDScript" id="GDScript_ef01i"]
+script/source = "extends ColorRect
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+"
 
 [node name="PauseScreen" type="CanvasLayer" node_paths=PackedStringArray("skin_file_dialog", "starting_button")]
 script = ExtResource("1_xu7lb")
 skin_file_dialog = NodePath("SkinFileDialog")
-starting_button = NodePath("Menu/VBoxContainer/ContinueButton")
+starting_button = NodePath("Menu/Buttons/HBoxContainer/ContinueButton")
+
+[node name="PauseOverlay" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_5gvka")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_ef01i")
 
 [node name="Menu" type="Control" parent="."]
 layout_mode = 3
@@ -35,30 +63,36 @@ grow_horizontal = 2
 grow_vertical = 0
 texture = ExtResource("1_72k38")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Menu"]
+[node name="Buttons" type="VBoxContainer" parent="Menu"]
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -51.0
-offset_right = 51.0
+offset_left = -80.0
+offset_right = 91.08
 offset_bottom = 101.0
 grow_horizontal = 2
 
-[node name="ContinueButton" type="Button" parent="Menu/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Menu/Buttons"]
 layout_mode = 2
+
+[node name="ContinueButton" type="Button" parent="Menu/Buttons/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 theme = ExtResource("3_utxek")
 text = "Continue"
 
-[node name="ChangeSkinButton" type="Button" parent="Menu/VBoxContainer"]
+[node name="QuitButton" type="Button" parent="Menu/Buttons/HBoxContainer"]
 layout_mode = 2
-theme = ExtResource("3_utxek")
-text = "Change skin"
-
-[node name="QuitButton" type="Button" parent="Menu/VBoxContainer"]
-layout_mode = 2
+size_flags_horizontal = 3
 theme = ExtResource("3_utxek")
 text = "Quit"
+
+[node name="ChangeSkinButton" type="Button" parent="Menu/Buttons"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme = ExtResource("3_utxek")
+text = "Change skin"
 
 [node name="SkinFileDialog" type="FileDialog" parent="."]
 title = "Open a File"
@@ -69,7 +103,7 @@ access = 2
 filters = PackedStringArray("*.png")
 use_native_dialog = true
 
-[connection signal="pressed" from="Menu/VBoxContainer/ContinueButton" to="." method="_on_continue_button_pressed"]
-[connection signal="pressed" from="Menu/VBoxContainer/ChangeSkinButton" to="." method="_on_change_skin_button_pressed"]
-[connection signal="pressed" from="Menu/VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="pressed" from="Menu/Buttons/HBoxContainer/ContinueButton" to="." method="_on_continue_button_pressed"]
+[connection signal="pressed" from="Menu/Buttons/HBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]
+[connection signal="pressed" from="Menu/Buttons/ChangeSkinButton" to="." method="_on_change_skin_button_pressed"]
 [connection signal="file_selected" from="SkinFileDialog" to="." method="_on_skin_file_dialog_file_selected"]

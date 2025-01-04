@@ -7,4 +7,5 @@ class_name BlockProperties
 
 @export var is_partial := false
 @export var casts_shadow := true
+
 @export var block_light: BlockLight

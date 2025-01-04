@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=28 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="2_d1sjh"]
@@ -6,8 +6,10 @@
 [ext_resource type="AudioStream" uid="uid://dqqgsvp4lycgf" path="res://assets/sounds/break.wav" id="4_0vcd0"]
 [ext_resource type="PackedScene" uid="uid://celyk57ifua4f" path="res://assets/objects/world/game_world.tscn" id="4_3hdty"]
 [ext_resource type="AudioStream" uid="uid://y6i3cpd0jrtq" path="res://assets/sounds/place.wav" id="5_tjk8f"]
+[ext_resource type="AudioStream" uid="uid://b4cmkbpom8cq5" path="res://assets/sounds/select_item.wav" id="6_hvwkn"]
 [ext_resource type="Script" path="res://assets/objects/world/game_input_manager.gd" id="6_ly1vx"]
 [ext_resource type="Texture2D" uid="uid://ddcuuu17cbn7c" path="res://assets/textures/backgrounds/cloud_small.png" id="7_4mou1"]
+[ext_resource type="AudioStream" uid="uid://dvbsibgabi3ju" path="res://assets/sounds/select_page.wav" id="7_4wp1w"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/block_world_renderer.gd" id="7_ddnpg"]
 [ext_resource type="Texture2D" uid="uid://cdugor2xiwl1w" path="res://assets/textures/backgrounds/cloud_big.png" id="7_yfnxb"]
 [ext_resource type="PackedScene" uid="uid://qnuf5qyuxwxp" path="res://assets/objects/world/block/render/block_particle.tscn" id="8_in2xm"]
@@ -22,6 +24,15 @@
 shader = ExtResource("2_d1sjh")
 shader_parameter/back_shade = 0.2
 shader_parameter/shadow_shade = 0.2
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_jutqc"]
+streams_count = 1
+stream_0/stream = ExtResource("6_hvwkn")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_4mcqp"]
+random_pitch = 1.1
+streams_count = 1
+stream_0/stream = ExtResource("7_4wp1w")
 
 [sub_resource type="Gradient" id="Gradient_7u5hj"]
 offsets = PackedFloat32Array(0, 0.333, 0.667, 1)
@@ -47,7 +58,7 @@ shader_parameter/block_light_range = 16
 shader_parameter/heightmap = PackedInt32Array()
 shader_parameter/top_height = -1
 
-[node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "blocks_renderer", "packet_manager", "hud", "player_camera", "lighting_display", "item_page_timer", "particles", "shadow_viewport")]
+[node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "blocks_renderer", "packet_manager", "hud", "player_camera", "lighting_display", "input_manager", "item_page_timer", "particles", "shadow_viewport", "select_item_sound", "select_page_sound", "select_item_sound_timer")]
 script = ExtResource("1_jdhth")
 world = NodePath("GameWorld")
 blocks_renderer = NodePath("BlockWorldRenderer")
@@ -55,6 +66,7 @@ packet_manager = NodePath("GamePacketManager")
 hud = NodePath("CanvasLayer/HUD")
 player_camera = NodePath("PlayerCamera")
 lighting_display = NodePath("LightingDisplay")
+input_manager = NodePath("GameInputManager")
 item_page_timer = NodePath("ItemPageTimer")
 particles = NodePath("Particles")
 shadow_viewport = NodePath("ShadowViewport")
@@ -62,6 +74,23 @@ shadow_shader = SubResource("ShaderMaterial_hm8g0")
 effect_sprite_scene = ExtResource("3_k32od")
 break_sound = ExtResource("4_0vcd0")
 place_sound = ExtResource("5_tjk8f")
+select_item_sound = NodePath("Sounds/SelectItem")
+select_page_sound = NodePath("Sounds/SelectPage")
+select_item_sound_timer = NodePath("SelectItemSoundTimer")
+
+[node name="SelectItemSoundTimer" type="Timer" parent="."]
+wait_time = 0.03
+one_shot = true
+
+[node name="Sounds" type="Node" parent="."]
+
+[node name="SelectItem" type="AudioStreamPlayer" parent="Sounds"]
+stream = SubResource("AudioStreamRandomizer_jutqc")
+volume_db = -10.0
+
+[node name="SelectPage" type="AudioStreamPlayer" parent="Sounds"]
+stream = SubResource("AudioStreamRandomizer_4mcqp")
+volume_db = -5.0
 
 [node name="GameInputManager" type="Node" parent="." node_paths=PackedStringArray("scene")]
 process_mode = 3

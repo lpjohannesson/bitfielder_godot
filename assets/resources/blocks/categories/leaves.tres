@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="BlockCategory" load_steps=2 format=3 uid="uid://bhu0yhmfkppte"]
+
+[ext_resource type="Script" path="res://assets/objects/world/block/block_category.gd" id="1_bso6w"]
+
+[resource]
+script = ExtResource("1_bso6w")

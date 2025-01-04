@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://qhbwwmg422j6"]
+[gd_scene load_steps=35 format=3 uid="uid://qhbwwmg422j6"]
 
 [ext_resource type="Script" path="res://assets/objects/world/entity/player/player.gd" id="1_7uomn"]
 [ext_resource type="Shader" path="res://assets/shaders/player.gdshader" id="2_1ofg0"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://assets/objects/world/shadowed_sprite.gd" id="4_faxp7"]
 [ext_resource type="AudioStream" uid="uid://dak8wkerhgy6s" path="res://assets/sounds/slide.wav" id="5_ta6vj"]
 [ext_resource type="AudioStream" uid="uid://d25x0e25g7514" path="res://assets/sounds/ground.wav" id="6_re4h7"]
+[ext_resource type="AudioStream" uid="uid://bw46fh4xagbwv" path="res://assets/sounds/punch.wav" id="7_mjcqy"]
 [ext_resource type="Script" path="res://assets/objects/world/entity/player/player_hover_area.gd" id="12_0labo"]
 [ext_resource type="Theme" uid="uid://wm8dstmgs0eu" path="res://assets/themes/menu_theme.tres" id="12_xroha"]
 
@@ -28,6 +29,11 @@ sound_stream = ExtResource("5_ta6vj")
 script = ExtResource("3_5garv")
 sound_name = "ground"
 sound_stream = ExtResource("6_re4h7")
+
+[sub_resource type="Resource" id="Resource_ltboo"]
+script = ExtResource("3_5garv")
+sound_name = "punch"
+sound_stream = ExtResource("7_mjcqy")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_2p0m6"]
 resource_local_to_scene = true
@@ -284,7 +290,7 @@ sprite = NodePath("../Sprite2D")
 collider = NodePath("../CollisionShape2D")
 animation_player = NodePath("../AnimationPlayer")
 player = NodePath("..")
-sounds = Array[ExtResource("3_5garv")]([SubResource("Resource_w02ct"), SubResource("Resource_6oscl"), SubResource("Resource_7vdfh")])
+sounds = Array[ExtResource("3_5garv")]([SubResource("Resource_w02ct"), SubResource("Resource_6oscl"), SubResource("Resource_7vdfh"), SubResource("Resource_ltboo")])
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_2p0m6")

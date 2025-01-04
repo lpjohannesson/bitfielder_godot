@@ -7,11 +7,14 @@ class_name PauseScreen
 
 signal continue_selected
 
-func show_screen(paused: bool) -> void:
-	visible = paused
+func pause_game() -> void:
+	scene.paused = not scene.paused
 	
-	if paused:
+	visible = scene.paused
+	
+	if scene.paused:
 		starting_button.grab_focus()
+		scene.input_manager.reset_inputs()
 
 func _on_continue_button_pressed() -> void:
 	continue_selected.emit()

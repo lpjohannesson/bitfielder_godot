@@ -10,8 +10,6 @@ var client := LocalClientConnection.new()
 var server := LocalServerConnection.new()
 var server_host: ServerHost
 
-var paused := false
-
 func host_on_network() -> void:
 	if server_host != null:
 		return
@@ -25,11 +23,10 @@ func host_on_network() -> void:
 	get_tree().paused = false
 
 func pause_game() -> void:
-	paused = not paused
-	pause_screen.show_screen(paused)
+	pause_screen.pause_game()
 	
 	if server_host == null:
-		get_tree().paused = paused
+		get_tree().paused = scene.paused
 
 func _ready() -> void:
 	# Attach local client and server connections

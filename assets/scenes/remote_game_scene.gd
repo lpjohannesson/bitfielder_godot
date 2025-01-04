@@ -4,14 +4,11 @@ class_name RemoteGameScene
 @export var scene: GameScene
 @export var pause_screen: PauseScreen
 
-var paused := false
-
 func get_server() -> RemoteServerConnection:
 	return RemoteServerConnection.instance
 
 func pause_game() -> void:
-	paused = not paused
-	pause_screen.show_screen(paused)
+	pause_screen.pause_game()
 
 func _ready() -> void:
 	scene.server = RemoteServerConnection.instance
