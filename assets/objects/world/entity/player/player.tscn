@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://qhbwwmg422j6"]
+[gd_scene load_steps=43 format=3 uid="uid://qhbwwmg422j6"]
 
 [ext_resource type="Script" path="res://assets/objects/world/entity/player/player.gd" id="1_7uomn"]
 [ext_resource type="Shader" path="res://assets/shaders/player.gdshader" id="2_1ofg0"]
@@ -17,6 +17,7 @@
 [ext_resource type="AudioStream" uid="uid://cs0owm8hghkj2" path="res://assets/sounds/block/water2.wav" id="9_q0tc3"]
 [ext_resource type="AudioStream" uid="uid://cxtd8b0sathgh" path="res://assets/sounds/block/water3.wav" id="10_6bujs"]
 [ext_resource type="Script" path="res://assets/objects/world/entity/player/player_hover_area.gd" id="12_0labo"]
+[ext_resource type="AudioStream" uid="uid://6eht4d7nch8h" path="res://assets/sounds/climb.wav" id="12_sxkoi"]
 [ext_resource type="Theme" uid="uid://wm8dstmgs0eu" path="res://assets/themes/menu_theme.tres" id="12_xroha"]
 
 [sub_resource type="Resource" id="Resource_w02ct"]
@@ -49,6 +50,11 @@ stream_2/stream = ExtResource("10_6bujs")
 script = ExtResource("3_5garv")
 sound_name = "splash"
 sound_stream = SubResource("AudioStreamRandomizer_xpqqm")
+
+[sub_resource type="Resource" id="Resource_im7ac"]
+script = ExtResource("3_5garv")
+sound_name = "climb"
+sound_stream = ExtResource("12_sxkoi")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_2p0m6"]
 resource_local_to_scene = true
@@ -307,7 +313,7 @@ sprite = NodePath("../Sprite2D")
 collider = NodePath("../CollisionShape2D")
 animation_player = NodePath("../AnimationPlayer")
 player = NodePath("..")
-sounds = Array[ExtResource("3_5garv")]([SubResource("Resource_w02ct"), SubResource("Resource_6oscl"), SubResource("Resource_7vdfh"), SubResource("Resource_ltboo"), SubResource("Resource_2hf8e")])
+sounds = Array[ExtResource("3_5garv")]([SubResource("Resource_w02ct"), SubResource("Resource_6oscl"), SubResource("Resource_7vdfh"), SubResource("Resource_ltboo"), SubResource("Resource_2hf8e"), SubResource("Resource_im7ac")])
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_2p0m6")

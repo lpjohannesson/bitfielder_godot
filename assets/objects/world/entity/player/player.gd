@@ -553,6 +553,8 @@ func try_climbing(block: BlockType, blocks: BlockWorld) -> bool:
 	
 	player_state = PlayerState.CLIMBING
 	
+	entity.play_sound("climb")
+	
 	return true
 
 func stop_climbing() -> void:
@@ -562,6 +564,7 @@ func stop_climbing() -> void:
 func climb() -> void:
 	if player_input.is_action_just_pressed("interact"):
 		stop_climbing()
+		entity.play_sound("climb")
 		return
 	
 	if player_input.is_action_just_pressed("jump"):
