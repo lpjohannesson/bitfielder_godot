@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3 uid="uid://cmqcyhabrwcss"]
+
+[ext_resource type="Script" path="res://assets/objects/world/effects/water_bubble.gd" id="1_4bqsk"]
+[ext_resource type="Texture2D" uid="uid://j5sy7gmm2fpx" path="res://assets/textures/effects/water_bubble.png" id="1_vu7fv"]
+
+[node name="WaterBubble" type="Node2D"]
+script = ExtResource("1_4bqsk")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_vu7fv")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+scale = Vector2(0.3, 0.3)
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_visible_on_screen_notifier_2d_screen_exited"]

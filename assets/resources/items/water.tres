@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ItemType" load_steps=5 format=3 uid="uid://da0j68cw1cghw"]
 
-[ext_resource type="Texture2D" uid="uid://s755vs4c00sy" path="res://assets/textures/items/water_bowl.png" id="1_mej4v"]
+[ext_resource type="Texture2D" uid="uid://s755vs4c00sy" path="res://assets/textures/items/bottle_water.png" id="1_mej4v"]
 [ext_resource type="Script" path="res://assets/objects/world/item/properties/block_item_properties.gd" id="2_wfyb5"]
 [ext_resource type="Script" path="res://assets/objects/world/item/item_type.gd" id="3_xx2am"]
 

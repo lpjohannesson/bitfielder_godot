@@ -35,6 +35,9 @@ const MODIFY_BLOCK_TWEEN_TIME := 0.35
 @export var modify_block_timer: Timer
 @export var slide_effect_timer: Timer
 @export var punch_timer: Timer
+@export var bubble_timer: Timer
+
+@export var bubble_scene: PackedScene
 
 var move_direction := 0.0
 var look_direction := 0.0
@@ -447,7 +450,7 @@ func show_ground_effects() -> void:
 		
 		var is_sliding := get_is_sliding()
 		
-		if is_sliding:
+		if is_sliding and last_surface != 0.0:
 			if not last_is_sliding:
 				entity.play_sound("slide")
 			
@@ -456,7 +459,7 @@ func show_ground_effects() -> void:
 				slide_effect_timer.start()
 		
 		last_is_sliding = is_sliding
-		
+	
 	elif is_on_ceiling():
 		surface = -1.0
 		surface_point = ceiling_point
@@ -469,6 +472,8 @@ func show_ground_effects() -> void:
 	
 	entity.spawn_effect_sprite("ground", surface_point.global_position)
 	entity.play_sound("ground")
+	
+	var blocks := entity.get_game_world().blocks
 	
 	for i in range(get_slide_collision_count()):
 		var collision := get_slide_collision(i)
@@ -483,7 +488,6 @@ func show_ground_effects() -> void:
 		
 		var block_position: Vector2i = shape.block_position
 		
-		var blocks := entity.get_game_world().blocks
 		var address := blocks.get_block_address(block_position)
 		var block_id := address.chunk.front_ids[address.block_index]
 		var block := blocks.block_types[block_id]
@@ -497,6 +501,41 @@ func show_ground_effects() -> void:
 		break
 	
 	last_surface = surface
+
+func show_swimming_effects() -> void:
+	var blocks := entity.get_game_world().blocks
+	
+	var center_block := get_interaction_block(center_block_position, blocks)
+	var last_center_block := get_interaction_block(last_center_block_position, blocks)
+	
+	var swimming := false
+	var last_swimming := false
+	
+	if center_block != null:
+		swimming = center_block.properties.is_swimmable
+	
+	if last_center_block != null:
+		last_swimming = last_center_block.properties.is_swimmable
+	
+	if swimming:
+		if bubble_timer.is_stopped():
+			var bubble: WaterBubble = bubble_scene.instantiate()
+			GameScene.instance.particles.add_child(bubble)
+			bubble.start_bubble(global_position)
+			
+			bubble_timer.start(randf_range(1.0, 2.0))
+		
+		if not last_swimming:
+			if center_block_position.y > last_center_block_position.y and \
+					velocity.y > 0.0:
+				
+				spawn_water_splash(center_block_position, blocks)
+	else:
+		if last_swimming:
+			if center_block_position.y < last_center_block_position.y and \
+					velocity.y < 0.0:
+				
+				spawn_water_splash(last_center_block_position, blocks)
 
 func try_climbing(block: BlockType, blocks: BlockWorld) -> bool:
 	if not (\
@@ -562,7 +601,7 @@ func spawn_water_splash(block_position: Vector2i, blocks: BlockWorld) -> void:
 	var effect_position := Vector2(global_position.x, block_world_position.y)
 	entity.spawn_effect_sprite("splash", effect_position)
 	
-	entity.play_sound("punch")
+	entity.play_sound("splash")
 
 func try_swimming(block: BlockType, blocks: BlockWorld) -> bool:
 	if not block.properties.is_swimmable:
@@ -572,7 +611,6 @@ func try_swimming(block: BlockType, blocks: BlockWorld) -> bool:
 	player_state = PlayerState.SWIMMING
 	
 	if center_block_position.y > last_center_block_position.y:
-		spawn_water_splash(center_block_position, blocks)
 		velocity.y *= 0.2
 	
 	return true
@@ -585,7 +623,6 @@ func swim(delta: float) -> void:
 		player_state = PlayerState.GROUND
 		
 		if center_block_position.y < last_center_block_position.y:
-			spawn_water_splash(last_center_block_position, blocks)
 			velocity.y = max(velocity.y * 1.5, -JUMP_VELOCITY)
 		
 		return
@@ -601,6 +638,7 @@ func swim(delta: float) -> void:
 	if player_input.is_action_just_pressed("jump"):
 		jump(WATER_JUMP_VELOCITY)
 		entity.animation_player.play("punch_down")
+		entity.play_sound("splash", -10.0)
 	
 	animate()
 
@@ -639,8 +677,6 @@ func controls(delta: float) -> void:
 	update_jump_timer()
 	try_use_item()
 	
-	center_block_position = entity.get_game_world().blocks.world_to_block(global_position)
-	
 	match player_state:
 		PlayerState.GROUND:
 			if interact_center_block():
@@ -675,25 +711,32 @@ func controls(delta: float) -> void:
 			swim(delta)
 	
 	move_and_slide()
-	last_center_block_position = center_block_position
 
 func stop_modify_block_tween() -> void:
 	if modify_block_tween != null:
 		modify_block_tween.kill()
 		modify_block_tween = null
 
+func update_center_block_position() -> void:
+	last_center_block_position = center_block_position
+
 func _ready() -> void:
 	entity.position_changed.connect(stop_modify_block_tween)
 
 func _physics_process(delta: float) -> void:
+	center_block_position = entity.get_game_world().blocks.world_to_block(global_position)
+	
 	# Check if remote controlled player
 	if not entity.on_server:
 		show_ground_effects()
+		show_swimming_effects()
 		
 		if GameScene.instance.player != self:
 			move_and_slide()
+			update_center_block_position()
 			return
 	
 	controls(delta)
+	update_center_block_position()
 	
 	player_input.update_inputs()

@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=12 format=3 uid="uid://7n2ngwx0enf7"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=13 format=3 uid="uid://7n2ngwx0enf7"]
 
-[ext_resource type="Texture2D" uid="uid://c7j0mohutqrgm" path="res://assets/textures/blocks/particles/wool.png" id="1_8bniy"]
+[ext_resource type="Resource" uid="uid://c2f8e0hh0au67" path="res://assets/resources/blocks/sounds/water.tres" id="1_qft56"]
+[ext_resource type="Texture2D" uid="uid://c1begxbvr4ut7" path="res://assets/textures/blocks/particles/water.png" id="2_h66na"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_olm3e"]
 [ext_resource type="Texture2D" uid="uid://bwfic1idywgn5" path="res://assets/textures/blocks/water1.png" id="3_0l6xj"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="3_58yye"]
@@ -38,4 +39,5 @@ script = ExtResource("4_81lat")
 block_name = "water"
 properties = SubResource("Resource_mn6ki")
 renderer = SubResource("Resource_ov31u")
-particle_texture = ExtResource("1_8bniy")
+particle_texture = ExtResource("2_h66na")
+block_sounds = ExtResource("1_qft56")

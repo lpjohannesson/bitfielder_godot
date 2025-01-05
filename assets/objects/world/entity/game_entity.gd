@@ -35,7 +35,7 @@ func update_block(block_specifier: BlockSpecifier, address: BlockAddress) -> voi
 		GameScene.instance.update_block(block_specifier, address, true)
 		GameScene.instance.packet_manager.send_check_block_update(block_specifier)
 
-func play_sound(sound_name: String) -> void:
+func play_sound(sound_name: String, volume: float = 0.0) -> void:
 	if on_server:
 		var sound_packet := GamePacket.create_packet(
 			Packets.ServerPacket.PLAY_ENTITY_SOUND,
@@ -53,7 +53,8 @@ func play_sound(sound_name: String) -> void:
 			return
 		
 		var sound_stream: AudioStream = sound_map[sound_name]
-		GameScene.instance.spawn_world_sound(sound_stream, body.global_position)
+		var sound := GameScene.instance.spawn_world_sound(sound_stream, body.global_position)
+		sound.volume_db = volume
 
 func _ready() -> void:
 	if not on_server:
