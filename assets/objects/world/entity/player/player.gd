@@ -603,7 +603,7 @@ func spawn_water_splash(block_position: Vector2i, blocks: BlockWorld) -> void:
 	
 	entity.play_sound("splash")
 
-func try_swimming(block: BlockType, blocks: BlockWorld) -> bool:
+func try_swimming(block: BlockType) -> bool:
 	if not block.properties.is_swimmable:
 		return false
 	
@@ -661,7 +661,7 @@ func interact_center_block() -> bool:
 	if try_climbing(block, blocks):
 		return true
 	
-	if try_swimming(block, blocks):
+	if try_swimming(block):
 		return true
 	
 	return false
