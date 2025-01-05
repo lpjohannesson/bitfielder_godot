@@ -15,6 +15,7 @@ script = ExtResource("2_ndo22")
 is_solid = true
 is_one_way = false
 is_climbable = false
+is_swimmable = false
 is_partial = false
 casts_shadow = true
 
