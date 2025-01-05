@@ -1,9 +1,9 @@
 [gd_resource type="Resource" script_class="BlockType" load_steps=12 format=3 uid="uid://7n2ngwx0enf7"]
 
 [ext_resource type="Texture2D" uid="uid://c7j0mohutqrgm" path="res://assets/textures/blocks/particles/wool.png" id="1_8bniy"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="2_7wrau"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_olm3e"]
 [ext_resource type="Texture2D" uid="uid://bwfic1idywgn5" path="res://assets/textures/blocks/water1.png" id="3_0l6xj"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="3_58yye"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="4_81lat"]
 [ext_resource type="Texture2D" uid="uid://biijynwundait" path="res://assets/textures/blocks/water2.png" id="4_focds"]
 [ext_resource type="Texture2D" uid="uid://cxrmxtylltkfg" path="res://assets/textures/blocks/water3.png" id="5_l1owm"]
@@ -14,27 +14,28 @@ script = ExtResource("2_olm3e")
 is_solid = false
 is_one_way = false
 is_climbable = false
-is_partial = false
-casts_shadow = true
+is_swimmable = true
+is_partial = true
+casts_shadow = false
 
-[sub_resource type="AnimatedTexture" id="AnimatedTexture_ytxea"]
+[sub_resource type="AnimatedTexture" id="AnimatedTexture_n3x7c"]
 frames = 4
-speed_scale = 5.0
 frame_0/texture = ExtResource("3_0l6xj")
+frame_0/duration = 0.2
 frame_1/texture = ExtResource("4_focds")
-frame_1/duration = 1.0
+frame_1/duration = 0.2
 frame_2/texture = ExtResource("5_l1owm")
-frame_2/duration = 1.0
+frame_2/duration = 0.2
 frame_3/texture = ExtResource("6_ansfs")
-frame_3/duration = 1.0
+frame_3/duration = 0.2
 
-[sub_resource type="Resource" id="Resource_k7p3y"]
-script = ExtResource("2_7wrau")
-texture = SubResource("AnimatedTexture_ytxea")
+[sub_resource type="Resource" id="Resource_ov31u"]
+script = ExtResource("3_58yye")
+texture = SubResource("AnimatedTexture_n3x7c")
 
 [resource]
 script = ExtResource("4_81lat")
 block_name = "water"
 properties = SubResource("Resource_mn6ki")
-renderer = SubResource("Resource_k7p3y")
+renderer = SubResource("Resource_ov31u")
 particle_texture = ExtResource("1_8bniy")

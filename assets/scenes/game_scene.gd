@@ -124,6 +124,9 @@ func send_item_selection() -> void:
 	
 	server.send_packet(packet)
 
+func can_update_items() -> bool:
+	return player != null and player.inventory != null
+
 func update_page_item() -> void:
 	send_item_selection()
 	
@@ -135,14 +138,23 @@ func update_page_item() -> void:
 		select_item_sound.play()
 
 func select_page_item(item_index: int) -> void:
+	if not can_update_items():
+		return
+	
 	player.inventory.select_page_item(item_index)
 	update_page_item()
 
 func move_page_item(direction: int) -> void:
+	if not can_update_items():
+		return
+	
 	player.inventory.move_page_item(direction)
 	update_page_item()
 
 func move_item_page(direction: int) -> void:
+	if not can_update_items():
+		return
+	
 	player.inventory.move_item_page(direction)
 	send_item_selection()
 	
@@ -156,12 +168,6 @@ func get_pressed_select_direction() -> int:
 
 func try_select_items() -> void:
 	if paused:
-		return
-	
-	if player == null:
-		return
-	
-	if player.inventory == null:
 		return
 	
 	var page_direction := \

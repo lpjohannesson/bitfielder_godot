@@ -1,4 +1,4 @@
-[gd_scene load_steps=67 format=3 uid="uid://celyk57ifua4f"]
+[gd_scene load_steps=68 format=3 uid="uid://celyk57ifua4f"]
 
 [ext_resource type="Script" path="res://assets/objects/world/game_world.gd" id="1_waysh"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_world.gd" id="2_3pcni"]
@@ -61,6 +61,7 @@
 [ext_resource type="Resource" uid="uid://ch3v75wso8twl" path="res://assets/resources/items/ore_gold.tres" id="45_6gktx"]
 [ext_resource type="Resource" uid="uid://bxpv74yw0m85n" path="res://assets/resources/items/ore_diamond.tres" id="46_rc4sq"]
 [ext_resource type="Resource" uid="uid://d3sevr6gl0jdr" path="res://assets/resources/items/ore_sulfur.tres" id="47_xf6rd"]
+[ext_resource type="Resource" uid="uid://da0j68cw1cghw" path="res://assets/resources/items/water.tres" id="49_esi0f"]
 [ext_resource type="Resource" uid="uid://c3ouhwvyjc3kv" path="res://assets/resources/items/bush.tres" id="52_t2gm4"]
 [ext_resource type="Resource" uid="uid://da65gp1v6cab1" path="res://assets/resources/items/campfire.tres" id="53_qga74"]
 [ext_resource type="Resource" uid="uid://dkuaaa5y7o60n" path="res://assets/resources/items/chest.tres" id="54_yaboj"]
@@ -91,7 +92,7 @@ blocks = NodePath("..")
 script = ExtResource("3_vg71c")
 world = NodePath("..")
 serializer = NodePath("ItemSerializer")
-item_types = Array[ExtResource("4_u7yh7")]([null, ExtResource("5_degwe"), ExtResource("24_xmnu3"), ExtResource("6_nqmh0"), ExtResource("25_bs7sh"), ExtResource("26_xwre3"), ExtResource("25_tebgd"), ExtResource("42_xi7uu"), ExtResource("28_jv7b0"), ExtResource("30_6ntpc"), ExtResource("52_t2gm4"), ExtResource("31_ebq75"), ExtResource("35_rgp5i"), ExtResource("33_87c5q"), ExtResource("36_mdga1"), ExtResource("37_dehta"), ExtResource("43_1i1oc"), ExtResource("44_mxtet"), ExtResource("45_6gktx"), ExtResource("46_rc4sq"), ExtResource("47_xf6rd"), ExtResource("41_j132l"), ExtResource("42_gxuda"), ExtResource("53_qga74"), ExtResource("60_fwg3n"), ExtResource("54_yaboj"), ExtResource("58_g5jxt")])
+item_types = Array[ExtResource("4_u7yh7")]([null, ExtResource("5_degwe"), ExtResource("24_xmnu3"), ExtResource("6_nqmh0"), ExtResource("25_bs7sh"), ExtResource("26_xwre3"), ExtResource("25_tebgd"), ExtResource("42_xi7uu"), ExtResource("28_jv7b0"), ExtResource("30_6ntpc"), ExtResource("52_t2gm4"), ExtResource("31_ebq75"), ExtResource("35_rgp5i"), ExtResource("49_esi0f"), ExtResource("33_87c5q"), ExtResource("36_mdga1"), ExtResource("37_dehta"), ExtResource("43_1i1oc"), ExtResource("44_mxtet"), ExtResource("45_6gktx"), ExtResource("46_rc4sq"), ExtResource("47_xf6rd"), ExtResource("41_j132l"), ExtResource("42_gxuda"), ExtResource("53_qga74"), ExtResource("60_fwg3n"), ExtResource("54_yaboj"), ExtResource("58_g5jxt")])
 
 [node name="ItemSerializer" type="Node" parent="ItemManager" node_paths=PackedStringArray("items")]
 script = ExtResource("9_j762g")

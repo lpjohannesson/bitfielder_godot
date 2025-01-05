@@ -29,8 +29,8 @@ renderers = Array[ExtResource("4_277mn")]([ExtResource("5_4btu1"), SubResource("
 
 [resource]
 script = ExtResource("6_6i0j4")
-category = ExtResource("2_b3ykv")
 block_name = "leaves_apple"
+category = ExtResource("2_b3ykv")
 properties = SubResource("Resource_rol5m")
 renderer = SubResource("Resource_5abib")
 particle_texture = ExtResource("2_mweum")

@@ -1,10 +1,11 @@
-[gd_scene load_steps=19 format=3 uid="uid://dpmf4snl7yob2"]
+[gd_scene load_steps=23 format=3 uid="uid://dpmf4snl7yob2"]
 
 [ext_resource type="Texture2D" uid="uid://dghuesjvv30oq" path="res://assets/textures/effects/break.png" id="1_vflrm"]
 [ext_resource type="Texture2D" uid="uid://cefd6e62j71qs" path="res://assets/textures/effects/ground.png" id="2_fhy27"]
 [ext_resource type="Texture2D" uid="uid://oywskwbi3n1t" path="res://assets/textures/effects/place.png" id="3_601cr"]
 [ext_resource type="Texture2D" uid="uid://du8n3vrn1hmsf" path="res://assets/textures/effects/slide.png" id="4_gavc4"]
 [ext_resource type="Script" path="res://assets/objects/world/effects/effect_sprite.gd" id="4_wr8tn"]
+[ext_resource type="Texture2D" uid="uid://bbnkn6gftvwex" path="res://assets/textures/effects/splash.png" id="5_j7d5r"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_lqq27"]
 atlas = ExtResource("1_vflrm")
@@ -53,6 +54,18 @@ region = Rect2(16, 0, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_n51s1"]
 atlas = ExtResource("4_gavc4")
 region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3mjq2"]
+atlas = ExtResource("5_j7d5r")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7hvbs"]
+atlas = ExtResource("5_j7d5r")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j6oyt"]
+atlas = ExtResource("5_j7d5r")
+region = Rect2(48, 0, 24, 24)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_2qh1e"]
 animations = [{
@@ -111,13 +124,25 @@ animations = [{
 "loop": false,
 "name": &"slide",
 "speed": 9.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3mjq2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7hvbs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j6oyt")
+}],
+"loop": false,
+"name": &"splash",
+"speed": 9.0
 }]
 
 [node name="EffectSprite" type="AnimatedSprite2D"]
 sprite_frames = SubResource("SpriteFrames_2qh1e")
-animation = &"slide"
-frame = 2
-frame_progress = 1.0
+animation = &"splash"
 script = ExtResource("4_wr8tn")
 
 [connection signal="animation_finished" from="." to="." method="_on_animation_finished"]

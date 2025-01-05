@@ -17,8 +17,8 @@ casts_shadow = true
 
 [resource]
 script = ExtResource("4_lqudk")
-category = ExtResource("2_6rlo0")
 block_name = "leaves"
+category = ExtResource("2_6rlo0")
 properties = SubResource("Resource_rol5m")
 renderer = ExtResource("4_0odfd")
 particle_texture = ExtResource("1_kua5h")

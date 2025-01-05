@@ -1,13 +1,24 @@
 extends CharacterBody2D
 class_name Player
 
-enum PlayerState { GROUND, MODIFYING_BLOCK, CLIMBING }
+enum PlayerState { GROUND, MODIFYING_BLOCK, CLIMBING, SWIMMING }
 
-const ACCELERATION := 300.0
-const SPEED := 100.0
-const JUMP_VELOCITY := 150.0
+const GROUND_ACCELERATION := 300.0
+const GROUND_SPEED := 100.0
+
+const WATER_ACCELERATION := 200.0
+const WATER_SPEED := 75.0
+const WATER_GROUND_SPEED := 20.0
+
 const GRAVITY_ACCELERATION := 300.0
 const GRAVITY_SPEED := 300.0
+
+const WATER_GRAVITY_ACCELERATION := 100.0
+const WATER_GRAVITY_SPEED := 70.0
+
+const JUMP_VELOCITY := 150.0
+const WATER_JUMP_VELOCITY := 100.0
+
 const JUMP_MIDSTOP := 0.5
 const CLIMB_SPEED := 50.0
 const CLIMB_JUMP_SPEED := 50.0
@@ -31,6 +42,9 @@ var midstopped := false
 var modify_block_tween: Tween
 var inventory: ItemInventory
 var username: String
+
+var center_block_position: Vector2i
+var last_center_block_position: Vector2i
 
 var last_surface := 0.0
 var last_is_sliding := false
@@ -56,12 +70,12 @@ func get_facing_sign() -> float:
 func get_is_sliding() -> bool:
 	return velocity.x != 0.0 and sign(velocity.x) != get_facing_sign()
 
-func walk(delta: float) -> void:
+func walk(walk_speed: float, walk_acceleration: float, delta: float) -> void:
 	if is_on_floor() or move_direction != 0.0:
 		velocity.x = Direction.target_axis(
 			velocity.x,
-			move_direction * SPEED,
-			ACCELERATION * delta)
+			move_direction * walk_speed,
+			walk_acceleration * delta)
 
 func aim() -> void:
 	move_direction = sign(player_input.get_axis("move_left", "move_right"))
@@ -96,8 +110,8 @@ func try_jump_down() -> bool:
 	
 	return true
 
-func jump() -> void:
-	velocity.y = -JUMP_VELOCITY
+func jump(jump_velocity: float) -> void:
+	velocity.y = -jump_velocity
 	midstopped = false
 	entity.play_sound("jump")
 
@@ -115,7 +129,7 @@ func try_jump() -> void:
 	if try_jump_down():
 		return
 	
-	jump()
+	jump(JUMP_VELOCITY)
 
 func midstop_jump():
 	if not midstopped and \
@@ -348,7 +362,6 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	# Get block positions
 	var blocks := entity.get_game_world().blocks
 	
-	var center_block_position := blocks.world_to_block(global_position)
 	var forward_block_position := center_block_position
 	
 	if look_direction == 0.0:
@@ -485,37 +498,19 @@ func show_ground_effects() -> void:
 	
 	last_surface = surface
 
-func get_climbable_block(blocks: BlockWorld, block_position: Vector2i) -> BlockType:
-	var address := blocks.get_block_address(block_position)
-	
-	if address == null:
-		return null
-	
-	var block_id := address.chunk.front_ids[address.block_index]
-	var block := blocks.block_types[block_id]
-	
-	if block.properties.is_climbable:
-		return block
-	else:
-		return null
-
-func try_climbing() -> bool:
+func try_climbing(block: BlockType, blocks: BlockWorld) -> bool:
 	if not (\
 			player_input.is_action_just_pressed("interact") or \
 			player_input.is_action_just_pressed("look_up")):
 		
 		return false
 	
-	var blocks := entity.get_game_world().blocks
-	var block_position := blocks.world_to_block(global_position)
-	var block := get_climbable_block(blocks, block_position)
-	
-	if block == null:
+	if not block.properties.is_climbable:
 		return false
 	
 	# Start climbing
 	velocity = Vector2.ZERO
-	global_position.x = blocks.block_to_world(block_position, true).x
+	global_position.x = blocks.block_to_world(center_block_position, true).x
 	
 	player_state = PlayerState.CLIMBING
 	
@@ -532,15 +527,14 @@ func climb() -> void:
 	
 	if player_input.is_action_just_pressed("jump"):
 		stop_climbing()
-		jump()
+		jump(JUMP_VELOCITY)
 		
 		return
 	
 	var blocks := entity.get_game_world().blocks
-	var block_position := blocks.world_to_block(global_position)
-	var block := get_climbable_block(blocks, block_position)
+	var block := get_interaction_block(center_block_position, blocks)
 	
-	if block == null:
+	if block == null or not block.properties.is_climbable:
 		stop_climbing()
 		return
 	
@@ -551,22 +545,110 @@ func climb() -> void:
 	else:
 		entity.animation_player.play("climb")
 
+func spawn_water_splash(block_position: Vector2i, blocks: BlockWorld) -> void:
+	var above_position := Vector2i(block_position.x, block_position.y - 1)
+	var above_address := blocks.get_block_address(above_position)
+	
+	if above_address == null:
+		return
+	
+	var above_id := above_address.chunk.front_ids[above_address.block_index]
+	var above_block = blocks.block_types[above_id]
+	
+	if not above_block.properties.is_partial or above_block.properties.is_swimmable:
+		return
+	
+	var block_world_position := blocks.block_to_world(above_position, true)
+	var effect_position := Vector2(global_position.x, block_world_position.y)
+	entity.spawn_effect_sprite("splash", effect_position)
+	
+	entity.play_sound("punch")
+
+func try_swimming(block: BlockType, blocks: BlockWorld) -> bool:
+	if not block.properties.is_swimmable:
+		return false
+	
+	# Start swimming
+	player_state = PlayerState.SWIMMING
+	
+	if center_block_position.y > last_center_block_position.y:
+		spawn_water_splash(center_block_position, blocks)
+		velocity.y *= 0.2
+	
+	return true
+
+func swim(delta: float) -> void:
+	var blocks := entity.get_game_world().blocks
+	var block := get_interaction_block(center_block_position, blocks)
+	
+	if block == null or not block.properties.is_swimmable:
+		player_state = PlayerState.GROUND
+		
+		if center_block_position.y < last_center_block_position.y:
+			spawn_water_splash(last_center_block_position, blocks)
+			velocity.y = max(velocity.y * 1.5, -JUMP_VELOCITY)
+		
+		return
+	
+	fall(WATER_GRAVITY_SPEED, WATER_GRAVITY_ACCELERATION, delta)
+	
+	if is_on_floor():
+		walk(WATER_GROUND_SPEED, WATER_ACCELERATION, delta)
+	else:
+		walk(WATER_SPEED, WATER_ACCELERATION, delta)
+		midstop_jump()
+	
+	if player_input.is_action_just_pressed("jump"):
+		jump(WATER_JUMP_VELOCITY)
+		entity.animation_player.play("punch_down")
+	
+	animate()
+
+func get_interaction_block(block_position: Vector2i, blocks: BlockWorld) -> BlockType:
+	var address := blocks.get_block_address(block_position)
+	
+	if address == null:
+		return null
+	
+	var block_id := address.chunk.front_ids[address.block_index]
+	return blocks.block_types[block_id]
+
+func interact_center_block() -> bool:
+	var blocks := entity.get_game_world().blocks
+	var block := get_interaction_block(center_block_position, blocks)
+	
+	if block == null:
+		return false
+	
+	if try_climbing(block, blocks):
+		return true
+	
+	if try_swimming(block, blocks):
+		return true
+	
+	return false
+
+func fall(fall_speed: float, fall_acceleration: float, delta: float) -> void:
+	velocity.y = Direction.target_axis(
+		velocity.y,
+		fall_speed,
+		fall_acceleration * delta)
+
 func controls(delta: float) -> void:
 	aim()
 	update_jump_timer()
 	try_use_item()
 	
+	center_block_position = entity.get_game_world().blocks.world_to_block(global_position)
+	
 	match player_state:
 		PlayerState.GROUND:
-			if try_climbing():
+			if interact_center_block():
 				return
 			
-			velocity.y = Direction.target_axis(
-				velocity.y,
-				GRAVITY_SPEED,
-				GRAVITY_ACCELERATION * delta)
+			fall(GRAVITY_SPEED, GRAVITY_ACCELERATION, delta)
 			
-			walk(delta)
+			walk(GROUND_SPEED, GROUND_ACCELERATION, delta)
 			try_jump()
 			
 			if is_on_floor():
@@ -580,7 +662,7 @@ func controls(delta: float) -> void:
 			if modify_block_tween == null:
 				# Jump midair after block
 				if player_input.is_action_pressed("jump"):
-					jump()
+					jump(JUMP_VELOCITY)
 					end_modify_block()
 			
 			if modify_block_timer.is_stopped():
@@ -588,16 +670,20 @@ func controls(delta: float) -> void:
 		
 		PlayerState.CLIMBING:
 			climb()
+		
+		PlayerState.SWIMMING:
+			swim(delta)
 	
 	move_and_slide()
+	last_center_block_position = center_block_position
 
-func stop_modify_block() -> void:
+func stop_modify_block_tween() -> void:
 	if modify_block_tween != null:
 		modify_block_tween.kill()
 		modify_block_tween = null
 
 func _ready() -> void:
-	entity.position_changed.connect(stop_modify_block)
+	entity.position_changed.connect(stop_modify_block_tween)
 
 func _physics_process(delta: float) -> void:
 	# Check if remote controlled player
