@@ -447,19 +447,6 @@ func show_ground_effects() -> void:
 	if is_on_floor():
 		surface = 1.0
 		surface_point = floor_point
-		
-		var is_sliding := get_is_sliding()
-		
-		if is_sliding and last_surface != 0.0:
-			if not last_is_sliding:
-				entity.play_sound("slide")
-			
-			if slide_effect_timer.is_stopped():
-				entity.spawn_effect_sprite("slide", floor_point.global_position)
-				slide_effect_timer.start()
-		
-		last_is_sliding = is_sliding
-	
 	elif is_on_ceiling():
 		surface = -1.0
 		surface_point = ceiling_point
@@ -475,6 +462,7 @@ func show_ground_effects() -> void:
 	
 	var blocks := entity.get_game_world().blocks
 	
+	# Play block sound
 	for i in range(get_slide_collision_count()):
 		var collision := get_slide_collision(i)
 		
@@ -501,6 +489,19 @@ func show_ground_effects() -> void:
 		break
 	
 	last_surface = surface
+
+func show_slide_effects() -> void:
+	var is_sliding := get_is_sliding()
+	
+	if is_on_floor() and is_sliding:
+		if not last_is_sliding:
+			entity.play_sound("slide")
+		
+		if slide_effect_timer.is_stopped():
+			entity.spawn_effect_sprite("slide", floor_point.global_position)
+			slide_effect_timer.start()
+	
+	last_is_sliding = is_sliding
 
 func show_swimming_effects() -> void:
 	var blocks := entity.get_game_world().blocks
@@ -639,9 +640,10 @@ func swim(delta: float) -> void:
 		midstop_jump()
 	
 	if player_input.is_action_just_pressed("jump"):
-		jump(WATER_JUMP_VELOCITY)
-		entity.animation_player.play("punch_down")
-		entity.play_sound("splash", -10.0)
+		if not try_jump_down():
+			jump(WATER_JUMP_VELOCITY)
+			entity.animation_player.play("punch_down")
+			entity.play_sound("splash", -10.0)
 	
 	animate()
 
@@ -732,6 +734,7 @@ func _physics_process(delta: float) -> void:
 	# Check if remote controlled player
 	if not entity.on_server:
 		show_ground_effects()
+		show_slide_effects()
 		show_swimming_effects()
 		
 		if GameScene.instance.player != self:
