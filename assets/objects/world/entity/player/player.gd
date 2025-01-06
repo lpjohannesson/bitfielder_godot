@@ -414,7 +414,7 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	if center_address != null:
 		var center_front_id := center_address.chunk.front_ids[center_address.block_index]
 		var center_front_block := blocks.block_types[center_front_id]
-	
+		
 		if not is_block_passable(center_front_block):
 			if not on_front_layer:
 				return false
@@ -453,11 +453,9 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 		
 		return true
 	
-	# Try modifying center block
+	# Check center
 	if center_address == null:
 		return false
-	
-	block_specifier.block_position = center_block_position
 	
 	# Check if on air
 	if block_specifier.read_address(center_address) == 0:
@@ -483,6 +481,8 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 		block_specifier.block_id = block_id
 	
 	# Place or break center
+	block_specifier.block_position = center_block_position
+	
 	modify_block(
 		center_address,
 		block_specifier,
