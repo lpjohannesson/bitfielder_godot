@@ -1,6 +1,11 @@
 extends Node
 class_name GameServer
 
+const WORLD_FILE_PATH := "user://world"
+
+const CHUNK_START_X := -8
+const CHUNK_END_X := 8
+
 const CHUNK_LOAD_EXTENTS := Vector2i(6, 5)
 const BLOCK_CHECK_TIMEOUT := 0.25
 const CHUNK_LOAD_DISTANCE := 256.0
@@ -23,6 +28,8 @@ func close_server() -> void:
 			Packets.ServerPacket.SERVER_CLOSED,
 			null
 		))
+	
+	save_world_files()
 
 func add_entity(entity: GameEntity) -> void:
 	entity.entity_id = next_entity_id
@@ -397,12 +404,29 @@ func disconnect_client(client: ClientConnection) -> void:
 	
 	world.entities.remove_entity(client.player.entity)
 
+func save_world_files() -> void:
+	DirAccess.make_dir_absolute(WORLD_FILE_PATH)
+	
+	for chunk_x in range(CHUNK_START_X, CHUNK_END_X):
+		world.blocks.serializer.save_chunk_line_file(chunk_x)
+
+func load_world_files() -> bool:
+	if not DirAccess.dir_exists_absolute(WORLD_FILE_PATH):
+		return false
+	
+	for path in DirAccess.open(WORLD_FILE_PATH).get_files():
+		var full_path := WORLD_FILE_PATH.path_join(path)
+		world.blocks.serializer.create_chunk_line_from_file(full_path)
+	
+	return true
+
 func _init() -> void:
 	instance = self
 
 func _ready() -> void:
-	block_generator.start_generator()
-	block_generator.generate_area(-8, 8)
+	if not load_world_files():
+		block_generator.start_generator()
+		block_generator.generate_area(CHUNK_START_X, CHUNK_END_X)
 
 func _process(_delta: float) -> void:
 	for client in clients:

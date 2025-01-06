@@ -255,7 +255,12 @@ func get_heightmap_address(block_x: int) -> HeightmapAddress:
 	return address
 
 func get_block_height(block_x: int) -> int:
-	return get_heightmap_address(block_x).get_height()
+	var heightmap_address := get_heightmap_address(block_x)
+	
+	if heightmap_address == null:
+		return 0
+	
+	return heightmap_address.get_height()
 
 func _ready() -> void:
 	# Create block types

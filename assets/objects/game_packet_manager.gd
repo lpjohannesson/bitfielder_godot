@@ -7,16 +7,7 @@ var last_chunk_index: Vector2i
 
 func create_block_chunk(packet: GamePacket) -> void:
 	var blocks := scene.world.blocks
-	var chunk_index: Vector2i = packet.data[0]
-	
-	# Skip if chunk exists
-	if blocks.get_chunk(chunk_index) != null:
-		return
-	
-	var chunk := blocks.create_chunk(chunk_index)
-	
-	scene.world.blocks.serializer.load_chunk(chunk, packet.data)
-	blocks.update_chunk(chunk)
+	var chunk := blocks.serializer.create_chunk_from_data(packet.data)
 	
 	scene.blocks_renderer.start_chunk(chunk)
 
