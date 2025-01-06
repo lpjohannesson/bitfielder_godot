@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bdo3id28653y6"
-path="res://.godot/imported/stick.png-cfbd92562e10242e9674a88f454679e4.ctex"
+uid="uid://csjp7r4tpfhxv"
+path="res://.godot/imported/stick_vertical.png-d27bebe9de2ef002345e448aff5b75cc.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/textures/blocks/stick.png"
-dest_files=["res://.godot/imported/stick.png-cfbd92562e10242e9674a88f454679e4.ctex"]
+source_file="res://assets/textures/blocks/stick_vertical.png"
+dest_files=["res://.godot/imported/stick_vertical.png-d27bebe9de2ef002345e448aff5b75cc.ctex"]
 
 [params]
 

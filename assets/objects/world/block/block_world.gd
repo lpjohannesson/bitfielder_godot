@@ -91,8 +91,12 @@ func create_colliders(chunk: BlockChunk) -> void:
 			chunk.colliders.add_child(collider)
 			
 			collider.position = Vector2(chunk_position) + Vector2.ONE * 0.5
-			collider.shape = RectangleShape2D.new()
-			collider.shape.size = Vector2.ONE
+			
+			if block.properties.collider == null:
+				collider.shape = RectangleShape2D.new()
+				collider.shape.size = Vector2.ONE
+			else:
+				collider.shape = block.properties.collider
 			
 			collider.one_way_collision = block.properties.is_one_way
 
@@ -195,6 +199,9 @@ func update_block(block_position: Vector2i) -> void:
 	update_chunk(chunk)
 
 func get_block_id(block_name: String) -> int:
+	if not block_type_map.has(block_name):
+		return 0
+	
 	return block_type_map[block_name]
 
 func generate_column_height(chunk_column: Array[BlockChunk], x: int) -> int:

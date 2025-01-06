@@ -40,7 +40,7 @@ const MODIFY_BLOCK_TWEEN_TIME := 0.35
 @export var bubble_scene: PackedScene
 
 var move_direction := 0.0
-var look_direction := 0.0
+var block_place_direction = 0.0
 var midstopped := false
 var modify_block_tween: Tween
 var inventory: ItemInventory
@@ -80,12 +80,20 @@ func walk(walk_speed: float, walk_acceleration: float, delta: float) -> void:
 			move_direction * walk_speed,
 			walk_acceleration * delta)
 
+func get_move_direction() -> int:
+	return sign(player_input.get_axis("move_left", "move_right"))
+
+func get_look_direction() -> int:
+	return sign(player_input.get_axis("look_up", "look_down"))
+
 func aim() -> void:
-	move_direction = sign(player_input.get_axis("move_left", "move_right"))
-	look_direction = sign(player_input.get_axis("look_up", "look_down"))
+	move_direction = get_move_direction()
 	
 	if move_direction != 0.0:
 		entity.sprite.flip_h = move_direction < 0.0
+	
+	if player_state != PlayerState.MODIFYING_BLOCK:
+		block_place_direction = get_look_direction()
 
 func try_jump_down() -> bool:
 	if not player_input.is_action_pressed("look_down"):
@@ -194,6 +202,8 @@ func try_use_item() -> void:
 func play_punch_animation() -> void:
 	entity.animation_player.stop()
 	
+	var look_direction := get_look_direction()
+	
 	if look_direction < 0.0:
 		entity.animation_player.play("punch_up")
 	elif look_direction > 0.0:
@@ -206,6 +216,7 @@ func animate() -> void:
 		return
 	
 	var animation_name: String
+	var look_direction := get_look_direction()
 	
 	if is_on_floor():
 		if move_direction == 0.0 or velocity.x == 0.0:
@@ -321,7 +332,7 @@ func modify_block(
 		address: BlockAddress,
 		block_specifier: BlockSpecifier,
 		blocks: BlockWorld,
-		forward_block_position: Vector2i) -> void:
+		next_block_position: Vector2i) -> void:
 	
 	velocity = Vector2.ZERO
 	
@@ -330,7 +341,7 @@ func modify_block(
 		.set_trans(Tween.TRANS_QUAD)
 	
 	modify_block_tween.tween_property(self, "global_position",
-		blocks.block_to_world(forward_block_position, true),
+		blocks.block_to_world(next_block_position, true),
 		MODIFY_BLOCK_TWEEN_TIME)
 	
 	modify_block_tween.finished.connect(end_modify_block_tween)
@@ -346,6 +357,9 @@ func modify_block(
 	# Update block
 	entity.update_block(block_specifier, address)
 
+func is_block_passable(block: BlockType) -> bool:
+	return not block.properties.is_solid or block.properties.is_one_way
+
 func can_modify_forward_block(
 		address: BlockAddress,
 		blocks: BlockWorld) -> bool:
@@ -356,30 +370,75 @@ func can_modify_forward_block(
 	var front_id := address.chunk.front_ids[address.block_index]
 	var front_block := blocks.block_types[front_id]
 	
-	return front_block.properties.is_solid and not front_block.properties.is_one_way
+	return not is_block_passable(front_block)
+
+func cast_block(look_offset: Vector2) -> Variant:
+	var space_state := get_world_2d().direct_space_state
+	var query := PhysicsRayQueryParameters2D.create(global_position, global_position + look_offset)
+	query.collision_mask = 2
+	
+	var result := space_state.intersect_ray(query)
+	
+	if result.is_empty():
+		return null
+	
+	var collider = result.collider.get_child(result.shape)
+	
+	if not collider is BlockCollider:
+		return null
+	
+	return collider.block_position
 
 func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	if modify_block_tween != null:
 		return false
 	
-	# Get block positions
-	var blocks := entity.get_game_world().blocks
-	
-	var forward_block_position := center_block_position
+	# Get look offset
+	var look_direction = get_look_direction()
+	var look_offset := Vector2i.ZERO
 	
 	if look_direction == 0.0:
-		forward_block_position.x += int(get_facing_sign())
+		look_offset.x = int(get_facing_sign())
 	else:
-		forward_block_position.y += int(look_direction)
+		look_offset.y = look_direction
 	
-	# Determine if placing or breaking
+	# Create block info
+	var blocks := entity.get_game_world().blocks
+	
 	var block_specifier := BlockSpecifier.new()
 	block_specifier.on_front_layer = on_front_layer
 	
+	# Check if center is passable
+	var center_address := blocks.get_block_address(center_block_position)
+	
+	if center_address != null:
+		var center_front_id := center_address.chunk.front_ids[center_address.block_index]
+		var center_front_block := blocks.block_types[center_front_id]
+	
+		if not is_block_passable(center_front_block):
+			if not on_front_layer:
+				return false
+			
+			# Check if facing block
+			if cast_block(Vector2(look_offset) * blocks.scale) != center_block_position:
+				return false
+			
+			# Break center
+			block_specifier.block_position = center_block_position
+			
+			modify_block(
+				center_address,
+				block_specifier,
+				blocks,
+				center_block_position)
+			
+			return true
+	
+	# Check forward
+	var forward_block_position := center_block_position + look_offset
 	var forward_address := blocks.get_block_address(forward_block_position)
 	
 	if can_modify_forward_block(forward_address, blocks):
-		# Skip if back modification blocked
 		if not on_front_layer:
 			return false
 		
@@ -395,8 +454,6 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 		return true
 	
 	# Try modifying center block
-	var center_address := blocks.get_block_address(center_block_position)
-	
 	if center_address == null:
 		return false
 	
@@ -581,6 +638,7 @@ func climb() -> void:
 		stop_climbing()
 		return
 	
+	var look_direction := get_look_direction()
 	velocity.y = look_direction * CLIMB_SPEED
 	
 	if look_direction == 0.0:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=70 format=3 uid="uid://celyk57ifua4f"]
+[gd_scene load_steps=71 format=3 uid="uid://celyk57ifua4f"]
 
 [ext_resource type="Script" path="res://assets/objects/world/game_world.gd" id="1_waysh"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_world.gd" id="2_3pcni"]
@@ -19,7 +19,8 @@
 [ext_resource type="Resource" uid="uid://lon2d5qckn1k" path="res://assets/resources/blocks/wood_log.tres" id="9_j7cik"]
 [ext_resource type="Script" path="res://assets/objects/world/item/item_serializer.gd" id="9_j762g"]
 [ext_resource type="Resource" uid="uid://uuieiq6nosiq" path="res://assets/resources/blocks/wood_planks.tres" id="10_eitd2"]
-[ext_resource type="Resource" uid="uid://dmgl8jsafc8o6" path="res://assets/resources/blocks/stick.tres" id="11_o3qxe"]
+[ext_resource type="Resource" uid="uid://bpyds0reiigpq" path="res://assets/resources/blocks/stick_vertical.tres" id="11_drol0"]
+[ext_resource type="Resource" uid="uid://dmgl8jsafc8o6" path="res://assets/resources/blocks/stick_horizontal.tres" id="11_o3qxe"]
 [ext_resource type="Resource" uid="uid://2m1yu75b8ebw" path="res://assets/resources/blocks/leaves.tres" id="12_4pbjl"]
 [ext_resource type="Resource" uid="uid://irphc4rxlfsc" path="res://assets/resources/blocks/leaves_apple.tres" id="12_un3bo"]
 [ext_resource type="Resource" uid="uid://bbv4vutd5bnrl" path="res://assets/resources/blocks/bush.tres" id="13_04xow"]
@@ -79,7 +80,7 @@ entities = NodePath("EntityManager")
 [node name="BlockWorld" type="Node2D" parent="." node_paths=PackedStringArray("chunks", "serializer")]
 scale = Vector2(16, 16)
 script = ExtResource("2_3pcni")
-block_types = Array[ExtResource("3_bdl7w")]([ExtResource("4_x6ly3"), ExtResource("5_bxmfp"), ExtResource("6_486s4"), ExtResource("7_rr82n"), ExtResource("9_j7cik"), ExtResource("10_eitd2"), ExtResource("11_o3qxe"), ExtResource("12_4pbjl"), ExtResource("12_un3bo"), ExtResource("13_04xow"), ExtResource("14_wlrim"), ExtResource("15_sfhs0"), ExtResource("16_k2bey"), ExtResource("17_nq8w5"), ExtResource("18_v0tft"), ExtResource("19_mc014"), ExtResource("20_fpsyb"), ExtResource("20_014mw"), ExtResource("21_b2opd"), ExtResource("8_re7ou"), ExtResource("22_iis1m"), ExtResource("23_vvxsb"), ExtResource("24_v5gke"), ExtResource("25_qr8ut"), ExtResource("22_4shq2"), ExtResource("23_6dd02"), ExtResource("28_duwn7"), ExtResource("30_y8xyc"), ExtResource("29_4a8n5"), ExtResource("30_ktsej")])
+block_types = Array[ExtResource("3_bdl7w")]([ExtResource("4_x6ly3"), ExtResource("5_bxmfp"), ExtResource("6_486s4"), ExtResource("7_rr82n"), ExtResource("9_j7cik"), ExtResource("10_eitd2"), ExtResource("11_o3qxe"), ExtResource("11_drol0"), ExtResource("12_4pbjl"), ExtResource("12_un3bo"), ExtResource("13_04xow"), ExtResource("14_wlrim"), ExtResource("15_sfhs0"), ExtResource("16_k2bey"), ExtResource("17_nq8w5"), ExtResource("18_v0tft"), ExtResource("19_mc014"), ExtResource("20_fpsyb"), ExtResource("20_014mw"), ExtResource("21_b2opd"), ExtResource("8_re7ou"), ExtResource("22_iis1m"), ExtResource("23_vvxsb"), ExtResource("24_v5gke"), ExtResource("25_qr8ut"), ExtResource("22_4shq2"), ExtResource("23_6dd02"), ExtResource("28_duwn7"), ExtResource("30_y8xyc"), ExtResource("29_4a8n5"), ExtResource("30_ktsej")])
 chunk_scene = ExtResource("19_qsv6g")
 chunks = NodePath("Chunks")
 serializer = NodePath("BlockSerializer")

@@ -1,14 +1,14 @@
 [gd_resource type="Resource" script_class="ItemType" load_steps=5 format=3 uid="uid://b66ts0vonntho"]
 
 [ext_resource type="Texture2D" uid="uid://c3oe8a6lth446" path="res://assets/textures/items/stick.png" id="1_hy0xj"]
-[ext_resource type="Script" path="res://assets/objects/world/item/properties/block_item_properties.gd" id="2_7xo14"]
+[ext_resource type="Script" path="res://assets/objects/world/item/properties/directional_block_item_properties.gd" id="2_ubq67"]
 [ext_resource type="Script" path="res://assets/objects/world/item/item_type.gd" id="3_se8y5"]
 
-[sub_resource type="Resource" id="Resource_2axdm"]
-script = ExtResource("2_7xo14")
+[sub_resource type="Resource" id="Resource_ns4xq"]
+script = ExtResource("2_ubq67")
 
 [resource]
 script = ExtResource("3_se8y5")
 item_name = "stick"
 item_texture = ExtResource("1_hy0xj")
-properties = SubResource("Resource_2axdm")
+properties = SubResource("Resource_ns4xq")

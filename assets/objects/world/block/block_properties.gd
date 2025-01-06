@@ -10,3 +10,5 @@ class_name BlockProperties
 @export var casts_shadow := true
 
 @export var block_light: BlockLight
+
+@export var collider: Shape2D
