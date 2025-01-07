@@ -372,9 +372,11 @@ func can_modify_forward_block(
 	
 	return not is_block_passable(front_block)
 
-func cast_block(look_offset: Vector2) -> Variant:
+func cast_block(look_offset: Vector2) -> BlockCollider:
 	var space_state := get_world_2d().direct_space_state
 	var query := PhysicsRayQueryParameters2D.create(global_position, global_position + look_offset)
+	
+	# Only check block layer
 	query.collision_mask = 2
 	
 	var result := space_state.intersect_ray(query)
@@ -387,7 +389,7 @@ func cast_block(look_offset: Vector2) -> Variant:
 	if not collider is BlockCollider:
 		return null
 	
-	return collider.block_position
+	return collider
 
 func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	if modify_block_tween != null:
@@ -419,18 +421,23 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 			if not on_front_layer:
 				return false
 			
-			# Check if facing block
-			if cast_block(Vector2(look_offset) * blocks.scale) != center_block_position:
+			# Check facing block
+			var cast_block := cast_block(Vector2(look_offset) * blocks.scale)
+			
+			if cast_block == null:
 				return false
 			
-			# Break center
-			block_specifier.block_position = center_block_position
+			# Break facing block
+			var cast_position := cast_block.block_position
+			block_specifier.block_position = cast_position
+			
+			var cast_address := blocks.get_block_address(cast_position)
 			
 			modify_block(
-				center_address,
+				cast_address,
 				block_specifier,
 				blocks,
-				center_block_position)
+				cast_position)
 			
 			return true
 	
