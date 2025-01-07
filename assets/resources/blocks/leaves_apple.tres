@@ -1,38 +1,32 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=14 format=3 uid="uid://irphc4rxlfsc"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=12 format=3 uid="uid://irphc4rxlfsc"]
 
-[ext_resource type="Resource" uid="uid://kdgxxud1ojcu" path="res://assets/resources/blocks/sounds/leaves.tres" id="1_5ur3n"]
-[ext_resource type="Resource" uid="uid://bhu0yhmfkppte" path="res://assets/resources/blocks/categories/leaves.tres" id="2_b3ykv"]
-[ext_resource type="Texture2D" uid="uid://3y74r12ljned" path="res://assets/textures/blocks/particles/leaves.png" id="2_mweum"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="3_ivp1w"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/block_renderer.gd" id="4_277mn"]
-[ext_resource type="Resource" uid="uid://crrg4xv7qi7b7" path="res://assets/resources/blocks/renderers/leaves.tres" id="5_4btu1"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="6_6i0j4"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="6_kpn05"]
-[ext_resource type="Texture2D" uid="uid://bvmblgg86fo5y" path="res://assets/textures/items/apple.png" id="7_45ej6"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/layered_block_renderer.gd" id="8_u1gw2"]
+[ext_resource type="Resource" uid="uid://kdgxxud1ojcu" path="res://assets/resources/blocks/sounds/leaves.tres" id="1_gqq5g"]
+[ext_resource type="Resource" uid="uid://bhu0yhmfkppte" path="res://assets/resources/blocks/categories/leaves.tres" id="2_8qbty"]
+[ext_resource type="Texture2D" uid="uid://3y74r12ljned" path="res://assets/textures/blocks/particles/leaves.png" id="3_u0fd8"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/block_renderer.gd" id="5_tx7rg"]
+[ext_resource type="Resource" uid="uid://crrg4xv7qi7b7" path="res://assets/resources/blocks/renderers/leaves.tres" id="6_tb6y1"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="7_lf5kr"]
+[ext_resource type="Texture2D" uid="uid://bvmblgg86fo5y" path="res://assets/textures/items/apple.png" id="8_h2bxp"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/layered_block_renderer.gd" id="9_dftum"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="10_rc182"]
 
-[sub_resource type="Resource" id="Resource_rol5m"]
-script = ExtResource("3_ivp1w")
+[sub_resource type="Resource" id="Resource_dm8dj"]
+script = ExtResource("7_lf5kr")
+texture = ExtResource("8_h2bxp")
+
+[sub_resource type="Resource" id="Resource_5abib"]
+script = ExtResource("9_dftum")
+renderers = Array[ExtResource("5_tx7rg")]([ExtResource("6_tb6y1"), SubResource("Resource_dm8dj")])
+
+[resource]
+script = ExtResource("10_rc182")
+category = ExtResource("2_8qbty")
+renderer = SubResource("Resource_5abib")
+particle_texture = ExtResource("3_u0fd8")
+block_sounds = ExtResource("1_gqq5g")
 is_solid = true
 is_one_way = false
 is_climbable = false
 is_swimmable = false
 is_partial = true
 casts_shadow = true
-
-[sub_resource type="Resource" id="Resource_dm8dj"]
-script = ExtResource("6_kpn05")
-texture = ExtResource("7_45ej6")
-
-[sub_resource type="Resource" id="Resource_5abib"]
-script = ExtResource("8_u1gw2")
-renderers = Array[ExtResource("4_277mn")]([ExtResource("5_4btu1"), SubResource("Resource_dm8dj")])
-
-[resource]
-script = ExtResource("6_6i0j4")
-block_name = "leaves_apple"
-category = ExtResource("2_b3ykv")
-properties = SubResource("Resource_rol5m")
-renderer = SubResource("Resource_5abib")
-particle_texture = ExtResource("2_mweum")
-block_sounds = ExtResource("1_5ur3n")

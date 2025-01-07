@@ -1,36 +1,30 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=13 format=3 uid="uid://bxbdoq7jf6a38"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=11 format=3 uid="uid://bxbdoq7jf6a38"]
 
-[ext_resource type="Resource" uid="uid://dd8dq6svx8xar" path="res://assets/resources/blocks/sounds/stone.tres" id="1_1dv1b"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="1_facif"]
-[ext_resource type="Texture2D" uid="uid://eer33eptpvf7" path="res://assets/textures/blocks/particles/stone.png" id="1_w0msj"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_26gfx"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/block_renderer.gd" id="2_wl5bp"]
-[ext_resource type="Resource" uid="uid://cci2gglggfno4" path="res://assets/resources/blocks/renderers/stone.tres" id="3_prq3y"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="4_cl8ql"]
-[ext_resource type="Texture2D" uid="uid://s0y1cuhn426f" path="res://assets/textures/blocks/ore_coal.png" id="5_7a5ii"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/layered_block_renderer.gd" id="6_4fu4n"]
+[ext_resource type="Resource" uid="uid://dd8dq6svx8xar" path="res://assets/resources/blocks/sounds/stone.tres" id="1_x6n0j"]
+[ext_resource type="Texture2D" uid="uid://eer33eptpvf7" path="res://assets/textures/blocks/particles/stone.png" id="2_6u72w"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/block_renderer.gd" id="4_q38t7"]
+[ext_resource type="Resource" uid="uid://cci2gglggfno4" path="res://assets/resources/blocks/renderers/stone.tres" id="5_h7mop"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="6_tiv0j"]
+[ext_resource type="Texture2D" uid="uid://s0y1cuhn426f" path="res://assets/textures/blocks/ore_coal.png" id="7_mlgff"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/layered_block_renderer.gd" id="8_3tp2k"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="9_388nf"]
 
-[sub_resource type="Resource" id="Resource_7y3ed"]
-script = ExtResource("2_26gfx")
+[sub_resource type="Resource" id="Resource_6ilo7"]
+script = ExtResource("6_tiv0j")
+texture = ExtResource("7_mlgff")
+
+[sub_resource type="Resource" id="Resource_u2k4d"]
+script = ExtResource("8_3tp2k")
+renderers = Array[ExtResource("4_q38t7")]([ExtResource("5_h7mop"), SubResource("Resource_6ilo7")])
+
+[resource]
+script = ExtResource("9_388nf")
+renderer = SubResource("Resource_u2k4d")
+particle_texture = ExtResource("2_6u72w")
+block_sounds = ExtResource("1_x6n0j")
 is_solid = true
 is_one_way = false
 is_climbable = false
 is_swimmable = false
 is_partial = false
 casts_shadow = true
-
-[sub_resource type="Resource" id="Resource_6ilo7"]
-script = ExtResource("4_cl8ql")
-texture = ExtResource("5_7a5ii")
-
-[sub_resource type="Resource" id="Resource_u2k4d"]
-script = ExtResource("6_4fu4n")
-renderers = Array[ExtResource("2_wl5bp")]([ExtResource("3_prq3y"), SubResource("Resource_6ilo7")])
-
-[resource]
-script = ExtResource("1_facif")
-block_name = "ore_coal"
-properties = SubResource("Resource_7y3ed")
-renderer = SubResource("Resource_u2k4d")
-particle_texture = ExtResource("1_w0msj")
-block_sounds = ExtResource("1_1dv1b")

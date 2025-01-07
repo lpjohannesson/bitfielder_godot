@@ -1,36 +1,30 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=13 format=3 uid="uid://cy0wrxticc1km"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=11 format=3 uid="uid://cy0wrxticc1km"]
 
-[ext_resource type="Resource" uid="uid://dd8dq6svx8xar" path="res://assets/resources/blocks/sounds/stone.tres" id="1_c5s4d"]
-[ext_resource type="Texture2D" uid="uid://eer33eptpvf7" path="res://assets/textures/blocks/particles/stone.png" id="1_ra8w7"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_ndo22"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/block_renderer.gd" id="3_boe0o"]
-[ext_resource type="Resource" uid="uid://cci2gglggfno4" path="res://assets/resources/blocks/renderers/stone.tres" id="4_usk0k"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="5_8fbfa"]
-[ext_resource type="Texture2D" uid="uid://dhnsgvpteprrf" path="res://assets/textures/blocks/ore_diamond.png" id="6_27p6t"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/layered_block_renderer.gd" id="7_sdu1k"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="8_ddrm6"]
+[ext_resource type="Resource" uid="uid://dd8dq6svx8xar" path="res://assets/resources/blocks/sounds/stone.tres" id="1_n1ro6"]
+[ext_resource type="Texture2D" uid="uid://eer33eptpvf7" path="res://assets/textures/blocks/particles/stone.png" id="2_f3yir"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/block_renderer.gd" id="4_12oxm"]
+[ext_resource type="Resource" uid="uid://cci2gglggfno4" path="res://assets/resources/blocks/renderers/stone.tres" id="5_8jml2"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="6_syv7x"]
+[ext_resource type="Texture2D" uid="uid://dhnsgvpteprrf" path="res://assets/textures/blocks/ore_diamond.png" id="7_spgvx"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/layered_block_renderer.gd" id="8_qn41t"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="9_fq6da"]
 
-[sub_resource type="Resource" id="Resource_7y3ed"]
-script = ExtResource("2_ndo22")
+[sub_resource type="Resource" id="Resource_6ilo7"]
+script = ExtResource("6_syv7x")
+texture = ExtResource("7_spgvx")
+
+[sub_resource type="Resource" id="Resource_u2k4d"]
+script = ExtResource("8_qn41t")
+renderers = Array[ExtResource("4_12oxm")]([ExtResource("5_8jml2"), SubResource("Resource_6ilo7")])
+
+[resource]
+script = ExtResource("9_fq6da")
+renderer = SubResource("Resource_u2k4d")
+particle_texture = ExtResource("2_f3yir")
+block_sounds = ExtResource("1_n1ro6")
 is_solid = true
 is_one_way = false
 is_climbable = false
 is_swimmable = false
 is_partial = false
 casts_shadow = true
-
-[sub_resource type="Resource" id="Resource_6ilo7"]
-script = ExtResource("5_8fbfa")
-texture = ExtResource("6_27p6t")
-
-[sub_resource type="Resource" id="Resource_u2k4d"]
-script = ExtResource("7_sdu1k")
-renderers = Array[ExtResource("3_boe0o")]([ExtResource("4_usk0k"), SubResource("Resource_6ilo7")])
-
-[resource]
-script = ExtResource("8_ddrm6")
-block_name = "ore_diamond"
-properties = SubResource("Resource_7y3ed")
-renderer = SubResource("Resource_u2k4d")
-particle_texture = ExtResource("1_ra8w7")
-block_sounds = ExtResource("1_c5s4d")

@@ -1,29 +1,23 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=9 format=3 uid="uid://b4guj1oadstgd"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=7 format=3 uid="uid://b4guj1oadstgd"]
 
-[ext_resource type="Resource" uid="uid://dd8dq6svx8xar" path="res://assets/resources/blocks/sounds/stone.tres" id="1_6vc4v"]
-[ext_resource type="Texture2D" uid="uid://dgdvqy4id4ct7" path="res://assets/textures/blocks/particles/bricks.png" id="2_a4bls"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="4_vfnjl"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="4_vrlgw"]
-[ext_resource type="Texture2D" uid="uid://bdw2msk5jkrcp" path="res://assets/textures/blocks/bricks.png" id="5_xmpa8"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="10_tqa4m"]
+[ext_resource type="Resource" uid="uid://dd8dq6svx8xar" path="res://assets/resources/blocks/sounds/stone.tres" id="1_jkka2"]
+[ext_resource type="Texture2D" uid="uid://dgdvqy4id4ct7" path="res://assets/textures/blocks/particles/bricks.png" id="2_dyfbk"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="4_xi3nw"]
+[ext_resource type="Texture2D" uid="uid://bdw2msk5jkrcp" path="res://assets/textures/blocks/bricks.png" id="5_cklwb"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="6_jec2i"]
 
-[sub_resource type="Resource" id="Resource_r47fy"]
-script = ExtResource("4_vrlgw")
+[sub_resource type="Resource" id="Resource_kom1o"]
+script = ExtResource("4_xi3nw")
+texture = ExtResource("5_cklwb")
+
+[resource]
+script = ExtResource("6_jec2i")
+renderer = SubResource("Resource_kom1o")
+particle_texture = ExtResource("2_dyfbk")
+block_sounds = ExtResource("1_jkka2")
 is_solid = true
 is_one_way = false
 is_climbable = false
 is_swimmable = false
 is_partial = false
 casts_shadow = true
-
-[sub_resource type="Resource" id="Resource_kom1o"]
-script = ExtResource("4_vfnjl")
-texture = ExtResource("5_xmpa8")
-
-[resource]
-script = ExtResource("10_tqa4m")
-block_name = "bricks"
-properties = SubResource("Resource_r47fy")
-renderer = SubResource("Resource_kom1o")
-particle_texture = ExtResource("2_a4bls")
-block_sounds = ExtResource("1_6vc4v")

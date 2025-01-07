@@ -9,6 +9,5 @@ script = ExtResource("2_ubq67")
 
 [resource]
 script = ExtResource("3_se8y5")
-item_name = "stick"
 item_texture = ExtResource("1_hy0xj")
 properties = SubResource("Resource_ns4xq")

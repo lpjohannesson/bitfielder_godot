@@ -1,26 +1,20 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=8 format=3 uid="uid://2m1yu75b8ebw"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=6 format=3 uid="uid://2m1yu75b8ebw"]
 
-[ext_resource type="Texture2D" uid="uid://3y74r12ljned" path="res://assets/textures/blocks/particles/leaves.png" id="1_kua5h"]
-[ext_resource type="Resource" uid="uid://kdgxxud1ojcu" path="res://assets/resources/blocks/sounds/leaves.tres" id="1_qopnw"]
-[ext_resource type="Resource" uid="uid://bhu0yhmfkppte" path="res://assets/resources/blocks/categories/leaves.tres" id="2_6rlo0"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_46l47"]
-[ext_resource type="Resource" uid="uid://crrg4xv7qi7b7" path="res://assets/resources/blocks/renderers/leaves.tres" id="4_0odfd"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="4_lqudk"]
+[ext_resource type="Resource" uid="uid://kdgxxud1ojcu" path="res://assets/resources/blocks/sounds/leaves.tres" id="1_rgfof"]
+[ext_resource type="Resource" uid="uid://bhu0yhmfkppte" path="res://assets/resources/blocks/categories/leaves.tres" id="2_v66pj"]
+[ext_resource type="Texture2D" uid="uid://3y74r12ljned" path="res://assets/textures/blocks/particles/leaves.png" id="3_o5lp1"]
+[ext_resource type="Resource" uid="uid://crrg4xv7qi7b7" path="res://assets/resources/blocks/renderers/leaves.tres" id="5_wespj"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="6_c71kd"]
 
-[sub_resource type="Resource" id="Resource_rol5m"]
-script = ExtResource("2_46l47")
+[resource]
+script = ExtResource("6_c71kd")
+category = ExtResource("2_v66pj")
+renderer = ExtResource("5_wespj")
+particle_texture = ExtResource("3_o5lp1")
+block_sounds = ExtResource("1_rgfof")
 is_solid = true
 is_one_way = false
 is_climbable = false
 is_swimmable = false
 is_partial = true
 casts_shadow = true
-
-[resource]
-script = ExtResource("4_lqudk")
-block_name = "leaves"
-category = ExtResource("2_6rlo0")
-properties = SubResource("Resource_rol5m")
-renderer = ExtResource("4_0odfd")
-particle_texture = ExtResource("1_kua5h")
-block_sounds = ExtResource("1_qopnw")

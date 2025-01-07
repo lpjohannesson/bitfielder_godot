@@ -9,6 +9,5 @@ script = ExtResource("2_plaq2")
 
 [resource]
 script = ExtResource("1_7qhul")
-item_name = "torch"
 item_texture = ExtResource("1_08nt6")
 properties = SubResource("Resource_ovpnv")

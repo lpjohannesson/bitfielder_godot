@@ -62,8 +62,8 @@ func redraw_chunk_async(
 				front_block.renderer.draw_block(render_data)
 				
 				# Draw shadow
-				if front_block.properties.casts_shadow:
-					if front_block.properties.is_partial:
+				if front_block.casts_shadow:
+					if front_block.is_partial:
 						render_data.sprites = shadow_sprites
 						front_block.renderer.draw_block(render_data)
 					else:
@@ -74,7 +74,7 @@ func redraw_chunk_async(
 			
 			# Draw back
 			if back_block.renderer != null:
-				if front_block.properties.is_partial:
+				if front_block.is_partial:
 					render_data.block_id = back_id
 					render_data.block = back_block
 					render_data.on_front_layer = false

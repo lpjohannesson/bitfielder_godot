@@ -17,7 +17,7 @@ func is_neighbor_partial(render_data: BlockRenderData, block_id: int):
 	if block.renderer == null:
 		return true
 	
-	return block.properties.is_partial
+	return block.is_partial
 
 func get_neighbor_mask(
 		render_data: BlockRenderData,

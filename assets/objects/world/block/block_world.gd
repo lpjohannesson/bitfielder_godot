@@ -1,18 +1,21 @@
 extends Node2D
 class_name BlockWorld
 
+const BLOCKS_FOLDER = "res://assets/resources/blocks"
+
 const WORLD_CHUNK_HEIGHT = 16
 const HEIGHTMAP_BOTTOM = WORLD_CHUNK_HEIGHT * BlockChunk.CHUNK_SIZE.y
 
-@export var block_types: Array[BlockType]
 @export var chunk_scene: PackedScene
 
 @export var chunks: Node2D
 @export var serializer: BlockSerializer
 
+var block_types: Array[BlockType]
+var block_type_map := {}
+
 var chunk_map := {}
 var heightmap_map := {}
-var block_type_map := {}
 
 static func get_chunk_index(block_position: Vector2i) -> Vector2i:
 	return floor(Vector2(block_position) / Vector2(BlockChunk.CHUNK_SIZE))
@@ -80,7 +83,7 @@ func create_colliders(chunk: BlockChunk) -> void:
 			var block_id := chunk.front_ids[block_index]
 			var block := block_types[block_id]
 			
-			if not block.properties.is_solid:
+			if not block.is_solid:
 				continue
 			
 			var collider := BlockCollider.new()
@@ -92,13 +95,13 @@ func create_colliders(chunk: BlockChunk) -> void:
 			
 			collider.position = Vector2(chunk_position) + Vector2.ONE * 0.5
 			
-			if block.properties.collider == null:
+			if block.collider == null:
 				collider.shape = RectangleShape2D.new()
 				collider.shape.size = Vector2.ONE
 			else:
-				collider.shape = block.properties.collider
+				collider.shape = block.collider
 			
-			collider.one_way_collision = block.properties.is_one_way
+			collider.one_way_collision = block.is_one_way
 
 func create_chunk(chunk_index: Vector2i) -> BlockChunk:
 	var chunk: BlockChunk = chunk_scene.instantiate()
@@ -269,10 +272,12 @@ func get_block_height(block_x: int) -> int:
 	
 	return heightmap_address.get_height()
 
+func set_block_name(block: BlockType, block_name: String) -> void:
+	block.block_name = block_name
+
 func _ready() -> void:
-	# Create block types
-	for i in range(block_types.size()):
-		var block := block_types[i]
-		
-		assert(not block_type_map.has(block.block_name))
-		block_type_map[block.block_name] = i
+	GameResourceLoader.load_resources(
+		BLOCKS_FOLDER,
+		block_types,
+		block_type_map,
+		set_block_name)

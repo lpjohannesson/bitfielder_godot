@@ -9,6 +9,5 @@ script = ExtResource("2_s3wpg")
 
 [resource]
 script = ExtResource("3_6gits")
-item_name = "sand"
 item_texture = ExtResource("1_j2j87")
 properties = SubResource("Resource_uhf02")

@@ -9,6 +9,5 @@ script = ExtResource("2_xhmk4")
 
 [resource]
 script = ExtResource("3_p40fm")
-item_name = "block_gold"
 item_texture = ExtResource("1_3b6fk")
 properties = SubResource("Resource_e4a6s")

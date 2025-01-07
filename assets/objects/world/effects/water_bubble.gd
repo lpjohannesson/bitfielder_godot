@@ -19,7 +19,7 @@ func check_liquid() -> void:
 	var block_id := address.chunk.front_ids[address.block_index]
 	var block := blocks.block_types[block_id]
 	
-	if not block.properties.is_swimmable:
+	if not block.is_swimmable:
 		queue_free()
 
 func start_bubble(bubble_position: Vector2) -> void:

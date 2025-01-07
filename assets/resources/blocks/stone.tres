@@ -1,24 +1,18 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=7 format=3 uid="uid://c5ng4qxptscuu"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=5 format=3 uid="uid://c5ng4qxptscuu"]
 
-[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="1_fap3o"]
-[ext_resource type="Texture2D" uid="uid://eer33eptpvf7" path="res://assets/textures/blocks/particles/stone.png" id="1_h6vmp"]
-[ext_resource type="Resource" uid="uid://cci2gglggfno4" path="res://assets/resources/blocks/renderers/stone.tres" id="1_keppk"]
-[ext_resource type="Resource" uid="uid://dd8dq6svx8xar" path="res://assets/resources/blocks/sounds/stone.tres" id="1_qj622"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_jt0r1"]
+[ext_resource type="Resource" uid="uid://dd8dq6svx8xar" path="res://assets/resources/blocks/sounds/stone.tres" id="1_b3rhj"]
+[ext_resource type="Texture2D" uid="uid://eer33eptpvf7" path="res://assets/textures/blocks/particles/stone.png" id="2_axy3b"]
+[ext_resource type="Resource" uid="uid://cci2gglggfno4" path="res://assets/resources/blocks/renderers/stone.tres" id="4_07sek"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="5_xq6jy"]
 
-[sub_resource type="Resource" id="Resource_8h8t0"]
-script = ExtResource("2_jt0r1")
+[resource]
+script = ExtResource("5_xq6jy")
+renderer = ExtResource("4_07sek")
+particle_texture = ExtResource("2_axy3b")
+block_sounds = ExtResource("1_b3rhj")
 is_solid = true
 is_one_way = false
 is_climbable = false
 is_swimmable = false
 is_partial = false
 casts_shadow = true
-
-[resource]
-script = ExtResource("1_fap3o")
-block_name = "stone"
-properties = SubResource("Resource_8h8t0")
-renderer = ExtResource("1_keppk")
-particle_texture = ExtResource("1_h6vmp")
-block_sounds = ExtResource("1_qj622")

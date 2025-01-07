@@ -1,18 +1,23 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=10 format=3 uid="uid://bswkupq3po3qp"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=8 format=3 uid="uid://bswkupq3po3qp"]
 
-[ext_resource type="Texture2D" uid="uid://c7j0mohutqrgm" path="res://assets/textures/blocks/particles/wool.png" id="1_vf1w0"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_3iqeh"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_light.gd" id="2_h0mc0"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="2_mm8d0"]
-[ext_resource type="Texture2D" uid="uid://c4lrbc48ntiho" path="res://assets/textures/blocks/mushroom.png" id="3_hm4kc"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="4_tu85k"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_light.gd" id="1_n3exb"]
+[ext_resource type="Texture2D" uid="uid://c7j0mohutqrgm" path="res://assets/textures/blocks/particles/wool.png" id="2_an01h"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="4_41fgo"]
+[ext_resource type="Texture2D" uid="uid://c4lrbc48ntiho" path="res://assets/textures/blocks/mushroom.png" id="5_844x4"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="6_5oah7"]
 
 [sub_resource type="Resource" id="Resource_w1ovd"]
-script = ExtResource("2_h0mc0")
+script = ExtResource("1_n3exb")
 color = Color(0.4774, 0.59148, 0.62, 1)
 
-[sub_resource type="Resource" id="Resource_f4806"]
-script = ExtResource("2_3iqeh")
+[sub_resource type="Resource" id="Resource_h7uof"]
+script = ExtResource("4_41fgo")
+texture = ExtResource("5_844x4")
+
+[resource]
+script = ExtResource("6_5oah7")
+renderer = SubResource("Resource_h7uof")
+particle_texture = ExtResource("2_an01h")
 is_solid = false
 is_one_way = false
 is_climbable = false
@@ -20,14 +25,3 @@ is_swimmable = false
 is_partial = true
 casts_shadow = true
 block_light = SubResource("Resource_w1ovd")
-
-[sub_resource type="Resource" id="Resource_h7uof"]
-script = ExtResource("2_mm8d0")
-texture = ExtResource("3_hm4kc")
-
-[resource]
-script = ExtResource("4_tu85k")
-block_name = "mushroom"
-properties = SubResource("Resource_f4806")
-renderer = SubResource("Resource_h7uof")
-particle_texture = ExtResource("1_vf1w0")

@@ -1,29 +1,23 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=9 format=3 uid="uid://cc4a5c0ma4x6y"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=7 format=3 uid="uid://cc4a5c0ma4x6y"]
 
-[ext_resource type="Resource" uid="uid://bieekdnf2l1uh" path="res://assets/resources/blocks/sounds/metal.tres" id="1_hfgx5"]
-[ext_resource type="Texture2D" uid="uid://bpt2ln2avgl8s" path="res://assets/textures/blocks/particles/block_iron.png" id="1_s1iwu"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_upjfa"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="3_mkehi"]
-[ext_resource type="Texture2D" uid="uid://bf5lb1yitjigp" path="res://assets/textures/blocks/block_iron.png" id="4_xppd0"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="5_r1eqb"]
+[ext_resource type="Resource" uid="uid://bieekdnf2l1uh" path="res://assets/resources/blocks/sounds/metal.tres" id="1_af4ey"]
+[ext_resource type="Texture2D" uid="uid://bpt2ln2avgl8s" path="res://assets/textures/blocks/particles/block_iron.png" id="2_ft7i2"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="4_6tqgv"]
+[ext_resource type="Texture2D" uid="uid://bf5lb1yitjigp" path="res://assets/textures/blocks/block_iron.png" id="5_by5yd"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="6_r4nsc"]
 
-[sub_resource type="Resource" id="Resource_bu2ry"]
-script = ExtResource("2_upjfa")
+[sub_resource type="Resource" id="Resource_cp2yv"]
+script = ExtResource("4_6tqgv")
+texture = ExtResource("5_by5yd")
+
+[resource]
+script = ExtResource("6_r4nsc")
+renderer = SubResource("Resource_cp2yv")
+particle_texture = ExtResource("2_ft7i2")
+block_sounds = ExtResource("1_af4ey")
 is_solid = true
 is_one_way = false
 is_climbable = false
 is_swimmable = false
 is_partial = false
 casts_shadow = true
-
-[sub_resource type="Resource" id="Resource_cp2yv"]
-script = ExtResource("3_mkehi")
-texture = ExtResource("4_xppd0")
-
-[resource]
-script = ExtResource("5_r1eqb")
-block_name = "block_iron"
-properties = SubResource("Resource_bu2ry")
-renderer = SubResource("Resource_cp2yv")
-particle_texture = ExtResource("1_s1iwu")
-block_sounds = ExtResource("1_hfgx5")

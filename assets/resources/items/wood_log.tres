@@ -9,6 +9,5 @@ script = ExtResource("2_uhbkh")
 
 [resource]
 script = ExtResource("3_y3i0g")
-item_name = "wood_log"
 item_texture = ExtResource("1_7dixw")
 properties = SubResource("Resource_2axdm")

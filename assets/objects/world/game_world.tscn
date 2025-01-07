@@ -1,75 +1,14 @@
-[gd_scene load_steps=71 format=3 uid="uid://celyk57ifua4f"]
+[gd_scene load_steps=10 format=3 uid="uid://celyk57ifua4f"]
 
 [ext_resource type="Script" path="res://assets/objects/world/game_world.gd" id="1_waysh"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_world.gd" id="2_3pcni"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="3_bdl7w"]
 [ext_resource type="Script" path="res://assets/objects/world/entity/entity_manager.gd" id="3_jc7ju"]
 [ext_resource type="Script" path="res://assets/objects/world/item/item_manager.gd" id="3_vg71c"]
 [ext_resource type="PackedScene" uid="uid://qhbwwmg422j6" path="res://assets/objects/world/entity/player/player.tscn" id="4_hgqgm"]
-[ext_resource type="Script" path="res://assets/objects/world/item/item_type.gd" id="4_u7yh7"]
-[ext_resource type="Resource" uid="uid://dpvrrnogs311x" path="res://assets/resources/blocks/air.tres" id="4_x6ly3"]
-[ext_resource type="Resource" uid="uid://ds7x6qly7xj3f" path="res://assets/resources/blocks/dirt.tres" id="5_bxmfp"]
-[ext_resource type="Resource" uid="uid://c750yayfee88g" path="res://assets/resources/items/dirt.tres" id="5_degwe"]
-[ext_resource type="Resource" uid="uid://mw5um37l7kdl" path="res://assets/resources/blocks/grass.tres" id="6_486s4"]
-[ext_resource type="Resource" uid="uid://cnyqb65ifw6f0" path="res://assets/resources/items/stone.tres" id="6_nqmh0"]
-[ext_resource type="Resource" uid="uid://c5ng4qxptscuu" path="res://assets/resources/blocks/stone.tres" id="7_rr82n"]
 [ext_resource type="Script" path="res://assets/objects/world/entity/entity_serializer.gd" id="8_gdq6u"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_serializer.gd" id="8_r3ein"]
-[ext_resource type="Resource" uid="uid://bxbdoq7jf6a38" path="res://assets/resources/blocks/ore_coal.tres" id="8_re7ou"]
-[ext_resource type="Resource" uid="uid://lon2d5qckn1k" path="res://assets/resources/blocks/wood_log.tres" id="9_j7cik"]
 [ext_resource type="Script" path="res://assets/objects/world/item/item_serializer.gd" id="9_j762g"]
-[ext_resource type="Resource" uid="uid://uuieiq6nosiq" path="res://assets/resources/blocks/wood_planks.tres" id="10_eitd2"]
-[ext_resource type="Resource" uid="uid://bpyds0reiigpq" path="res://assets/resources/blocks/stick_vertical.tres" id="11_drol0"]
-[ext_resource type="Resource" uid="uid://dmgl8jsafc8o6" path="res://assets/resources/blocks/stick_horizontal.tres" id="11_o3qxe"]
-[ext_resource type="Resource" uid="uid://2m1yu75b8ebw" path="res://assets/resources/blocks/leaves.tres" id="12_4pbjl"]
-[ext_resource type="Resource" uid="uid://irphc4rxlfsc" path="res://assets/resources/blocks/leaves_apple.tres" id="12_un3bo"]
-[ext_resource type="Resource" uid="uid://bbv4vutd5bnrl" path="res://assets/resources/blocks/bush.tres" id="13_04xow"]
-[ext_resource type="Resource" uid="uid://bswkupq3po3qp" path="res://assets/resources/blocks/mushroom.tres" id="14_wlrim"]
-[ext_resource type="Resource" uid="uid://b3n0tjfrhx877" path="res://assets/resources/blocks/wheat.tres" id="15_sfhs0"]
-[ext_resource type="Resource" uid="uid://b0kv0610wegjy" path="res://assets/resources/blocks/torch.tres" id="16_k2bey"]
-[ext_resource type="Resource" uid="uid://dg6mhdsulrrt0" path="res://assets/resources/blocks/wool.tres" id="17_nq8w5"]
-[ext_resource type="Resource" uid="uid://7n2ngwx0enf7" path="res://assets/resources/blocks/water.tres" id="18_v0tft"]
-[ext_resource type="Resource" uid="uid://d1jc08mmmb47s" path="res://assets/resources/blocks/glass.tres" id="19_mc014"]
 [ext_resource type="PackedScene" uid="uid://omkj7o5gbs7m" path="res://assets/objects/world/block/block_chunk.tscn" id="19_qsv6g"]
-[ext_resource type="Resource" uid="uid://d3uhgvnen6sq7" path="res://assets/resources/blocks/sand.tres" id="20_014mw"]
-[ext_resource type="Resource" uid="uid://b4guj1oadstgd" path="res://assets/resources/blocks/bricks.tres" id="20_fpsyb"]
-[ext_resource type="Resource" uid="uid://b4aqfr2yiet2c" path="res://assets/resources/blocks/ladder.tres" id="21_b2opd"]
-[ext_resource type="Resource" uid="uid://cc4a5c0ma4x6y" path="res://assets/resources/blocks/block_iron.tres" id="22_4shq2"]
-[ext_resource type="Resource" uid="uid://dk0ypur05u404" path="res://assets/resources/blocks/ore_iron.tres" id="22_iis1m"]
-[ext_resource type="Resource" uid="uid://gbqa31fnpnep" path="res://assets/resources/blocks/block_gold.tres" id="23_6dd02"]
-[ext_resource type="Resource" uid="uid://daa5dcojwsbtk" path="res://assets/resources/blocks/ore_gold.tres" id="23_vvxsb"]
-[ext_resource type="Resource" uid="uid://cy0wrxticc1km" path="res://assets/resources/blocks/ore_diamond.tres" id="24_v5gke"]
-[ext_resource type="Resource" uid="uid://bk7ovjdedqhol" path="res://assets/resources/items/grass.tres" id="24_xmnu3"]
-[ext_resource type="Resource" uid="uid://d0kfvaxqq26ha" path="res://assets/resources/items/wood_log.tres" id="25_bs7sh"]
-[ext_resource type="Resource" uid="uid://b25rl5nhi241b" path="res://assets/resources/blocks/ore_sulfur.tres" id="25_qr8ut"]
-[ext_resource type="Resource" uid="uid://dw2eqcb66nn1v" path="res://assets/resources/items/leaves.tres" id="25_tebgd"]
-[ext_resource type="Resource" uid="uid://b66ts0vonntho" path="res://assets/resources/items/stick.tres" id="26_xwre3"]
-[ext_resource type="Resource" uid="uid://colek0rqe5fnn" path="res://assets/resources/blocks/campfire.tres" id="28_duwn7"]
-[ext_resource type="Resource" uid="uid://ct1ykd6eghuc3" path="res://assets/resources/items/wood_planks.tres" id="28_jv7b0"]
-[ext_resource type="Resource" uid="uid://6f7vm5etschx" path="res://assets/resources/blocks/chest.tres" id="29_4a8n5"]
-[ext_resource type="Resource" uid="uid://dafi2oe4guw6b" path="res://assets/resources/items/torch.tres" id="30_6ntpc"]
-[ext_resource type="Resource" uid="uid://c3ko85vdvybyh" path="res://assets/resources/blocks/furnace.tres" id="30_ktsej"]
-[ext_resource type="Resource" uid="uid://mcccpqlq3kfr" path="res://assets/resources/blocks/crate.tres" id="30_y8xyc"]
-[ext_resource type="Resource" uid="uid://bxsesftnrtau0" path="res://assets/resources/items/mushroom.tres" id="31_ebq75"]
-[ext_resource type="Resource" uid="uid://bpmftavfm1cr" path="res://assets/resources/items/glass.tres" id="33_87c5q"]
-[ext_resource type="Resource" uid="uid://b3udi1n5qd6lx" path="res://assets/resources/items/wheat.tres" id="35_rgp5i"]
-[ext_resource type="Resource" uid="uid://cat1vma04b3n" path="res://assets/resources/items/sand.tres" id="36_mdga1"]
-[ext_resource type="Resource" uid="uid://cpjc2omyr43gi" path="res://assets/resources/items/ladder.tres" id="37_dehta"]
-[ext_resource type="Resource" uid="uid://dyvbxk6g2g1c2" path="res://assets/resources/items/block_iron.tres" id="41_j132l"]
-[ext_resource type="Resource" uid="uid://ciqxxvoyjitom" path="res://assets/resources/items/block_gold.tres" id="42_gxuda"]
-[ext_resource type="Resource" uid="uid://dm0mxcf80es0l" path="res://assets/resources/items/leaves_apple.tres" id="42_xi7uu"]
-[ext_resource type="Resource" uid="uid://ddl72qfo4tcug" path="res://assets/resources/items/ore_coal.tres" id="43_1i1oc"]
-[ext_resource type="Resource" uid="uid://d34pcihijjeam" path="res://assets/resources/items/ore_iron.tres" id="44_mxtet"]
-[ext_resource type="Resource" uid="uid://ch3v75wso8twl" path="res://assets/resources/items/ore_gold.tres" id="45_6gktx"]
-[ext_resource type="Resource" uid="uid://bxpv74yw0m85n" path="res://assets/resources/items/ore_diamond.tres" id="46_rc4sq"]
-[ext_resource type="Resource" uid="uid://d3sevr6gl0jdr" path="res://assets/resources/items/ore_sulfur.tres" id="47_xf6rd"]
-[ext_resource type="Resource" uid="uid://da0j68cw1cghw" path="res://assets/resources/items/water.tres" id="49_esi0f"]
-[ext_resource type="Resource" uid="uid://ugks5fwnburr" path="res://assets/resources/items/bricks.tres" id="52_ch7b1"]
-[ext_resource type="Resource" uid="uid://c3ouhwvyjc3kv" path="res://assets/resources/items/bush.tres" id="52_t2gm4"]
-[ext_resource type="Resource" uid="uid://da65gp1v6cab1" path="res://assets/resources/items/campfire.tres" id="53_qga74"]
-[ext_resource type="Resource" uid="uid://dkuaaa5y7o60n" path="res://assets/resources/items/chest.tres" id="54_yaboj"]
-[ext_resource type="Resource" uid="uid://8xkfpvkguvud" path="res://assets/resources/items/furnace.tres" id="58_g5jxt"]
-[ext_resource type="Resource" uid="uid://65bxvm5gu6bs" path="res://assets/resources/items/crate.tres" id="60_fwg3n"]
 
 [node name="GameWorld" type="Node2D" node_paths=PackedStringArray("blocks", "items", "entities")]
 script = ExtResource("1_waysh")
@@ -80,7 +19,6 @@ entities = NodePath("EntityManager")
 [node name="BlockWorld" type="Node2D" parent="." node_paths=PackedStringArray("chunks", "serializer")]
 scale = Vector2(16, 16)
 script = ExtResource("2_3pcni")
-block_types = Array[ExtResource("3_bdl7w")]([ExtResource("4_x6ly3"), ExtResource("5_bxmfp"), ExtResource("6_486s4"), ExtResource("7_rr82n"), ExtResource("9_j7cik"), ExtResource("10_eitd2"), ExtResource("11_o3qxe"), ExtResource("11_drol0"), ExtResource("12_4pbjl"), ExtResource("12_un3bo"), ExtResource("13_04xow"), ExtResource("14_wlrim"), ExtResource("15_sfhs0"), ExtResource("16_k2bey"), ExtResource("17_nq8w5"), ExtResource("18_v0tft"), ExtResource("19_mc014"), ExtResource("20_fpsyb"), ExtResource("20_014mw"), ExtResource("21_b2opd"), ExtResource("8_re7ou"), ExtResource("22_iis1m"), ExtResource("23_vvxsb"), ExtResource("24_v5gke"), ExtResource("25_qr8ut"), ExtResource("22_4shq2"), ExtResource("23_6dd02"), ExtResource("28_duwn7"), ExtResource("30_y8xyc"), ExtResource("29_4a8n5"), ExtResource("30_ktsej")])
 chunk_scene = ExtResource("19_qsv6g")
 chunks = NodePath("Chunks")
 serializer = NodePath("BlockSerializer")
@@ -95,7 +33,6 @@ blocks = NodePath("..")
 script = ExtResource("3_vg71c")
 world = NodePath("..")
 serializer = NodePath("ItemSerializer")
-item_types = Array[ExtResource("4_u7yh7")]([null, ExtResource("5_degwe"), ExtResource("24_xmnu3"), ExtResource("6_nqmh0"), ExtResource("25_bs7sh"), ExtResource("26_xwre3"), ExtResource("25_tebgd"), ExtResource("42_xi7uu"), ExtResource("28_jv7b0"), ExtResource("30_6ntpc"), ExtResource("52_t2gm4"), ExtResource("31_ebq75"), ExtResource("35_rgp5i"), ExtResource("49_esi0f"), ExtResource("33_87c5q"), ExtResource("52_ch7b1"), ExtResource("36_mdga1"), ExtResource("37_dehta"), ExtResource("43_1i1oc"), ExtResource("44_mxtet"), ExtResource("45_6gktx"), ExtResource("46_rc4sq"), ExtResource("47_xf6rd"), ExtResource("41_j132l"), ExtResource("42_gxuda"), ExtResource("53_qga74"), ExtResource("60_fwg3n"), ExtResource("54_yaboj"), ExtResource("58_g5jxt")])
 
 [node name="ItemSerializer" type="Node" parent="ItemManager" node_paths=PackedStringArray("items")]
 script = ExtResource("9_j762g")

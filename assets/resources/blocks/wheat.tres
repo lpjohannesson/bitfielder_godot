@@ -1,29 +1,23 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=9 format=3 uid="uid://b3n0tjfrhx877"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=7 format=3 uid="uid://b3n0tjfrhx877"]
 
-[ext_resource type="Resource" uid="uid://kdgxxud1ojcu" path="res://assets/resources/blocks/sounds/leaves.tres" id="1_7vv1v"]
-[ext_resource type="Texture2D" uid="uid://rxt34tnjmw4e" path="res://assets/textures/blocks/particles/leaves_red.png" id="1_eo0rm"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_fiv6v"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="2_icq2v"]
-[ext_resource type="Texture2D" uid="uid://ccqxd3u7mbj30" path="res://assets/textures/blocks/wheat.png" id="3_4vqka"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="4_bri87"]
+[ext_resource type="Resource" uid="uid://kdgxxud1ojcu" path="res://assets/resources/blocks/sounds/leaves.tres" id="1_ehklf"]
+[ext_resource type="Texture2D" uid="uid://rxt34tnjmw4e" path="res://assets/textures/blocks/particles/leaves_red.png" id="2_7pvpl"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="4_82kr6"]
+[ext_resource type="Texture2D" uid="uid://ccqxd3u7mbj30" path="res://assets/textures/blocks/wheat.png" id="5_ocq37"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="6_2bole"]
 
-[sub_resource type="Resource" id="Resource_xh3iw"]
-script = ExtResource("2_fiv6v")
+[sub_resource type="Resource" id="Resource_h7uof"]
+script = ExtResource("4_82kr6")
+texture = ExtResource("5_ocq37")
+
+[resource]
+script = ExtResource("6_2bole")
+renderer = SubResource("Resource_h7uof")
+particle_texture = ExtResource("2_7pvpl")
+block_sounds = ExtResource("1_ehklf")
 is_solid = false
 is_one_way = false
 is_climbable = false
 is_swimmable = false
 is_partial = true
 casts_shadow = true
-
-[sub_resource type="Resource" id="Resource_h7uof"]
-script = ExtResource("2_icq2v")
-texture = ExtResource("3_4vqka")
-
-[resource]
-script = ExtResource("4_bri87")
-block_name = "wheat"
-properties = SubResource("Resource_xh3iw")
-renderer = SubResource("Resource_h7uof")
-particle_texture = ExtResource("1_eo0rm")
-block_sounds = ExtResource("1_7vv1v")

@@ -358,7 +358,7 @@ func modify_block(
 	entity.update_block(block_specifier, address)
 
 func is_block_passable(block: BlockType) -> bool:
-	return not block.properties.is_solid or block.properties.is_one_way
+	return not block.is_solid or block.is_one_way
 
 func can_modify_forward_block(
 		address: BlockAddress,
@@ -570,10 +570,10 @@ func show_swimming_effects() -> void:
 	var last_swimming := false
 	
 	if center_block != null:
-		swimming = center_block.properties.is_swimmable
+		swimming = center_block.is_swimmable
 	
 	if last_center_block != null:
-		last_swimming = last_center_block.properties.is_swimmable
+		last_swimming = last_center_block.is_swimmable
 	
 	if swimming:
 		if bubble_timer.is_stopped():
@@ -602,7 +602,7 @@ func try_climbing(block: BlockType, blocks: BlockWorld) -> bool:
 		
 		return false
 	
-	if not block.properties.is_climbable:
+	if not block.is_climbable:
 		return false
 	
 	# Start climbing
@@ -634,7 +634,7 @@ func climb() -> void:
 	var blocks := entity.get_game_world().blocks
 	var block := get_interaction_block(center_block_position, blocks)
 	
-	if block == null or not block.properties.is_climbable:
+	if block == null or not block.is_climbable:
 		stop_climbing()
 		return
 	
@@ -656,7 +656,7 @@ func spawn_water_splash(block_position: Vector2i, blocks: BlockWorld) -> void:
 	var above_id := above_address.chunk.front_ids[above_address.block_index]
 	var above_block = blocks.block_types[above_id]
 	
-	if not above_block.properties.is_partial or above_block.properties.is_swimmable:
+	if not above_block.is_partial or above_block.is_swimmable:
 		return
 	
 	var block_world_position := blocks.block_to_world(above_position, true)
@@ -666,7 +666,7 @@ func spawn_water_splash(block_position: Vector2i, blocks: BlockWorld) -> void:
 	entity.play_sound("splash")
 
 func try_swimming(block: BlockType) -> bool:
-	if not block.properties.is_swimmable:
+	if not block.is_swimmable:
 		return false
 	
 	# Start swimming
@@ -681,7 +681,7 @@ func swim(delta: float) -> void:
 	var blocks := entity.get_game_world().blocks
 	var block := get_interaction_block(center_block_position, blocks)
 	
-	if block == null or not block.properties.is_swimmable:
+	if block == null or not block.is_swimmable:
 		player_state = PlayerState.GROUND
 		
 		if center_block_position.y < last_center_block_position.y:

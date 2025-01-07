@@ -1,28 +1,11 @@
-[gd_scene load_steps=19 format=3 uid="uid://bccokpb4xej0d"]
+[gd_scene load_steps=3 format=3 uid="uid://bccokpb4xej0d"]
 
 [ext_resource type="Script" path="res://assets/objects/world/block/block_world.gd" id="1_11p4s"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="2_gxfa2"]
-[ext_resource type="Resource" uid="uid://dpvrrnogs311x" path="res://assets/resources/blocks/air.tres" id="3_4jrng"]
-[ext_resource type="Resource" uid="uid://ds7x6qly7xj3f" path="res://assets/resources/blocks/dirt.tres" id="4_xp0kl"]
-[ext_resource type="Resource" uid="uid://mw5um37l7kdl" path="res://assets/resources/blocks/grass.tres" id="5_wfoh0"]
-[ext_resource type="Resource" uid="uid://c5ng4qxptscuu" path="res://assets/resources/blocks/stone.tres" id="6_vcvh4"]
-[ext_resource type="Resource" uid="uid://bxbdoq7jf6a38" path="res://assets/resources/blocks/ore_coal.tres" id="7_1kcc3"]
-[ext_resource type="Resource" uid="uid://lon2d5qckn1k" path="res://assets/resources/blocks/wood_log.tres" id="8_3yy3g"]
-[ext_resource type="Resource" uid="uid://uuieiq6nosiq" path="res://assets/resources/blocks/wood_planks.tres" id="9_s0aa1"]
-[ext_resource type="Resource" uid="uid://dmgl8jsafc8o6" path="res://assets/resources/blocks/stick_horizontal.tres" id="10_4cbxv"]
-[ext_resource type="Resource" uid="uid://2m1yu75b8ebw" path="res://assets/resources/blocks/leaves.tres" id="11_0wk7c"]
-[ext_resource type="Resource" uid="uid://bbv4vutd5bnrl" path="res://assets/resources/blocks/bush.tres" id="12_yqs3p"]
-[ext_resource type="Resource" uid="uid://bswkupq3po3qp" path="res://assets/resources/blocks/mushroom.tres" id="13_o553a"]
-[ext_resource type="Resource" uid="uid://b3n0tjfrhx877" path="res://assets/resources/blocks/wheat.tres" id="14_eciso"]
-[ext_resource type="Resource" uid="uid://b0kv0610wegjy" path="res://assets/resources/blocks/torch.tres" id="15_60tuh"]
-[ext_resource type="Resource" uid="uid://dg6mhdsulrrt0" path="res://assets/resources/blocks/wool.tres" id="16_8fqa8"]
-[ext_resource type="Resource" uid="uid://7n2ngwx0enf7" path="res://assets/resources/blocks/water.tres" id="17_52876"]
 [ext_resource type="PackedScene" uid="uid://omkj7o5gbs7m" path="res://assets/objects/world/block/block_chunk.tscn" id="18_t8vfm"]
 
 [node name="BlockWorld" type="Node2D" node_paths=PackedStringArray("chunks")]
 scale = Vector2(16, 16)
 script = ExtResource("1_11p4s")
-block_types = Array[ExtResource("2_gxfa2")]([ExtResource("3_4jrng"), ExtResource("4_xp0kl"), ExtResource("5_wfoh0"), ExtResource("6_vcvh4"), ExtResource("7_1kcc3"), ExtResource("8_3yy3g"), ExtResource("9_s0aa1"), ExtResource("10_4cbxv"), ExtResource("11_0wk7c"), ExtResource("12_yqs3p"), ExtResource("13_o553a"), ExtResource("14_eciso"), ExtResource("15_60tuh"), ExtResource("16_8fqa8"), ExtResource("17_52876")])
 chunk_scene = ExtResource("18_t8vfm")
 chunks = NodePath("Chunks")
 

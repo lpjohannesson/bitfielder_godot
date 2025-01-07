@@ -9,6 +9,5 @@ script = ExtResource("2_pca66")
 
 [resource]
 script = ExtResource("3_hnaig")
-item_name = "campfire"
 item_texture = ExtResource("1_fvqhk")
 properties = SubResource("Resource_ovpnv")

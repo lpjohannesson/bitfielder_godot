@@ -1,29 +1,23 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=9 format=3 uid="uid://c3ko85vdvybyh"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=7 format=3 uid="uid://c3ko85vdvybyh"]
 
-[ext_resource type="Resource" uid="uid://dd8dq6svx8xar" path="res://assets/resources/blocks/sounds/stone.tres" id="1_5yi6f"]
-[ext_resource type="Texture2D" uid="uid://eer33eptpvf7" path="res://assets/textures/blocks/particles/stone.png" id="2_lmyav"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="3_752tg"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="4_afdri"]
-[ext_resource type="Texture2D" uid="uid://jw6k6pi1sb2j" path="res://assets/textures/blocks/furnace.png" id="5_5w2u2"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="6_yb4g8"]
+[ext_resource type="Resource" uid="uid://dd8dq6svx8xar" path="res://assets/resources/blocks/sounds/stone.tres" id="1_3c5bg"]
+[ext_resource type="Texture2D" uid="uid://eer33eptpvf7" path="res://assets/textures/blocks/particles/stone.png" id="2_rdi2s"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/basic_block_renderer.gd" id="4_0tjp4"]
+[ext_resource type="Texture2D" uid="uid://jw6k6pi1sb2j" path="res://assets/textures/blocks/furnace.png" id="5_l765b"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="6_y5xlr"]
 
-[sub_resource type="Resource" id="Resource_wtfib"]
-script = ExtResource("3_752tg")
+[sub_resource type="Resource" id="Resource_b8nxn"]
+script = ExtResource("4_0tjp4")
+texture = ExtResource("5_l765b")
+
+[resource]
+script = ExtResource("6_y5xlr")
+renderer = SubResource("Resource_b8nxn")
+particle_texture = ExtResource("2_rdi2s")
+block_sounds = ExtResource("1_3c5bg")
 is_solid = false
 is_one_way = false
 is_climbable = false
 is_swimmable = false
 is_partial = true
 casts_shadow = true
-
-[sub_resource type="Resource" id="Resource_b8nxn"]
-script = ExtResource("4_afdri")
-texture = ExtResource("5_5w2u2")
-
-[resource]
-script = ExtResource("6_yb4g8")
-block_name = "furnace"
-properties = SubResource("Resource_wtfib")
-renderer = SubResource("Resource_b8nxn")
-particle_texture = ExtResource("2_lmyav")
-block_sounds = ExtResource("1_5yi6f")

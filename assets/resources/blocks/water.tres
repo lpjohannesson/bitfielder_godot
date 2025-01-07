@@ -1,43 +1,37 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=13 format=3 uid="uid://7n2ngwx0enf7"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=11 format=3 uid="uid://7n2ngwx0enf7"]
 
-[ext_resource type="Resource" uid="uid://c2f8e0hh0au67" path="res://assets/resources/blocks/sounds/water.tres" id="1_qft56"]
-[ext_resource type="Texture2D" uid="uid://c1begxbvr4ut7" path="res://assets/textures/blocks/particles/water.png" id="2_h66na"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_olm3e"]
-[ext_resource type="Texture2D" uid="uid://bwfic1idywgn5" path="res://assets/textures/blocks/water1.png" id="3_0l6xj"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="3_58yye"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="4_81lat"]
-[ext_resource type="Texture2D" uid="uid://biijynwundait" path="res://assets/textures/blocks/water2.png" id="4_focds"]
-[ext_resource type="Texture2D" uid="uid://cxrmxtylltkfg" path="res://assets/textures/blocks/water3.png" id="5_l1owm"]
-[ext_resource type="Texture2D" uid="uid://c6bt1ruq7ry6v" path="res://assets/textures/blocks/water4.png" id="6_ansfs"]
+[ext_resource type="Resource" uid="uid://c2f8e0hh0au67" path="res://assets/resources/blocks/sounds/water.tres" id="1_rxy7k"]
+[ext_resource type="Texture2D" uid="uid://c1begxbvr4ut7" path="res://assets/textures/blocks/particles/water.png" id="2_xdmpu"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="4_idks4"]
+[ext_resource type="Texture2D" uid="uid://bwfic1idywgn5" path="res://assets/textures/blocks/water1.png" id="5_ggtjb"]
+[ext_resource type="Texture2D" uid="uid://biijynwundait" path="res://assets/textures/blocks/water2.png" id="6_tu27c"]
+[ext_resource type="Texture2D" uid="uid://cxrmxtylltkfg" path="res://assets/textures/blocks/water3.png" id="7_x4of5"]
+[ext_resource type="Texture2D" uid="uid://c6bt1ruq7ry6v" path="res://assets/textures/blocks/water4.png" id="8_lqltw"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="9_mbbp2"]
 
-[sub_resource type="Resource" id="Resource_mn6ki"]
-script = ExtResource("2_olm3e")
+[sub_resource type="AnimatedTexture" id="AnimatedTexture_n3x7c"]
+frames = 4
+frame_0/texture = ExtResource("5_ggtjb")
+frame_0/duration = 0.2
+frame_1/texture = ExtResource("6_tu27c")
+frame_1/duration = 0.2
+frame_2/texture = ExtResource("7_x4of5")
+frame_2/duration = 0.2
+frame_3/texture = ExtResource("8_lqltw")
+frame_3/duration = 0.2
+
+[sub_resource type="Resource" id="Resource_ov31u"]
+script = ExtResource("4_idks4")
+texture = SubResource("AnimatedTexture_n3x7c")
+
+[resource]
+script = ExtResource("9_mbbp2")
+renderer = SubResource("Resource_ov31u")
+particle_texture = ExtResource("2_xdmpu")
+block_sounds = ExtResource("1_rxy7k")
 is_solid = false
 is_one_way = false
 is_climbable = false
 is_swimmable = true
 is_partial = true
 casts_shadow = false
-
-[sub_resource type="AnimatedTexture" id="AnimatedTexture_n3x7c"]
-frames = 4
-frame_0/texture = ExtResource("3_0l6xj")
-frame_0/duration = 0.2
-frame_1/texture = ExtResource("4_focds")
-frame_1/duration = 0.2
-frame_2/texture = ExtResource("5_l1owm")
-frame_2/duration = 0.2
-frame_3/texture = ExtResource("6_ansfs")
-frame_3/duration = 0.2
-
-[sub_resource type="Resource" id="Resource_ov31u"]
-script = ExtResource("3_58yye")
-texture = SubResource("AnimatedTexture_n3x7c")
-
-[resource]
-script = ExtResource("4_81lat")
-block_name = "water"
-properties = SubResource("Resource_mn6ki")
-renderer = SubResource("Resource_ov31u")
-particle_texture = ExtResource("2_h66na")
-block_sounds = ExtResource("1_qft56")

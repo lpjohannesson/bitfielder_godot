@@ -13,7 +13,7 @@ var block_lightmap: Image
 
 func get_block_light(block_id: int) -> BlockLight:
 	var block := world.blocks.block_types[block_id]
-	return block.properties.block_light
+	return block.block_light
 
 func show_lightmap() -> void:
 	var load_zone := GameServer.get_chunk_load_zone(chunk_index)

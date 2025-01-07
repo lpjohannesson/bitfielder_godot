@@ -1,29 +1,23 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=9 format=3 uid="uid://mcccpqlq3kfr"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=7 format=3 uid="uid://mcccpqlq3kfr"]
 
-[ext_resource type="Resource" uid="uid://hnkss3xm4ob8" path="res://assets/resources/blocks/sounds/wood.tres" id="1_5bik4"]
-[ext_resource type="Texture2D" uid="uid://dtr4vbkje7np6" path="res://assets/textures/blocks/particles/wood.png" id="2_n5qor"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="3_54xt6"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="4_21k6n"]
-[ext_resource type="Texture2D" uid="uid://d1dian1hifhwj" path="res://assets/textures/blocks/crate.png" id="5_0yd1y"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="6_qkek0"]
+[ext_resource type="Resource" uid="uid://hnkss3xm4ob8" path="res://assets/resources/blocks/sounds/wood.tres" id="1_6sjud"]
+[ext_resource type="Texture2D" uid="uid://dtr4vbkje7np6" path="res://assets/textures/blocks/particles/wood.png" id="2_8so4g"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="4_4wag3"]
+[ext_resource type="Texture2D" uid="uid://d1dian1hifhwj" path="res://assets/textures/blocks/crate.png" id="5_t7x2c"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="6_gyqvu"]
 
-[sub_resource type="Resource" id="Resource_bu2ry"]
-script = ExtResource("3_54xt6")
+[sub_resource type="Resource" id="Resource_ayk14"]
+script = ExtResource("4_4wag3")
+texture = ExtResource("5_t7x2c")
+
+[resource]
+script = ExtResource("6_gyqvu")
+renderer = SubResource("Resource_ayk14")
+particle_texture = ExtResource("2_8so4g")
+block_sounds = ExtResource("1_6sjud")
 is_solid = true
 is_one_way = false
 is_climbable = false
 is_swimmable = false
 is_partial = true
 casts_shadow = true
-
-[sub_resource type="Resource" id="Resource_ayk14"]
-script = ExtResource("4_21k6n")
-texture = ExtResource("5_0yd1y")
-
-[resource]
-script = ExtResource("6_qkek0")
-block_name = "crate"
-properties = SubResource("Resource_bu2ry")
-renderer = SubResource("Resource_ayk14")
-particle_texture = ExtResource("2_n5qor")
-block_sounds = ExtResource("1_5bik4")

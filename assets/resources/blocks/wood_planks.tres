@@ -1,29 +1,23 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=9 format=3 uid="uid://uuieiq6nosiq"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=7 format=3 uid="uid://uuieiq6nosiq"]
 
-[ext_resource type="Resource" uid="uid://hnkss3xm4ob8" path="res://assets/resources/blocks/sounds/wood.tres" id="1_f4bdp"]
-[ext_resource type="Texture2D" uid="uid://dtr4vbkje7np6" path="res://assets/textures/blocks/particles/wood.png" id="1_nf3pu"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_properties.gd" id="2_aiwed"]
-[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="2_irsbv"]
-[ext_resource type="Texture2D" uid="uid://c1b17f11sambd" path="res://assets/textures/blocks/wood_planks.png" id="3_pij8d"]
-[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="4_2tkm8"]
+[ext_resource type="Resource" uid="uid://hnkss3xm4ob8" path="res://assets/resources/blocks/sounds/wood.tres" id="1_eosct"]
+[ext_resource type="Texture2D" uid="uid://dtr4vbkje7np6" path="res://assets/textures/blocks/particles/wood.png" id="2_nvf7c"]
+[ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="4_ptxrx"]
+[ext_resource type="Texture2D" uid="uid://c1b17f11sambd" path="res://assets/textures/blocks/wood_planks.png" id="5_u73s3"]
+[ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="6_q5e8a"]
 
-[sub_resource type="Resource" id="Resource_uck5f"]
-script = ExtResource("2_aiwed")
+[sub_resource type="Resource" id="Resource_k7p3y"]
+script = ExtResource("4_ptxrx")
+texture = ExtResource("5_u73s3")
+
+[resource]
+script = ExtResource("6_q5e8a")
+renderer = SubResource("Resource_k7p3y")
+particle_texture = ExtResource("2_nvf7c")
+block_sounds = ExtResource("1_eosct")
 is_solid = true
 is_one_way = false
 is_climbable = false
 is_swimmable = false
 is_partial = false
 casts_shadow = true
-
-[sub_resource type="Resource" id="Resource_k7p3y"]
-script = ExtResource("2_irsbv")
-texture = ExtResource("3_pij8d")
-
-[resource]
-script = ExtResource("4_2tkm8")
-block_name = "wood_planks"
-properties = SubResource("Resource_uck5f")
-renderer = SubResource("Resource_k7p3y")
-particle_texture = ExtResource("1_nf3pu")
-block_sounds = ExtResource("1_f4bdp")
