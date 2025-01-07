@@ -52,6 +52,8 @@ func redraw_chunk_async(
 			var front_block := block_types[front_id]
 			var back_block := block_types[back_id]
 			
+			var is_back_drawn := front_block.is_partial or front_block.is_transparent
+			
 			# Draw front
 			if front_block.renderer != null:
 				render_data.block_id = front_id
@@ -63,7 +65,7 @@ func redraw_chunk_async(
 				
 				# Draw shadow
 				if front_block.casts_shadow:
-					if front_block.is_partial:
+					if is_back_drawn:
 						render_data.sprites = shadow_sprites
 						front_block.renderer.draw_block(render_data)
 					else:
@@ -73,8 +75,8 @@ func redraw_chunk_async(
 						shadow_sprites.push_back(rect_sprite)
 			
 			# Draw back
-			if back_block.renderer != null:
-				if front_block.is_partial:
+			if is_back_drawn:
+				if back_block.renderer != null:
 					render_data.block_id = back_id
 					render_data.block = back_block
 					render_data.on_front_layer = false

@@ -357,20 +357,17 @@ func modify_block(
 	# Update block
 	entity.update_block(block_specifier, address)
 
-func is_block_passable(block: BlockType) -> bool:
-	return not block.is_solid or block.is_one_way
-
-func can_modify_forward_block(
+func is_block_passable(
 		address: BlockAddress,
 		blocks: BlockWorld) -> bool:
 	
 	if address == null:
-		return false
+		return true
 	
 	var front_id := address.chunk.front_ids[address.block_index]
 	var front_block := blocks.block_types[front_id]
 	
-	return not is_block_passable(front_block)
+	return not front_block.is_solid or front_block.is_one_way
 
 func cast_block(look_offset: Vector2) -> BlockCollider:
 	var space_state := get_world_2d().direct_space_state
@@ -410,42 +407,37 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	var block_specifier := BlockSpecifier.new()
 	block_specifier.on_front_layer = on_front_layer
 	
-	# Check if center is passable
+	# Check center
 	var center_address := blocks.get_block_address(center_block_position)
 	
-	if center_address != null:
-		var center_front_id := center_address.chunk.front_ids[center_address.block_index]
-		var center_front_block := blocks.block_types[center_front_id]
+	if not is_block_passable(center_address, blocks):
+		if not on_front_layer:
+			return false
 		
-		if not is_block_passable(center_front_block):
-			if not on_front_layer:
-				return false
-			
-			# Check facing block
-			var cast_block := cast_block(Vector2(look_offset) * blocks.scale)
-			
-			if cast_block == null:
-				return false
-			
-			# Break facing block
-			var cast_position := cast_block.block_position
-			block_specifier.block_position = cast_position
-			
-			var cast_address := blocks.get_block_address(cast_position)
-			
-			modify_block(
-				cast_address,
-				block_specifier,
-				blocks,
-				cast_position)
-			
-			return true
+		var cast_block := cast_block(Vector2(look_offset) * blocks.scale)
+		
+		if cast_block == null:
+			return false
+		
+		# Break facing
+		var cast_position := cast_block.block_position
+		block_specifier.block_position = cast_position
+		
+		var cast_address := blocks.get_block_address(cast_position)
+		
+		modify_block(
+			cast_address,
+			block_specifier,
+			blocks,
+			cast_position)
+		
+		return true
 	
 	# Check forward
 	var forward_block_position := center_block_position + look_offset
 	var forward_address := blocks.get_block_address(forward_block_position)
 	
-	if can_modify_forward_block(forward_address, blocks):
+	if not is_block_passable(forward_address, blocks):
 		if not on_front_layer:
 			return false
 		
@@ -460,7 +452,7 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 		
 		return true
 	
-	# Check center
+	# Modify center
 	if center_address == null:
 		return false
 	

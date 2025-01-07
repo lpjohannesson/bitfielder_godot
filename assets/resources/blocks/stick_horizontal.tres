@@ -1,10 +1,13 @@
-[gd_resource type="Resource" script_class="BlockType" load_steps=7 format=3 uid="uid://dmgl8jsafc8o6"]
+[gd_resource type="Resource" script_class="BlockType" load_steps=8 format=3 uid="uid://dmgl8jsafc8o6"]
 
 [ext_resource type="Resource" uid="uid://hnkss3xm4ob8" path="res://assets/resources/blocks/sounds/wood.tres" id="1_jww28"]
 [ext_resource type="Texture2D" uid="uid://dtr4vbkje7np6" path="res://assets/textures/blocks/particles/wood.png" id="2_p52tx"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/auto_block_renderer.gd" id="4_vvpm2"]
 [ext_resource type="Texture2D" uid="uid://bdo3id28653y6" path="res://assets/textures/blocks/stick_horizontal.png" id="5_888ob"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_type.gd" id="6_m6445"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tedde"]
+size = Vector2(1, 0.375)
 
 [sub_resource type="Resource" id="Resource_cwxme"]
 script = ExtResource("4_vvpm2")
@@ -21,3 +24,4 @@ is_climbable = false
 is_swimmable = false
 is_partial = true
 casts_shadow = true
+collider = SubResource("RectangleShape2D_tedde")
