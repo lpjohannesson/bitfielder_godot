@@ -39,7 +39,7 @@ func generate_area(chunk_start_x: int, chunk_end_x: int) -> void:
 		var chunk_column: Array[BlockChunk] = chunk_columns[i]
 		var chunk_x = chunk_start_x + i
 		
-		blocks.create_heightmap(chunk_column, chunk_x)
+		blocks.heightmaps.generate_heightmap(chunk_column, chunk_x)
 	
 	# Update chunks
 	for chunk in chunks:

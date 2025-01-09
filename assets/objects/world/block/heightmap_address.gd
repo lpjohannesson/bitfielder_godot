@@ -1,10 +1,4 @@
-class_name HeightmapAddress
+class_name HeightAddress
 
-var heightmap: Variant
+var heightmap: BlockHeightmap
 var height_index: int
-
-func get_height() -> int:
-	return heightmap[height_index]
-
-func set_height(height: int) -> void:
-	heightmap[height_index] = height

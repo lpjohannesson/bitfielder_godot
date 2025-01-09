@@ -114,7 +114,7 @@ func create_chunk_from_data(chunk_data: Array) -> BlockChunk:
 	
 	return chunk
 
-func save_chunk_line(chunk_x: int) -> Dictionary:
+func save_chunk_column(chunk_x: int) -> Dictionary:
 	# Create palette
 	var palette: PackedStringArray = []
 	var palette_map := {}
@@ -137,45 +137,41 @@ func save_chunk_line(chunk_x: int) -> Dictionary:
 	
 	return {
 		"x": chunk_x,
-		"height": blocks.get_heightmap(chunk_x),
 		"pal": palette,
 		"chunks": paletted_chunks
 	}
 
-func create_chunk_line_from_data(chunk_line_data: Dictionary) -> void:
+func create_chunk_column_from_data(column_data: Dictionary) -> void:
 	# Get parameters
-	var chunk_x: int = chunk_line_data["x"]
-	var heightmap = chunk_line_data["height"]
-	var palette: PackedStringArray = chunk_line_data["pal"]
-	var paletted_chunks: Array = chunk_line_data["chunks"]
-	
-	# Create heightmap
-	if heightmap != null:
-		blocks.heightmap_map[chunk_x] = heightmap
+	var chunk_x: int = column_data["x"]
+	var palette: PackedStringArray = column_data["pal"]
+	var paletted_chunks: Array = column_data["chunks"]
 	
 	# Load chunks
 	var palette_ids := get_palette_ids(palette)
+	var chunk_column: Array[BlockChunk] = []
 	
 	for chunk_y in range(BlockWorld.WORLD_CHUNK_HEIGHT):
 		var chunk_index := Vector2i(chunk_x, chunk_y)
 		var chunk := blocks.create_chunk(chunk_index)
 		
+		chunk_column.push_back(chunk)
+		
 		var paletted_chunk = paletted_chunks[chunk_y]
 		load_paletted_chunk(paletted_chunk, chunk, palette_ids)
-
-func get_chunk_line_file_path(chunk_x: int) -> String:
-	return "%s/%s.dat" % [GameServer.WORLD_FILE_PATH, chunk_x]
-
-func save_chunk_line_file(chunk_x: int) -> void:
-	var path := get_chunk_line_file_path(chunk_x)
-	var file = FileAccess.open(path, FileAccess.WRITE)
 	
-	var bytes := var_to_bytes(save_chunk_line(chunk_x))
+	blocks.heightmaps.generate_heightmap(chunk_column, chunk_x)
+
+func save_chunk_column_file(chunk_x: int, chunks_path: String) -> void:
+	var chunk_column_path := "%s/%s.dat" % [chunks_path, chunk_x]
+	var file = FileAccess.open(chunk_column_path, FileAccess.WRITE)
+	
+	var bytes := var_to_bytes(save_chunk_column(chunk_x))
 	file.store_buffer(bytes)
 
-func create_chunk_line_from_file(path: String) -> BlockChunk:
+func create_chunk_column_from_file(path: String) -> BlockChunk:
 	var bytes := FileAccess.get_file_as_bytes(path)
-	var chunk_line_data: Dictionary = bytes_to_var(bytes)
+	var column_data: Dictionary = bytes_to_var(bytes)
 	
-	create_chunk_line_from_data(chunk_line_data)
+	create_chunk_column_from_data(column_data)
 	return

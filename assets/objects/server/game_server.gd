@@ -46,12 +46,6 @@ func get_block_chunk_packet(chunk: BlockChunk) -> GamePacket:
 		world.blocks.serializer.save_chunk(chunk)
 	)
 
-func get_block_heightmap_packet(heightmap: PackedInt32Array, chunk_x: int) -> GamePacket:
-	return GamePacket.create_packet(
-		Packets.ServerPacket.CREATE_BLOCK_HEIGHTMAP,
-		[chunk_x, heightmap]
-	)
-
 func get_player_chunk_index_packet(chunk_index: Vector2i) -> GamePacket:
 	return GamePacket.create_packet(
 		Packets.ServerPacket.PLAYER_CHUNK_INDEX,
@@ -78,12 +72,18 @@ func update_block(
 	block_specifier.write_address(address)
 	
 	world.blocks.update_block(block_specifier.block_position)
-	world.blocks.update_heightmap(block_specifier)
+	world.blocks.heightmaps.update_height(block_specifier, true)
 	
 	var packet := get_update_block_packet(block_specifier, show_effects)
 	
 	for client in clients:
 		client.send_packet(packet)
+
+func get_light_heightmap_packet(heightmap: BlockHeightmap, chunk_x: int) -> GamePacket:
+	return GamePacket.create_packet(
+		Packets.ServerPacket.CREATE_LIGHT_HEIGHTMAP,
+		[chunk_x, heightmap.light_data]
+	)
 
 func get_create_entity_packet(entity: GameEntity) -> GamePacket:
 	return GamePacket.create_packet(
@@ -242,15 +242,6 @@ func update_player_chunk(client: ClientConnection, chunk_index: Vector2i) -> voi
 	
 	client.send_packet(get_block_chunk_packet(chunk))
 
-func update_player_heightmap(client: ClientConnection, chunk_x: int) -> void:
-	var heightmap = world.blocks.get_heightmap(chunk_x)
-	
-	if heightmap == null:
-		return
-	
-	var heightmap_packet := get_block_heightmap_packet(heightmap, chunk_x)
-	client.send_packet(heightmap_packet)
-
 func create_player_chunks(client: ClientConnection) -> void:
 	var player := client.player
 	
@@ -260,7 +251,7 @@ func create_player_chunks(client: ClientConnection) -> void:
 	var load_zone = get_chunk_load_zone(player_chunk_index)
 	
 	for chunk_x in range(load_zone.position.x, load_zone.end.x):
-		update_player_heightmap(client, chunk_x)
+		update_player_light_heightmap(client, chunk_x)
 		
 		for chunk_y in range(load_zone.position.y, load_zone.end.y):
 			var chunk_index := Vector2i(chunk_x, chunk_y)
@@ -283,7 +274,7 @@ func update_player_chunks(client: ClientConnection) -> void:
 	
 	for chunk_x in range(new_load_zone.position.x, new_load_zone.end.x):
 		if chunk_x < old_load_zone.position.x or chunk_x >= old_load_zone.end.x:
-			update_player_heightmap(client, chunk_x)
+			update_player_light_heightmap(client, chunk_x)
 		
 		for chunk_y in range(new_load_zone.position.y, new_load_zone.end.y):
 			var chunk_index := Vector2i(chunk_x, chunk_y)
@@ -296,6 +287,15 @@ func update_player_chunks(client: ClientConnection) -> void:
 	
 	client.send_packet(get_player_chunk_index_packet(new_chunk_index))
 	client.chunk_load_position = player_position
+
+func update_player_light_heightmap(client: ClientConnection, chunk_x: int) -> void:
+	var heightmap = world.blocks.heightmaps.get_heightmap(chunk_x)
+	
+	if heightmap == null:
+		return
+	
+	var heightmap_packet := get_light_heightmap_packet(heightmap, chunk_x)
+	client.send_packet(heightmap_packet)
 
 func send_entity_states() -> void:
 	for entity in world.entities.entities:
@@ -340,20 +340,27 @@ func recieve_packet(packet: GamePacket, client: ClientConnection) -> void:
 		Packets.ClientPacket.CHANGE_SKIN:
 			change_player_skin(packet, client)
 
+func get_player_spawn_position() -> Vector2:
+	var player_ground_x := randi_range(-PLAYER_SPAWN_RANGE, PLAYER_SPAWN_RANGE)
+	var player_ground_y: int
+	
+	var height_address := world.blocks.heightmaps.get_height_address(player_ground_x)
+	
+	if height_address == null:
+		player_ground_y = 0
+	else:
+		player_ground_y = height_address.heightmap.collision_data[height_address.height_index] - 1
+	
+	var player_ground_position := Vector2i(player_ground_x, player_ground_y)
+	return world.blocks.block_to_world(player_ground_position, true)
+
 func connect_client(client: ClientConnection, login_info: ClientLoginInfo) -> void:
 	# Spawn player
 	var player: Player = world.entities.serializer.player_scene.instantiate()
 	client.player = player
 	
 	player.username = login_info.username
-	
-	# Set player position
-	var player_ground_x := randi_range(-PLAYER_SPAWN_RANGE, PLAYER_SPAWN_RANGE)
-	var player_ground_y := world.blocks.get_block_height(player_ground_x) - 1
-	var player_ground_position := Vector2i(player_ground_x, player_ground_y)
-	
-	player.global_position = \
-		world.blocks.block_to_world(player_ground_position, true)
+	player.global_position = get_player_spawn_position()
 	
 	add_entity(player.entity)
 	
@@ -404,19 +411,25 @@ func disconnect_client(client: ClientConnection) -> void:
 	
 	world.entities.remove_entity(client.player.entity)
 
+func get_chunks_path() -> String:
+	return WORLD_FILE_PATH.path_join("chunks")
+
 func save_world_files() -> void:
-	DirAccess.make_dir_absolute(WORLD_FILE_PATH)
+	var chunks_path := get_chunks_path()
+	DirAccess.make_dir_recursive_absolute(chunks_path)
 	
 	for chunk_x in range(CHUNK_START_X, CHUNK_END_X):
-		world.blocks.serializer.save_chunk_line_file(chunk_x)
+		world.blocks.serializer.save_chunk_column_file(chunk_x, chunks_path)
 
 func load_world_files() -> bool:
 	if not DirAccess.dir_exists_absolute(WORLD_FILE_PATH):
 		return false
 	
-	for path in DirAccess.open(WORLD_FILE_PATH).get_files():
-		var full_path := WORLD_FILE_PATH.path_join(path)
-		world.blocks.serializer.create_chunk_line_from_file(full_path)
+	var chunks_path := get_chunks_path()
+	
+	for chunk_path in DirAccess.open(chunks_path).get_files():
+		var chunk_full_path := chunks_path.path_join(chunk_path)
+		world.blocks.serializer.create_chunk_column_from_file(chunk_full_path)
 	
 	return true
 

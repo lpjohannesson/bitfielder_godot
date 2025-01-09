@@ -1,10 +1,11 @@
-[gd_scene load_steps=10 format=3 uid="uid://celyk57ifua4f"]
+[gd_scene load_steps=11 format=3 uid="uid://celyk57ifua4f"]
 
 [ext_resource type="Script" path="res://assets/objects/world/game_world.gd" id="1_waysh"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_world.gd" id="2_3pcni"]
 [ext_resource type="Script" path="res://assets/objects/world/entity/entity_manager.gd" id="3_jc7ju"]
 [ext_resource type="Script" path="res://assets/objects/world/item/item_manager.gd" id="3_vg71c"]
 [ext_resource type="PackedScene" uid="uid://qhbwwmg422j6" path="res://assets/objects/world/entity/player/player.tscn" id="4_hgqgm"]
+[ext_resource type="Script" path="res://assets/objects/world/block/heightmap_manager.gd" id="5_8u4c6"]
 [ext_resource type="Script" path="res://assets/objects/world/entity/entity_serializer.gd" id="8_gdq6u"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_serializer.gd" id="8_r3ein"]
 [ext_resource type="Script" path="res://assets/objects/world/item/item_serializer.gd" id="9_j762g"]
@@ -16,17 +17,22 @@ blocks = NodePath("BlockWorld")
 items = NodePath("ItemManager")
 entities = NodePath("EntityManager")
 
-[node name="BlockWorld" type="Node2D" parent="." node_paths=PackedStringArray("chunks", "serializer")]
+[node name="BlockWorld" type="Node2D" parent="." node_paths=PackedStringArray("chunks", "serializer", "heightmaps")]
 scale = Vector2(16, 16)
 script = ExtResource("2_3pcni")
 chunk_scene = ExtResource("19_qsv6g")
 chunks = NodePath("Chunks")
 serializer = NodePath("BlockSerializer")
+heightmaps = NodePath("HeightmapManager")
 
 [node name="Chunks" type="Node2D" parent="BlockWorld"]
 
 [node name="BlockSerializer" type="Node" parent="BlockWorld" node_paths=PackedStringArray("blocks")]
 script = ExtResource("8_r3ein")
+blocks = NodePath("..")
+
+[node name="HeightmapManager" type="Node" parent="BlockWorld" node_paths=PackedStringArray("blocks")]
+script = ExtResource("5_8u4c6")
 blocks = NodePath("..")
 
 [node name="ItemManager" type="Node" parent="." node_paths=PackedStringArray("world", "serializer")]

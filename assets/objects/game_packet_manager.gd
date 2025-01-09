@@ -11,12 +11,6 @@ func create_block_chunk(packet: GamePacket) -> void:
 	
 	scene.blocks_renderer.start_chunk(chunk)
 
-func create_block_heightmap(packet: GamePacket) -> void:
-	var chunk_x: int = packet.data[0]
-	var heightmap: PackedInt32Array = packet.data[1]
-	
-	scene.world.blocks.load_heightmap(heightmap, chunk_x)
-
 func load_player_chunk_index(packet: GamePacket) -> void:
 	var player_chunk_index: Vector2i = packet.data
 	var load_zone := GameServer.get_chunk_load_zone(player_chunk_index)
@@ -28,9 +22,9 @@ func load_player_chunk_index(packet: GamePacket) -> void:
 		if not load_zone.has_point(chunk_index):
 			blocks.destroy_chunk(chunk_index)
 	
-	for chunk_x in blocks.heightmap_map.keys():
+	for chunk_x in blocks.heightmaps.heightmap_map.keys():
 		if chunk_x < load_zone.position.x or chunk_x >= load_zone.end.x:
-			blocks.destroy_heightmap(chunk_x)
+			blocks.heightmaps.destroy_heightmap(chunk_x)
 	
 	last_chunk_index = player_chunk_index
 	
@@ -48,6 +42,13 @@ func update_block(packet: GamePacket) -> void:
 		return
 	
 	scene.update_block(block_specifier, address, show_effects)
+
+func create_light_heightmap(packet: GamePacket) -> void:
+	var chunk_x: int = packet.data[0]
+	var light_data: PackedInt32Array = packet.data[1]
+	
+	var heightmap := scene.world.blocks.heightmaps.create_heightmap(chunk_x)
+	heightmap.light_data = light_data
 
 func send_check_player_position() -> void:
 	var packet := GamePacket.create_packet(
@@ -126,14 +127,14 @@ func recieve_packet(packet: GamePacket) -> void:
 		Packets.ServerPacket.CREATE_BLOCK_CHUNK:
 			create_block_chunk(packet)
 		
-		Packets.ServerPacket.CREATE_BLOCK_HEIGHTMAP:
-			create_block_heightmap(packet)
-		
 		Packets.ServerPacket.PLAYER_CHUNK_INDEX:
 			load_player_chunk_index(packet)
 		
 		Packets.ServerPacket.UPDATE_BLOCK:
 			update_block(packet)
+		
+		Packets.ServerPacket.CREATE_LIGHT_HEIGHTMAP:
+			create_light_heightmap(packet)
 		
 		Packets.ServerPacket.CREATE_ENTITY:
 			create_entity(packet)

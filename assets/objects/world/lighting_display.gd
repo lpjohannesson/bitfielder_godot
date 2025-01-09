@@ -23,7 +23,7 @@ func show_lightmap() -> void:
 	
 	# Pass heightmap to shader for sunlight
 	for chunk_x in range(load_zone.position.x, load_zone.end.x):
-		var heightmap = world.blocks.get_heightmap(chunk_x)
+		var heightmap = world.blocks.heightmaps.get_heightmap(chunk_x)
 		
 		if heightmap == null:
 			continue
@@ -31,7 +31,7 @@ func show_lightmap() -> void:
 		var start_index = (chunk_x - load_zone.position.x) * BlockChunk.CHUNK_SIZE.x
 		
 		for x in range(BlockChunk.CHUNK_SIZE.x):
-			shader_heightmap[start_index + x] = heightmap[x]
+			shader_heightmap[start_index + x] = heightmap.light_data[x]
 	
 	light_canvas.material.set_shader_parameter("heightmap", shader_heightmap)
 	light_canvas.material.set_shader_parameter("top_height", top_left_position.y)

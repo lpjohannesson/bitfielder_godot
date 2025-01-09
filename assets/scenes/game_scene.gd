@@ -114,7 +114,7 @@ func update_block(
 		blocks.update_chunk(chunk)
 		blocks_renderer.redraw_chunk(chunk)
 	
-	blocks.update_heightmap(block_specifier)
+	blocks.heightmaps.update_height(block_specifier, false)
 	lighting_display.show_lightmap()
 
 func send_item_selection() -> void:
