@@ -2,6 +2,7 @@ extends Resource
 class_name BlockType
 
 @export var category: BlockCategory
+@export var properties: BlockProperties
 
 @export var renderer: BlockRenderer
 @export var particle_texture: Texture2D

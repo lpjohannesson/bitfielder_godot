@@ -86,15 +86,6 @@ func load_entity_data(packet: GamePacket) -> void:
 	
 	entities.serializer.load_entity_data(entity, packet.data)
 
-func play_entity_sound(packet: GamePacket) -> void:
-	var entity := scene.world.entities.get_entity(packet.data[0])
-	
-	if entity == null:
-		return
-	
-	var sound_name: String = packet.data[1]
-	entity.play_sound(sound_name)
-
 func assign_player(packet: GamePacket) -> void:
 	var entity := scene.world.entities.get_entity(packet.data)
 	scene.player = entity.entity_node
@@ -116,6 +107,26 @@ func change_player_skin(packet: GamePacket) -> void:
 	
 	var player: Player = scene.world.entities.get_entity(entity_id).entity_node
 	PlayerSkinManager.load_skin(player, skin_bytes)
+
+func play_entity_sound(packet: GamePacket) -> void:
+	var entity := scene.world.entities.get_entity(packet.data[0])
+	
+	if entity == null:
+		return
+	
+	var sound_name: String = packet.data[1]
+	entity.play_sound(sound_name)
+
+func play_world_sound(packet: GamePacket) -> void:
+	var sound_name: String = packet.data[0]
+	var sound_position: Vector2 = packet.data[1]
+	
+	if not scene.sound_map.has(sound_name):
+		return
+	
+	var sound_stream: AudioStream = scene.sound_map[sound_name]
+	
+	scene.spawn_world_sound(sound_stream, sound_position)
 
 func recieve_packet(packet: GamePacket) -> void:
 	print(Packets.ServerPacket.find_key(packet.type), ": ", packet.data)
@@ -145,9 +156,6 @@ func recieve_packet(packet: GamePacket) -> void:
 		Packets.ServerPacket.ENTITY_DATA:
 			load_entity_data(packet)
 		
-		Packets.ServerPacket.PLAY_ENTITY_SOUND:
-			play_entity_sound(packet)
-		
 		Packets.ServerPacket.ASSIGN_PLAYER:
 			assign_player(packet)
 		
@@ -156,3 +164,9 @@ func recieve_packet(packet: GamePacket) -> void:
 		
 		Packets.ServerPacket.CHANGE_PLAYER_SKIN:
 			change_player_skin(packet)
+		
+		Packets.ServerPacket.PLAY_ENTITY_SOUND:
+			play_entity_sound(packet)
+		
+		Packets.ServerPacket.PLAY_WORLD_SOUND:
+			play_world_sound(packet)

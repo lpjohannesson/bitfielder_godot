@@ -1,10 +1,11 @@
-[gd_scene load_steps=43 format=3 uid="uid://qhbwwmg422j6"]
+[gd_scene load_steps=47 format=3 uid="uid://qhbwwmg422j6"]
 
 [ext_resource type="Script" path="res://assets/objects/world/entity/player/player.gd" id="1_7uomn"]
 [ext_resource type="Shader" path="res://assets/shaders/player.gdshader" id="2_1ofg0"]
+[ext_resource type="PackedScene" uid="uid://hx5xalh7km6b" path="res://assets/objects/world/entity/player/player_run_sprite.tscn" id="2_axaxw"]
 [ext_resource type="PackedScene" uid="uid://cmqcyhabrwcss" path="res://assets/objects/world/effects/water_bubble.tscn" id="2_urlx5"]
 [ext_resource type="Texture2D" uid="uid://bsvrr5o1bqqyo" path="res://assets/textures/player/overlay.png" id="3_4xs5l"]
-[ext_resource type="Script" path="res://assets/objects/world/entity/entity_sound.gd" id="3_5garv"]
+[ext_resource type="Script" path="res://assets/objects/world/world_sound.gd" id="3_5garv"]
 [ext_resource type="Texture2D" uid="uid://ra74cdvlyfue" path="res://assets/textures/player/skin_uv.png" id="3_8trt0"]
 [ext_resource type="Texture2D" uid="uid://doj1kdvxq24lv" path="res://assets/textures/player/default_skin.png" id="3_rw5il"]
 [ext_resource type="Script" path="res://assets/objects/world/entity/game_entity.gd" id="4_1rk0b"]
@@ -19,6 +20,7 @@
 [ext_resource type="Script" path="res://assets/objects/world/entity/player/player_hover_area.gd" id="12_0labo"]
 [ext_resource type="AudioStream" uid="uid://6eht4d7nch8h" path="res://assets/sounds/climb.wav" id="12_sxkoi"]
 [ext_resource type="Theme" uid="uid://wm8dstmgs0eu" path="res://assets/themes/menu_theme.tres" id="12_xroha"]
+[ext_resource type="AudioStream" uid="uid://biv3ulp1jww6v" path="res://assets/sounds/run.wav" id="14_gptux"]
 
 [sub_resource type="Resource" id="Resource_w02ct"]
 script = ExtResource("3_5garv")
@@ -55,6 +57,11 @@ sound_stream = SubResource("AudioStreamRandomizer_xpqqm")
 script = ExtResource("3_5garv")
 sound_name = "climb"
 sound_stream = ExtResource("12_sxkoi")
+
+[sub_resource type="Resource" id="Resource_tpev0"]
+script = ExtResource("3_5garv")
+sound_name = "run"
+sound_stream = ExtResource("14_gptux")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_2p0m6"]
 resource_local_to_scene = true
@@ -271,6 +278,24 @@ tracks/0/keys = {
 "values": [4, 5, 6, 7]
 }
 
+[sub_resource type="Animation" id="Animation_rm7vg"]
+resource_name = "run"
+length = 0.2
+loop_mode = 1
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1, 0.15),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [4, 5, 6, 7]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_whnse"]
 _data = {
 "climb": SubResource("Animation_blapl"),
@@ -283,13 +308,14 @@ _data = {
 "punch_down": SubResource("Animation_les6d"),
 "punch_forward": SubResource("Animation_nf7j3"),
 "punch_up": SubResource("Animation_voj85"),
+"run": SubResource("Animation_rm7vg"),
 "slide": SubResource("Animation_viv5v"),
 "walk": SubResource("Animation_bdjc4")
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hettc"]
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("entity", "floor_point", "ceiling_point", "username_display", "coyote_timer", "jump_timer", "modify_block_timer", "slide_effect_timer", "punch_timer", "bubble_timer")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("entity", "floor_point", "ceiling_point", "username_display", "coyote_timer", "jump_timer", "modify_block_timer", "slide_effect_timer", "punch_timer", "bubble_timer", "run_start_timer", "run_effect_timer")]
 collision_mask = 2
 script = ExtResource("1_7uomn")
 entity = NodePath("GameEntity")
@@ -302,6 +328,9 @@ modify_block_timer = NodePath("ModifyBlockTimer")
 slide_effect_timer = NodePath("SlideEffectTimer")
 punch_timer = NodePath("PunchTimer")
 bubble_timer = NodePath("BubbleTimer")
+run_start_timer = NodePath("RunStartTimer")
+run_effect_timer = NodePath("RunEffectTimer")
+run_sprite_scene = ExtResource("2_axaxw")
 bubble_scene = ExtResource("2_urlx5")
 
 [node name="GameEntity" type="Node" parent="." node_paths=PackedStringArray("entity_node", "body", "sprite", "collider", "animation_player", "player")]
@@ -313,7 +342,7 @@ sprite = NodePath("../Sprite2D")
 collider = NodePath("../CollisionShape2D")
 animation_player = NodePath("../AnimationPlayer")
 player = NodePath("..")
-sounds = Array[ExtResource("3_5garv")]([SubResource("Resource_w02ct"), SubResource("Resource_6oscl"), SubResource("Resource_7vdfh"), SubResource("Resource_ltboo"), SubResource("Resource_2hf8e"), SubResource("Resource_im7ac")])
+sounds = Array[ExtResource("3_5garv")]([SubResource("Resource_w02ct"), SubResource("Resource_6oscl"), SubResource("Resource_7vdfh"), SubResource("Resource_ltboo"), SubResource("Resource_2hf8e"), SubResource("Resource_im7ac"), SubResource("Resource_tpev0")])
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 material = SubResource("ShaderMaterial_2p0m6")
@@ -363,6 +392,14 @@ one_shot = true
 
 [node name="BubbleTimer" type="Timer" parent="."]
 wait_time = 0.3
+one_shot = true
+
+[node name="RunStartTimer" type="Timer" parent="."]
+wait_time = 0.25
+one_shot = true
+
+[node name="RunEffectTimer" type="Timer" parent="."]
+wait_time = 0.1
 one_shot = true
 
 [node name="UsernameDisplay" type="Area2D" parent="." node_paths=PackedStringArray("label")]

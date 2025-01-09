@@ -28,12 +28,16 @@ static var instance: GameScene
 @export var select_page_sound: AudioStreamPlayer
 @export var select_item_sound_timer: Timer
 
+@export var sounds: Array[WorldSound]
+
 @onready var viewport := get_viewport()
 
 var server: ServerConnection
 var player: Player
 
 var paused := false
+
+var sound_map := {}
 
 func return_to_menu() -> void:
 	get_tree().change_scene_to_file("res://assets/scenes/menu_scene.tscn")
@@ -205,6 +209,9 @@ func _ready() -> void:
 	
 	resize()
 	viewport.size_changed.connect(resize)
+	
+	for sound in sounds:
+		sound_map[sound.sound_name] = sound.sound_stream
 
 func _process(_delta: float) -> void:
 	shadow_viewport.canvas_transform = \

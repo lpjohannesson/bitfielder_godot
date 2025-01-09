@@ -6,7 +6,7 @@ uniform int block_light_range = 8;
 uniform int[128] heightmap;
 uniform int top_height;
 
-uniform sampler2D block_lightmap : filter_nearest;
+uniform sampler2D block_lightmap: filter_nearest;
 
 struct LightProperties {
 	vec2 uv;

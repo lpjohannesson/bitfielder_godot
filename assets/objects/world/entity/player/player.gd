@@ -3,8 +3,11 @@ class_name Player
 
 enum PlayerState { GROUND, MODIFYING_BLOCK, CLIMBING, SWIMMING }
 
-const GROUND_ACCELERATION := 300.0
-const GROUND_SPEED := 100.0
+const GROUND_WALK_ACCELERATION := 300.0
+const GROUND_RUN_ACCELERATION := 350.0
+
+const GROUND_WALK_SPEED := 100.0
+const GROUND_RUN_SPEED := 150.0
 
 const WATER_ACCELERATION := 200.0
 const WATER_SPEED := 75.0
@@ -37,9 +40,15 @@ const MODIFY_BLOCK_TWEEN_TIME := 0.35
 @export var punch_timer: Timer
 @export var bubble_timer: Timer
 
+@export var run_start_timer: Timer
+@export var run_effect_timer: Timer
+@export var run_sprite_scene: PackedScene
+
 @export var bubble_scene: PackedScene
 
 var move_direction := 0.0
+var running := false
+
 var block_place_direction = 0.0
 var midstopped := false
 var modify_block_tween: Tween
@@ -122,6 +131,9 @@ func try_jump_down() -> bool:
 	return true
 
 func jump(jump_velocity: float) -> void:
+	if velocity.y <= -jump_velocity:
+		return
+	
 	velocity.y = -jump_velocity
 	midstopped = false
 	entity.play_sound("jump")
@@ -143,12 +155,13 @@ func try_jump() -> void:
 	jump(JUMP_VELOCITY)
 
 func midstop_jump():
-	if not midstopped and \
-		velocity.y < 0.0 and \
-		not player_input.is_action_pressed("jump"):
-		
+	if velocity.y < 0.0:
+		if not midstopped and not player_input.is_action_pressed("jump"):
+			midstopped = true
+			velocity.y *= JUMP_MIDSTOP
+	else:
 		midstopped = true
-		velocity.y *= JUMP_MIDSTOP
+	
 
 func punch() -> void:
 	if not punch_timer.is_stopped():
@@ -230,7 +243,10 @@ func animate() -> void:
 			if get_is_sliding():
 				animation_name = "slide"
 			else:
-				animation_name = "walk"
+				if running:
+					animation_name = "run"
+				else:
+					animation_name = "walk"
 	else:
 		if velocity.y < 0.0:
 			animation_name = "jump"
@@ -291,16 +307,10 @@ func is_entity_above_block(block_position: Vector2i) -> bool:
 	
 	return false
 
-func is_block_placeable(block_id: int) -> bool:
-	return block_id == 0
-
 func is_block_attachable(block_id: int) -> bool:
 	return block_id != 0
 
 func is_front_block_placeable(address: BlockAddress, block_position: Vector2i) -> bool:
-	if not is_block_placeable(address.chunk.front_ids[address.block_index]):
-		return false
-	
 	if is_entity_above_block(block_position):
 		return false
 	
@@ -312,10 +322,7 @@ func is_front_block_placeable(address: BlockAddress, block_position: Vector2i) -
 	
 	return false
 
-func is_back_block_placeable(address: BlockAddress, block_position: Vector2i) -> bool:
-	if not is_block_placeable(address.chunk.back_ids[address.block_index]):
-		return false
-	
+func is_back_block_placeable(block_position: Vector2i) -> bool:
 	if block_has_neighbors(block_position, false):
 		return true
 	
@@ -353,6 +360,7 @@ func modify_block(
 	entity.collider.disabled = true
 	
 	player_state = PlayerState.MODIFYING_BLOCK
+	running = false
 	
 	# Update block
 	entity.update_block(block_specifier, address)
@@ -414,13 +422,13 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 		if not on_front_layer:
 			return false
 		
-		var cast_block := cast_block(Vector2(look_offset) * blocks.scale)
+		var casted_block := cast_block(Vector2(look_offset) * blocks.scale)
 		
-		if cast_block == null:
+		if casted_block == null:
 			return false
 		
 		# Break facing
-		var cast_position := cast_block.block_position
+		var cast_position := casted_block.block_position
 		block_specifier.block_position = cast_position
 		
 		var cast_address := blocks.get_block_address(cast_position)
@@ -471,7 +479,6 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 				return false
 		else:
 			if not is_back_block_placeable(
-					center_address,
 					center_block_position):
 				
 				return false
@@ -609,6 +616,7 @@ func try_climbing(block: BlockType, blocks: BlockWorld) -> bool:
 	global_position.x = blocks.block_to_world(center_block_position, true).x
 	
 	player_state = PlayerState.CLIMBING
+	running = false
 	
 	entity.play_sound("climb")
 	
@@ -670,6 +678,7 @@ func try_swimming(block: BlockType) -> bool:
 	
 	# Start swimming
 	player_state = PlayerState.SWIMMING
+	running = false
 	
 	if center_block_position.y > last_center_block_position.y:
 		velocity.y *= 0.2
@@ -734,6 +743,30 @@ func fall(fall_speed: float, fall_acceleration: float, delta: float) -> void:
 		fall_speed,
 		fall_acceleration * delta)
 
+func try_running() -> void:
+	if is_on_wall() or move_direction == 0.0 or get_is_sliding():
+		running = false
+		return
+	
+	# Check if can start running
+	if not is_on_floor():
+		return
+	
+	var move_just_pressed := \
+		int(player_input.is_action_just_pressed("move_right")) - \
+		int(player_input.is_action_just_pressed("move_left"))
+	
+	if move_just_pressed == 0.0:
+		return
+	
+	if run_start_timer.is_stopped():
+		run_start_timer.start()
+	else:
+		run_start_timer.stop()
+		
+		running = true
+		entity.play_sound("run")
+
 func controls(delta: float) -> void:
 	aim()
 	update_jump_timer()
@@ -746,7 +779,13 @@ func controls(delta: float) -> void:
 			
 			fall(GRAVITY_SPEED, GRAVITY_ACCELERATION, delta)
 			
-			walk(GROUND_SPEED, GROUND_ACCELERATION, delta)
+			try_running()
+			
+			if running:
+				walk(GROUND_RUN_SPEED, GROUND_RUN_ACCELERATION, delta)
+			else:
+				walk(GROUND_WALK_SPEED, GROUND_WALK_ACCELERATION, delta)
+			
 			try_jump()
 			
 			if is_on_floor():
@@ -782,6 +821,31 @@ func stop_modify_block_tween() -> void:
 func update_center_block_position() -> void:
 	last_center_block_position = center_block_position
 
+func get_skin_texture() -> Texture2D:
+	return entity.sprite.material.get_shader_parameter("skin_texture")
+
+func show_run_effects() -> void:
+	if not run_effect_timer.is_stopped():
+		return
+	
+	if abs(velocity.x) <= GROUND_WALK_SPEED:
+		return
+	
+	var effect_sprite := run_sprite_scene.instantiate()
+	GameScene.instance.particles.add_child(effect_sprite)
+	
+	SpriteCopy.copy_sprite(entity.sprite, effect_sprite)
+	
+	var skin_texture := get_skin_texture()
+	
+	var effect_material: ShaderMaterial = effect_sprite.material
+	var skin_uv := (Vector2.DOWN * (randi() % 3)) / Vector2(PlayerSkinManager.SKIN_SIZE)
+	
+	effect_material.set_shader_parameter("skin_texture", skin_texture)
+	effect_material.set_shader_parameter("skin_uv", skin_uv)
+	
+	run_effect_timer.start()
+
 func _ready() -> void:
 	entity.position_changed.connect(stop_modify_block_tween)
 
@@ -793,6 +857,7 @@ func _physics_process(delta: float) -> void:
 		show_ground_effects()
 		show_slide_effects()
 		show_swimming_effects()
+		show_run_effects()
 		
 		if GameScene.instance.player != self:
 			move_and_slide()

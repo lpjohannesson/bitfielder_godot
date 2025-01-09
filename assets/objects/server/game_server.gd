@@ -354,6 +354,15 @@ func get_player_spawn_position() -> Vector2:
 	var player_ground_position := Vector2i(player_ground_x, player_ground_y)
 	return world.blocks.block_to_world(player_ground_position, true)
 
+func spawn_world_sound(sound_name: String, sound_position: Vector2) -> void:
+	var packet := GamePacket.create_packet(
+		Packets.ServerPacket.PLAY_WORLD_SOUND,
+		[sound_name, sound_position]
+	)
+	
+	for client in clients:
+		client.send_packet(packet)
+
 func connect_client(client: ClientConnection, login_info: ClientLoginInfo) -> void:
 	# Spawn player
 	var player: Player = world.entities.serializer.player_scene.instantiate()

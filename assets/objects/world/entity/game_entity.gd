@@ -8,7 +8,7 @@ class_name GameEntity
 @export var collider: CollisionShape2D
 @export var animation_player: AnimationPlayer
 @export var player: Player
-@export var sounds: Array[EntitySound]
+@export var sounds: Array[WorldSound]
 
 var entity_id := 0
 var entity_data: Dictionary
@@ -60,3 +60,30 @@ func _ready() -> void:
 	if not on_server:
 		for sound in sounds:
 			sound_map[sound.sound_name] = sound.sound_stream
+
+func _physics_process(_delta: float) -> void:
+	if body != null:
+		var blocks := get_game_world().blocks
+		
+		var collided_blocks: Array[Vector2i] = []
+		
+		for i in range(body.get_slide_collision_count()):
+			var collision = body.get_slide_collision(i)
+			
+			if not collision.get_collider_shape() is BlockCollider:
+				continue
+			
+			var block_collider: BlockCollider = collision.get_collider_shape()
+			var block_position := block_collider.block_position
+			
+			if collided_blocks.has(block_position):
+				continue
+			
+			collided_blocks.push_back(block_position)
+			
+			var address := blocks.get_block_address(block_position)
+			var block_id := address.chunk.front_ids[address.block_index]
+			var block := blocks.block_types[block_id]
+			
+			if block.properties != null:
+				block.properties.block_entity_collision(self, collision)

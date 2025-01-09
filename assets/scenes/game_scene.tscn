@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=31 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="2_d1sjh"]
@@ -8,6 +8,8 @@
 [ext_resource type="AudioStream" uid="uid://y6i3cpd0jrtq" path="res://assets/sounds/place.wav" id="5_tjk8f"]
 [ext_resource type="AudioStream" uid="uid://b4cmkbpom8cq5" path="res://assets/sounds/select_item.wav" id="6_hvwkn"]
 [ext_resource type="Script" path="res://assets/objects/world/game_input_manager.gd" id="6_ly1vx"]
+[ext_resource type="Script" path="res://assets/objects/world/world_sound.gd" id="6_vw555"]
+[ext_resource type="AudioStream" uid="uid://brbqcbn1rbycl" path="res://assets/sounds/spring.wav" id="7_4iqqu"]
 [ext_resource type="Texture2D" uid="uid://ddcuuu17cbn7c" path="res://assets/textures/backgrounds/cloud_small.png" id="7_4mou1"]
 [ext_resource type="AudioStream" uid="uid://dvbsibgabi3ju" path="res://assets/sounds/select_page.wav" id="7_4wp1w"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/block_world_renderer.gd" id="7_ddnpg"]
@@ -24,6 +26,11 @@
 shader = ExtResource("2_d1sjh")
 shader_parameter/back_shade = 0.2
 shader_parameter/shadow_shade = 0.2
+
+[sub_resource type="Resource" id="Resource_3wuox"]
+script = ExtResource("6_vw555")
+sound_name = "spring"
+sound_stream = ExtResource("7_4iqqu")
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_jutqc"]
 streams_count = 1
@@ -77,6 +84,7 @@ place_sound = ExtResource("5_tjk8f")
 select_item_sound = NodePath("Sounds/SelectItem")
 select_page_sound = NodePath("Sounds/SelectPage")
 select_item_sound_timer = NodePath("SelectItemSoundTimer")
+sounds = Array[ExtResource("6_vw555")]([SubResource("Resource_3wuox")])
 
 [node name="SelectItemSoundTimer" type="Timer" parent="."]
 wait_time = 0.03

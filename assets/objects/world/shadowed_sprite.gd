@@ -17,10 +17,7 @@ func _ready() -> void:
 	var shadow_viewport := GameScene.instance.shadow_viewport
 	shadow_viewport.add_child(shadow)
 	
-	shadow.texture = texture
-	shadow.hframes = hframes
-	shadow.vframes = vframes
-	shadow.frame = frame
+	SpriteCopy.copy_sprite(self, shadow)
 	
 	texture_changed.connect(func() -> void:
 		shadow.texture = texture)
@@ -34,5 +31,4 @@ func _process(_delta: float) -> void:
 	if shadow == null:
 		return
 	
-	shadow.global_transform = global_transform
-	shadow.flip_h = flip_h
+	SpriteCopy.copy_sprite_update(self, shadow)
