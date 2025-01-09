@@ -54,6 +54,7 @@ var midstopped := false
 var modify_block_tween: Tween
 var inventory: ItemInventory
 var username: String
+var run_effect_offset := 0
 
 var center_block_position: Vector2i
 var last_center_block_position: Vector2i
@@ -839,7 +840,9 @@ func show_run_effects() -> void:
 	var skin_texture := get_skin_texture()
 	
 	var effect_material: ShaderMaterial = effect_sprite.material
-	var skin_uv := (Vector2.DOWN * (randi() % 3)) / Vector2(PlayerSkinManager.SKIN_SIZE)
+	var skin_uv := (Vector2.DOWN * run_effect_offset) / Vector2(PlayerSkinManager.SKIN_SIZE)
+	
+	run_effect_offset = (run_effect_offset + 1) % 3
 	
 	effect_material.set_shader_parameter("skin_texture", skin_texture)
 	effect_material.set_shader_parameter("skin_uv", skin_uv)
