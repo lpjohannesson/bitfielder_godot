@@ -33,5 +33,7 @@ is_solid = false
 is_one_way = false
 is_climbable = false
 is_swimmable = true
+draws_above_entities = true
 is_partial = true
+is_transparent = false
 casts_shadow = false

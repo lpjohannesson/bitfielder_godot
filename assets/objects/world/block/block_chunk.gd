@@ -5,7 +5,9 @@ const CHUNK_SIZE := Vector2i(8, 8)
 const BLOCK_COUNT := CHUNK_SIZE.x * CHUNK_SIZE.y
 
 @export var front_layer: Node2D
+@export var above_entity_layer: Node2D
 @export var back_layer: Node2D
+
 @export var colliders: StaticBody2D
 
 var shadow_layer: Node2D
@@ -16,8 +18,7 @@ var back_ids: PackedInt32Array
 var chunk_index: Vector2i
 
 var redrawing_chunk := false
-
-signal chunk_done_drawing
+var drawing_thread: Thread
 
 static func get_block_index(chunk_position: Vector2i) -> int:
 	return chunk_position.y * CHUNK_SIZE.x + chunk_position.x
@@ -30,13 +31,12 @@ func get_layer(on_front_layer: bool) -> PackedInt32Array:
 
 func redraw_chunk() -> void:
 	front_layer.queue_redraw()
+	above_entity_layer.queue_redraw()
 	back_layer.queue_redraw()
 	shadow_layer.queue_redraw()
 	
 	await front_layer.draw
 	redrawing_chunk = false
-	
-	chunk_done_drawing.emit()
 
 func _init() -> void:
 	front_ids.resize(BLOCK_COUNT)

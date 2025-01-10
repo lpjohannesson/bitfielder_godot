@@ -3,11 +3,12 @@ class_name Player
 
 enum PlayerState { GROUND, MODIFYING_BLOCK, CLIMBING, SWIMMING }
 
-const GROUND_WALK_ACCELERATION := 300.0
-const GROUND_RUN_ACCELERATION := 350.0
+const GROUND_WALK_ACCELERATION := 400.0
+const GROUND_RUN_ACCELERATION := 450.0
+const AIR_ACCELERATION := 250.0
 
-const GROUND_WALK_SPEED := 100.0
-const GROUND_RUN_SPEED := 150.0
+const GROUND_WALK_SPEED := 120.0
+const GROUND_RUN_SPEED := 180.0
 
 const WATER_ACCELERATION := 200.0
 const WATER_SPEED := 75.0
@@ -15,23 +16,26 @@ const WATER_GROUND_SPEED := 20.0
 
 const GRAVITY_ACCELERATION := 300.0
 const GRAVITY_SPEED := 300.0
+const WALL_GRAVITY_SPEED := 70.0
 
 const WATER_GRAVITY_ACCELERATION := 100.0
 const WATER_GRAVITY_SPEED := 70.0
 
-const JUMP_VELOCITY := 150.0
+const JUMP_VELOCITY := 170.0
 const WATER_JUMP_VELOCITY := 100.0
 
 const JUMP_MIDSTOP := 0.5
 const CLIMB_SPEED := 50.0
 const CLIMB_JUMP_SPEED := 50.0
 const GROUND_VOLUME := -12.0
-const MODIFY_BLOCK_TWEEN_TIME := 0.35
+const MODIFY_BLOCK_TWEEN_TIME := 0.3
 
 @export var entity: GameEntity
+@export var username_display: UsernameDisplay
+
 @export var floor_point: Node2D
 @export var ceiling_point: Node2D
-@export var username_display: UsernameDisplay
+@export var wall_point: Node2D
 
 @export var coyote_timer: Timer
 @export var jump_timer: Timer
@@ -99,8 +103,17 @@ func get_look_direction() -> int:
 func aim() -> void:
 	move_direction = get_move_direction()
 	
-	if move_direction != 0.0:
-		entity.sprite.flip_h = move_direction < 0.0
+	if is_on_floor():
+		if move_direction != 0.0:
+			entity.sprite.flip_h = move_direction < 0.0
+	else:
+		if is_on_wall():
+			entity.sprite.flip_h = get_wall_normal().x < 0.0
+		else:
+			var move_just_pressed := get_move_just_pressed()
+			
+			if move_just_pressed != 0.0:
+				entity.sprite.flip_h = move_just_pressed < 0.0
 	
 	if player_state != PlayerState.MODIFYING_BLOCK:
 		block_place_direction = get_look_direction()
@@ -249,10 +262,13 @@ func animate() -> void:
 				else:
 					animation_name = "walk"
 	else:
-		if velocity.y < 0.0:
-			animation_name = "jump"
+		if is_on_wall():
+			animation_name = "slide"
 		else:
-			animation_name = "fall"
+			if velocity.y < 0.0:
+				animation_name = "jump"
+			else:
+				animation_name = "fall"
 	
 	entity.animation_player.play(animation_name)
 
@@ -329,11 +345,17 @@ func is_back_block_placeable(block_position: Vector2i) -> bool:
 	
 	return false
 
+func change_player_state(new_state: PlayerState) -> void:
+	if new_state != PlayerState.GROUND:
+		running = false
+	
+	player_state = new_state
+
 func end_modify_block_tween() -> void:
 	modify_block_tween = null
 
 func end_modify_block() -> void:
-	player_state = PlayerState.GROUND
+	change_player_state(PlayerState.GROUND)
 	entity.collider.disabled = false
 
 func modify_block(
@@ -343,6 +365,9 @@ func modify_block(
 		next_block_position: Vector2i) -> void:
 	
 	velocity = Vector2.ZERO
+	
+	if next_block_position.x != center_block_position.x:
+		entity.sprite.flip_h = next_block_position.x < center_block_position.x
 	
 	modify_block_tween = create_tween()\
 		.set_ease(Tween.EASE_OUT)\
@@ -360,8 +385,7 @@ func modify_block(
 	modify_block_timer.start()
 	entity.collider.disabled = true
 	
-	player_state = PlayerState.MODIFYING_BLOCK
-	running = false
+	change_player_state(PlayerState.MODIFYING_BLOCK)
 	
 	# Update block
 	entity.update_block(block_specifier, address)
@@ -406,7 +430,10 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	var look_offset := Vector2i.ZERO
 	
 	if look_direction == 0.0:
-		look_offset.x = int(get_facing_sign())
+		if move_direction == 0.0:
+			look_offset.x = get_facing_sign()
+		else:
+			look_offset.x = move_direction
 	else:
 		look_offset.y = look_direction
 	
@@ -504,6 +531,17 @@ func modify_block_or_punch(block_id: int, use_data: ItemUseData) -> void:
 	if not modify_success and use_data.just_pressed:
 		punch()
 
+func show_wall_effects() -> void:
+	if is_on_floor():
+		return
+	
+	if not is_on_wall():
+		return
+	
+	var wall_position := global_position - wall_point.position * get_wall_normal().x
+	
+	try_spawn_slide_effect(wall_position)
+
 func show_ground_effects() -> void:
 	var surface: float
 	var surface_point: Node2D
@@ -554,6 +592,13 @@ func show_ground_effects() -> void:
 	
 	last_surface = surface
 
+func try_spawn_slide_effect(effect_position: Vector2) -> void:
+	if not slide_effect_timer.is_stopped():
+		return
+	
+	entity.spawn_effect_sprite("slide", effect_position)
+	slide_effect_timer.start()
+
 func show_slide_effects() -> void:
 	var is_sliding := get_is_sliding()
 	
@@ -561,9 +606,7 @@ func show_slide_effects() -> void:
 		if not last_is_sliding:
 			entity.play_sound("slide")
 		
-		if slide_effect_timer.is_stopped():
-			entity.spawn_effect_sprite("slide", floor_point.global_position)
-			slide_effect_timer.start()
+		try_spawn_slide_effect(floor_point.global_position)
 	
 	last_is_sliding = is_sliding
 
@@ -616,8 +659,7 @@ func try_climbing(block: BlockType, blocks: BlockWorld) -> bool:
 	velocity = Vector2.ZERO
 	global_position.x = blocks.block_to_world(center_block_position, true).x
 	
-	player_state = PlayerState.CLIMBING
-	running = false
+	change_player_state(PlayerState.CLIMBING)
 	
 	entity.play_sound("climb")
 	
@@ -625,7 +667,7 @@ func try_climbing(block: BlockType, blocks: BlockWorld) -> bool:
 
 func stop_climbing() -> void:
 	velocity.x = move_direction * CLIMB_JUMP_SPEED
-	player_state = PlayerState.GROUND
+	change_player_state(PlayerState.GROUND)
 
 func climb() -> void:
 	if player_input.is_action_just_pressed("interact"):
@@ -678,8 +720,7 @@ func try_swimming(block: BlockType) -> bool:
 		return false
 	
 	# Start swimming
-	player_state = PlayerState.SWIMMING
-	running = false
+	change_player_state(PlayerState.SWIMMING)
 	
 	if center_block_position.y > last_center_block_position.y:
 		velocity.y *= 0.2
@@ -691,7 +732,7 @@ func swim(delta: float) -> void:
 	var block := get_interaction_block(center_block_position, blocks)
 	
 	if block == null or not block.is_swimmable:
-		player_state = PlayerState.GROUND
+		change_player_state(PlayerState.GROUND)
 		
 		if center_block_position.y < last_center_block_position.y:
 			velocity.y = max(velocity.y * 1.5, -JUMP_VELOCITY)
@@ -709,6 +750,10 @@ func swim(delta: float) -> void:
 	if player_input.is_action_just_pressed("jump"):
 		if not try_jump_down():
 			jump(WATER_JUMP_VELOCITY)
+			
+			if is_on_wall():
+				velocity.x = WATER_SPEED * get_wall_normal().x
+			
 			entity.animation_player.play("punch_down")
 			entity.play_sound("splash", -10.0)
 	
@@ -744,6 +789,11 @@ func fall(fall_speed: float, fall_acceleration: float, delta: float) -> void:
 		fall_speed,
 		fall_acceleration * delta)
 
+func get_move_just_pressed() -> float:
+	return \
+		float(player_input.is_action_just_pressed("move_right")) - \
+		float(player_input.is_action_just_pressed("move_left"))
+
 func try_running() -> void:
 	if is_on_wall() or move_direction == 0.0 or get_is_sliding():
 		running = false
@@ -753,9 +803,7 @@ func try_running() -> void:
 	if not is_on_floor():
 		return
 	
-	var move_just_pressed := \
-		int(player_input.is_action_just_pressed("move_right")) - \
-		int(player_input.is_action_just_pressed("move_left"))
+	var move_just_pressed := get_move_just_pressed()
 	
 	if move_just_pressed == 0.0:
 		return
@@ -768,6 +816,20 @@ func try_running() -> void:
 		running = true
 		entity.play_sound("run")
 
+func try_wall_jump() -> void:
+	if not is_on_wall():
+		return
+	
+	if not player_input.is_action_just_pressed("jump"):
+		return
+	
+	var wall_x := get_wall_normal().x
+	
+	velocity.x = wall_x * GROUND_WALK_SPEED
+	entity.sprite.flip_h = wall_x < 0.0
+	
+	jump(JUMP_VELOCITY)
+
 func controls(delta: float) -> void:
 	aim()
 	update_jump_timer()
@@ -778,12 +840,18 @@ func controls(delta: float) -> void:
 			if interact_center_block():
 				return
 			
-			fall(GRAVITY_SPEED, GRAVITY_ACCELERATION, delta)
+			if is_on_wall():
+				fall(WALL_GRAVITY_SPEED, GRAVITY_ACCELERATION, delta)
+			else:
+				fall(GRAVITY_SPEED, GRAVITY_ACCELERATION, delta)
 			
 			try_running()
 			
 			if running:
-				walk(GROUND_RUN_SPEED, GROUND_RUN_ACCELERATION, delta)
+				if is_on_floor():
+					walk(GROUND_RUN_SPEED, GROUND_RUN_ACCELERATION, delta)
+				else:
+					walk(GROUND_RUN_SPEED, AIR_ACCELERATION, delta)
 			else:
 				walk(GROUND_WALK_SPEED, GROUND_WALK_ACCELERATION, delta)
 			
@@ -793,6 +861,7 @@ func controls(delta: float) -> void:
 				coyote_timer.start()
 			else:
 				midstop_jump()
+				try_wall_jump()
 			
 			animate()
 		
@@ -858,6 +927,7 @@ func _physics_process(delta: float) -> void:
 	# Check if remote controlled player
 	if not entity.on_server:
 		show_ground_effects()
+		show_wall_effects()
 		show_slide_effects()
 		show_swimming_effects()
 		show_run_effects()

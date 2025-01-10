@@ -119,9 +119,10 @@ func destroy_chunk(chunk_index: Vector2i) -> void:
 	if chunk == null:
 		return
 	
-	# Wait for chunk to finish drawing
-	if chunk.redrawing_chunk:
-		await chunk.chunk_done_drawing
+	chunk.redrawing_chunk = false
+	
+	if chunk.drawing_thread != null:
+		chunk.drawing_thread.wait_to_finish()
 	
 	chunk_map.erase(chunk_index)
 	chunk.queue_free()

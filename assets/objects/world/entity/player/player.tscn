@@ -315,13 +315,15 @@ _data = {
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_hettc"]
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("entity", "floor_point", "ceiling_point", "username_display", "coyote_timer", "jump_timer", "modify_block_timer", "slide_effect_timer", "punch_timer", "bubble_timer", "run_start_timer", "run_effect_timer")]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("entity", "username_display", "floor_point", "ceiling_point", "wall_point", "coyote_timer", "jump_timer", "modify_block_timer", "slide_effect_timer", "punch_timer", "bubble_timer", "run_start_timer", "run_effect_timer")]
 collision_mask = 2
+safe_margin = 0.1
 script = ExtResource("1_7uomn")
 entity = NodePath("GameEntity")
+username_display = NodePath("UsernameDisplay")
 floor_point = NodePath("FloorPoint")
 ceiling_point = NodePath("CeilingPoint")
-username_display = NodePath("UsernameDisplay")
+wall_point = NodePath("WallPoint")
 coyote_timer = NodePath("CoyoteTimer")
 jump_timer = NodePath("JumpTimer")
 modify_block_timer = NodePath("ModifyBlockTimer")
@@ -350,7 +352,7 @@ position = Vector2(0, -1)
 texture = ExtResource("3_4xs5l")
 hframes = 4
 vframes = 5
-frame = 4
+frame = 3
 script = ExtResource("4_faxp7")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -362,6 +364,9 @@ position = Vector2(0, 6)
 
 [node name="CeilingPoint" type="Node2D" parent="."]
 position = Vector2(0, -7)
+
+[node name="WallPoint" type="Node2D" parent="."]
+position = Vector2(4, 0)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -379,7 +384,7 @@ one_shot = true
 
 [node name="ModifyBlockTimer" type="Timer" parent="."]
 process_callback = 0
-wait_time = 0.4
+wait_time = 0.45
 one_shot = true
 
 [node name="SlideEffectTimer" type="Timer" parent="."]

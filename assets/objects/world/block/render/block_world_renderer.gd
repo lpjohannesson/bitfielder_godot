@@ -1,6 +1,12 @@
 extends Node
 class_name BlockWorldRenderer
 
+class BlockSpriteSet:
+	var front_sprites: Array[BlockSprite] = []
+	var above_entity_sprites: Array[BlockSprite] = []
+	var back_sprites: Array[BlockSprite] = []
+	var shadow_sprites: Array[BlockSprite] = []
+
 @export var world: GameWorld
 @export var particle_scene: PackedScene
 
@@ -21,15 +27,12 @@ func draw_block_sprites(layer: Node2D, sprites: Array[BlockSprite]) -> void:
 			sprite.region)
 
 func redraw_chunk_async(
-		thread: Thread,
 		chunk: BlockChunk,
 		block_sample: BlockSample) -> void:
 	
 	mutex.lock()
 	
-	var front_sprites: Array[BlockSprite] = []
-	var back_sprites: Array[BlockSprite] = []
-	var shadow_sprites: Array[BlockSprite] = []
+	var sprites := BlockSpriteSet.new()
 	
 	var render_data := BlockRenderData.new()
 	
@@ -59,20 +62,24 @@ func redraw_chunk_async(
 				render_data.block_id = front_id
 				render_data.block = front_block
 				render_data.on_front_layer = true
-				render_data.sprites = front_sprites
+				
+				if not front_block.is_partial or front_block.draws_above_entities:
+					render_data.sprites = sprites.above_entity_sprites
+				else:
+					render_data.sprites = sprites.front_sprites
 				
 				front_block.renderer.draw_block(render_data)
 				
 				# Draw shadow
 				if front_block.casts_shadow:
 					if is_back_drawn:
-						render_data.sprites = shadow_sprites
+						render_data.sprites = sprites.shadow_sprites
 						front_block.renderer.draw_block(render_data)
 					else:
 						var rect_sprite := BlockSprite.new()
 						rect_sprite.rect = Rect2(chunk_position, Vector2.ONE)
 						
-						shadow_sprites.push_back(rect_sprite)
+						sprites.shadow_sprites.push_back(rect_sprite)
 			
 			# Draw back
 			if is_back_drawn:
@@ -80,48 +87,47 @@ func redraw_chunk_async(
 					render_data.block_id = back_id
 					render_data.block = back_block
 					render_data.on_front_layer = false
-					render_data.sprites = back_sprites
+					render_data.sprites = sprites.back_sprites
 					
 					back_block.renderer.draw_block(render_data)
 	
-	call_deferred(
-		"end_redraw_chunk_async",
-		thread,
-		chunk,
-		front_sprites,
-		back_sprites,
-		shadow_sprites)
+	call_deferred("end_redraw_chunk_async", chunk, sprites)
 	
 	mutex.unlock()
 
-func end_redraw_chunk_async(
-		thread: Thread,
-		chunk: BlockChunk,
-		front_sprites: Array[BlockSprite],
-		back_sprites: Array[BlockSprite],
-		shadow_sprites: Array[BlockSprite]) -> void:
-	
-	thread.wait_to_finish()
+func end_redraw_chunk_async(chunk: BlockChunk, sprites: BlockSpriteSet) -> void:
+	chunk.drawing_thread.wait_to_finish()
+	chunk.drawing_thread = null
 	
 	connect_chunk_signal(chunk.front_layer.draw, func() -> void:
-		draw_block_sprites(chunk.front_layer, front_sprites))
+		draw_block_sprites(chunk.front_layer, sprites.front_sprites))
 	
 	connect_chunk_signal(chunk.back_layer.draw, func() -> void:
-		draw_block_sprites(chunk.back_layer, back_sprites))
+		draw_block_sprites(chunk.back_layer, sprites.back_sprites))
+	
+	connect_chunk_signal(chunk.above_entity_layer.draw, func() -> void:
+		draw_block_sprites(chunk.above_entity_layer, sprites.above_entity_sprites))
 	
 	connect_chunk_signal(chunk.shadow_layer.draw, func() -> void:
-		draw_block_sprites(chunk.shadow_layer, shadow_sprites))
+		draw_block_sprites(chunk.shadow_layer, sprites.shadow_sprites))
 	
 	chunk.redraw_chunk()
 
 func redraw_chunk_deferred(chunk: BlockChunk) -> void:
+	# Used when chunk is deleted
+	if not chunk.redrawing_chunk:
+		return
+	
 	var block_sample := BlockSample.sample_chunks(
 		chunk.chunk_index - Vector2i.ONE,
 		chunk.chunk_index + Vector2i.ONE,
 		world.blocks)
 	
-	var thread := Thread.new()
-	thread.start(redraw_chunk_async.bind(thread, chunk, block_sample))
+	if chunk.drawing_thread != null:
+		chunk.drawing_thread.wait_to_finish()
+	
+	chunk.drawing_thread = Thread.new()
+	chunk.drawing_thread.start(redraw_chunk_async.bind(chunk, block_sample))
 
 func redraw_chunk(chunk: BlockChunk) -> void:
 	if chunk.redrawing_chunk:

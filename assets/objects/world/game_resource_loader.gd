@@ -9,6 +9,10 @@ static func load_resources(
 	var resource_paths := DirAccess.get_files_at(folder_path)
 	
 	for resource_path in resource_paths:
+		# Change path for release
+		if resource_path.ends_with(".remap"):
+			resource_path = resource_path.replace(".remap", "")
+		
 		var resource_full_path := folder_path.path_join(resource_path)
 		
 		var resource := load(resource_full_path)

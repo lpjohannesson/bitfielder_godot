@@ -13,6 +13,7 @@ class_name BlockType
 @export var is_climbable := false
 @export var is_swimmable := false
 
+@export var draws_above_entities := false
 @export var is_partial := false
 @export var is_transparent := false
 @export var casts_shadow := true

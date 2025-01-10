@@ -141,6 +141,7 @@ animations = [{
 }]
 
 [node name="EffectSprite" type="AnimatedSprite2D"]
+z_index = 2
 sprite_frames = SubResource("SpriteFrames_2qh1e")
 animation = &"splash"
 script = ExtResource("4_wr8tn")
