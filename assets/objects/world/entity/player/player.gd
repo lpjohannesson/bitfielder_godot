@@ -7,7 +7,7 @@ const GROUND_WALK_ACCELERATION := 400.0
 const GROUND_RUN_ACCELERATION := 450.0
 const AIR_ACCELERATION := 250.0
 
-const GROUND_WALK_SPEED := 120.0
+const GROUND_WALK_SPEED := 110.0
 const GROUND_RUN_SPEED := 180.0
 
 const WATER_ACCELERATION := 200.0
@@ -52,6 +52,7 @@ const MODIFY_BLOCK_TWEEN_TIME := 0.3
 
 var move_direction := 0.0
 var running := false
+var backflipping := false
 
 var block_place_direction = 0.0
 var midstopped := false
@@ -107,13 +108,14 @@ func aim() -> void:
 		if move_direction != 0.0:
 			entity.sprite.flip_h = move_direction < 0.0
 	else:
-		if is_on_wall():
-			entity.sprite.flip_h = get_wall_normal().x < 0.0
-		else:
-			var move_just_pressed := get_move_just_pressed()
-			
-			if move_just_pressed != 0.0:
-				entity.sprite.flip_h = move_just_pressed < 0.0
+		if not backflipping:
+			if is_on_wall():
+				entity.sprite.flip_h = get_wall_normal().x < 0.0
+			else:
+				var move_just_pressed := get_move_just_pressed()
+				
+				if move_just_pressed != 0.0:
+					entity.sprite.flip_h = move_just_pressed < 0.0
 	
 	if player_state != PlayerState.MODIFYING_BLOCK:
 		block_place_direction = get_look_direction()
@@ -167,6 +169,12 @@ func try_jump() -> void:
 		return
 	
 	jump(JUMP_VELOCITY)
+	
+	if get_is_sliding():
+		backflipping = true
+		velocity.x = move_direction * GROUND_WALK_SPEED
+	else:
+		backflipping = false
 
 func midstop_jump():
 	if velocity.y < 0.0:
@@ -175,7 +183,6 @@ func midstop_jump():
 			velocity.y *= JUMP_MIDSTOP
 	else:
 		midstopped = true
-	
 
 func punch() -> void:
 	if not punch_timer.is_stopped():
@@ -265,10 +272,13 @@ func animate() -> void:
 		if is_on_wall():
 			animation_name = "slide"
 		else:
-			if velocity.y < 0.0:
-				animation_name = "jump"
+			if backflipping:
+				animation_name = "backflip"
 			else:
-				animation_name = "fall"
+				if velocity.y < 0.0:
+					animation_name = "jump"
+				else:
+					animation_name = "fall"
 	
 	entity.animation_player.play(animation_name)
 
@@ -348,15 +358,16 @@ func is_back_block_placeable(block_position: Vector2i) -> bool:
 func change_player_state(new_state: PlayerState) -> void:
 	if new_state != PlayerState.GROUND:
 		running = false
+		backflipping = false
 	
 	player_state = new_state
 
 func end_modify_block_tween() -> void:
 	modify_block_tween = null
+	entity.collider.disabled = false
 
 func end_modify_block() -> void:
 	change_player_state(PlayerState.GROUND)
-	entity.collider.disabled = false
 
 func modify_block(
 		address: BlockAddress,
@@ -820,6 +831,8 @@ func try_wall_jump() -> void:
 	if not is_on_wall():
 		return
 	
+	backflipping = false
+	
 	if not player_input.is_action_just_pressed("jump"):
 		return
 	
@@ -829,6 +842,28 @@ func try_wall_jump() -> void:
 	entity.sprite.flip_h = wall_x < 0.0
 	
 	jump(JUMP_VELOCITY)
+
+func update_modify_block() -> void:
+	if modify_block_tween != null:
+		return
+	
+	# Jump midair after block
+	if player_input.is_action_pressed("jump"):
+		jump(JUMP_VELOCITY)
+		end_modify_block()
+		return
+	
+	if modify_block_timer.is_stopped():
+		end_modify_block()
+		return
+	
+	# Check if climbing
+	var blocks := entity.get_game_world().blocks
+	var interaction_block := get_interaction_block(center_block_position, blocks)
+
+	if interaction_block != null:
+		if try_climbing(interaction_block, blocks):
+			return
 
 func controls(delta: float) -> void:
 	aim()
@@ -855,25 +890,19 @@ func controls(delta: float) -> void:
 			else:
 				walk(GROUND_WALK_SPEED, GROUND_WALK_ACCELERATION, delta)
 			
-			try_jump()
-			
 			if is_on_floor():
 				coyote_timer.start()
+				backflipping = false
 			else:
 				midstop_jump()
 				try_wall_jump()
 			
+			try_jump()
+			
 			animate()
 		
 		PlayerState.MODIFYING_BLOCK:
-			if modify_block_tween == null:
-				# Jump midair after block
-				if player_input.is_action_pressed("jump"):
-					jump(JUMP_VELOCITY)
-					end_modify_block()
-			
-			if modify_block_timer.is_stopped():
-				end_modify_block()
+			update_modify_block()
 		
 		PlayerState.CLIMBING:
 			climb()
@@ -882,11 +911,6 @@ func controls(delta: float) -> void:
 			swim(delta)
 	
 	move_and_slide()
-
-func stop_modify_block_tween() -> void:
-	if modify_block_tween != null:
-		modify_block_tween.kill()
-		modify_block_tween = null
 
 func update_center_block_position() -> void:
 	last_center_block_position = center_block_position
@@ -918,8 +942,13 @@ func show_run_effects() -> void:
 	
 	run_effect_timer.start()
 
+func player_teleported() -> void:
+	if modify_block_tween != null:
+		modify_block_tween.kill()
+		end_modify_block_tween()
+
 func _ready() -> void:
-	entity.position_changed.connect(stop_modify_block_tween)
+	entity.position_changed.connect(player_teleported)
 
 func _physics_process(delta: float) -> void:
 	center_block_position = entity.get_game_world().blocks.world_to_block(global_position)

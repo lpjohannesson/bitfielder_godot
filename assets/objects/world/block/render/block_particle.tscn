@@ -4,6 +4,7 @@
 [ext_resource type="Script" path="res://assets/objects/world/block/render/block_particle.gd" id="2_lb80w"]
 
 [node name="BlockParticle" type="Node2D" node_paths=PackedStringArray("sprite")]
+z_index = 2
 script = ExtResource("2_lb80w")
 sprite = NodePath("Sprite2D")
 
