@@ -262,7 +262,7 @@ func is_block_ground(block_id: int) -> bool:
 	var block := block_types[block_id]
 	return not block.needs_ground and block.is_ground
 
-func is_block_specifier_grounded(block_specifier: BlockSpecifier) -> bool:
+func is_block_placement_grounded(block_specifier: BlockSpecifier) -> bool:
 	var block := block_types[block_specifier.block_id]
 	
 	if not block.needs_ground:
@@ -287,7 +287,7 @@ func is_block_placeable(
 		block_specifier: BlockSpecifier,
 		modifying_entity: Node) -> bool:
 	
-	if not is_block_specifier_grounded(block_specifier):
+	if not is_block_placement_grounded(block_specifier):
 		return false
 	
 	if block_specifier.on_front_layer:
