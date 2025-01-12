@@ -5,6 +5,7 @@
 [node name="ItemDisplay" type="Control" node_paths=PackedStringArray("texture_display", "arrow_point")]
 layout_mode = 3
 anchors_preset = 0
+mouse_filter = 1
 script = ExtResource("1_gacnf")
 texture_display = NodePath("TextureDisplay")
 arrow_point = NodePath("ArrowPoint")

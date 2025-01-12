@@ -30,6 +30,9 @@ static var instance: GameScene
 
 @export var sounds: Array[WorldSound]
 
+@export var cursor_image: Texture2D
+@export var cursor_disabled_image: Texture2D
+
 @onready var viewport := get_viewport()
 
 var server: ServerConnection
@@ -38,6 +41,11 @@ var player: Player
 var paused := false
 
 var sound_map := {}
+
+var can_use_cursor_item := false
+
+var using_cursor_item := false
+var cursor_use_data := ItemUseData.new()
 
 func return_to_menu() -> void:
 	get_tree().change_scene_to_file("res://assets/scenes/menu_scene.tscn")
@@ -194,6 +202,30 @@ func try_select_items() -> void:
 		if item_page_timer.is_stopped():
 			item_page_timer.start()
 
+func use_cursor_item() -> void:
+	if not can_use_cursor_item:
+		return
+	
+	if not using_cursor_item:
+		return
+	
+	player.use_item(cursor_use_data)
+	
+	cursor_use_data.just_pressed = false
+
+func start_use_cursor_item() -> void:
+	var address := world.blocks.get_block_address(cursor_use_data.block_position)
+	
+	if address != null:
+		var block_id := address.chunk.get_layer(cursor_use_data.on_front_layer)[address.block_index]
+		cursor_use_data.breaking = block_id != 0
+	
+	cursor_use_data.player = player
+	cursor_use_data.just_pressed = true
+	cursor_use_data.clicked = true
+	
+	using_cursor_item = true
+
 func resize() -> void:
 	shadow_viewport.size = viewport.get_visible_rect().size
 	
@@ -213,11 +245,25 @@ func _ready() -> void:
 	for sound in sounds:
 		sound_map[sound.sound_name] = sound.sound_stream
 
+func _exit_tree() -> void:
+	Input.set_custom_mouse_cursor(cursor_image)
+
 func _process(_delta: float) -> void:
 	shadow_viewport.canvas_transform = \
 		viewport.canvas_transform * SHADOW_TRANSFORM
 	
 	try_select_items()
+	
+	if player != null:
+		cursor_use_data.block_position = world.blocks.world_to_block(get_global_mouse_position())
+		can_use_cursor_item = player.is_block_in_range(cursor_use_data.block_position)
+		
+		if hud.hud_focused or can_use_cursor_item:
+			Input.set_custom_mouse_cursor(cursor_image)
+		else:
+			Input.set_custom_mouse_cursor(cursor_disabled_image)
+		
+		use_cursor_item()
 
 func _on_player_position_timer_timeout() -> void:
 	if player != null:
@@ -231,11 +277,26 @@ func _unhandled_input(event: InputEvent) -> void:
 	
 	match event.button_index:
 		MOUSE_BUTTON_LEFT:
-			action = "use_front"
+			if event.pressed and can_use_cursor_item:
+				cursor_use_data.on_front_layer = true
+				start_use_cursor_item()
+				return
+			else:
+				action = "use_front"
+				using_cursor_item = false
+			
 		MOUSE_BUTTON_RIGHT:
-			action = "use_back"
+			if event.pressed and can_use_cursor_item:
+				cursor_use_data.on_front_layer = false
+				start_use_cursor_item()
+				return
+			else:
+				action = "use_back"
+				using_cursor_item = false
+		
 		MOUSE_BUTTON_WHEEL_UP:
 			action = "select_left"
+		
 		MOUSE_BUTTON_WHEEL_DOWN:
 			action = "select_right"
 		_:

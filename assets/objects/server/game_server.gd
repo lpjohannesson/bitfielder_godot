@@ -194,6 +194,44 @@ func select_player_item(packet: GamePacket, client: ClientConnection) -> void:
 	
 	client.player.inventory.selected_index = selected_index
 
+func use_player_cursor_item(packet: GamePacket, client: ClientConnection) -> void:
+	if packet.data.size() != 3:
+		return
+	
+	if not packet.data[0] is Vector2i:
+		return
+	
+	if not packet.data[1] is bool:
+		return
+	
+	if not packet.data[2] is bool:
+		return
+	
+	var block_position: Vector2i = packet.data[0]
+	var on_front_layer: bool = packet.data[1]
+	var just_pressed: bool = packet.data[2]
+	
+	if not client.player.is_block_in_range(block_position):
+		return
+	
+	var use_data := ItemUseData.new()
+	
+	var address := world.blocks.get_block_address(block_position)
+	
+	if address != null:
+		var block_id := address.chunk.get_layer(on_front_layer)[address.block_index]
+		use_data.breaking = block_id != 0
+	
+	use_data.player = client.player
+	use_data.on_front_layer = on_front_layer
+	use_data.just_pressed = true
+	
+	use_data.clicked = true
+	use_data.block_position = block_position
+	
+	client.player.aim_block_placement(block_position)
+	client.player.use_item(use_data)
+
 func get_change_player_skin_packet(client: ClientConnection) -> GamePacket:
 	return GamePacket.create_packet(
 		Packets.ServerPacket.CHANGE_PLAYER_SKIN,
@@ -336,6 +374,9 @@ func recieve_packet(packet: GamePacket, client: ClientConnection) -> void:
 		
 		Packets.ClientPacket.SELECT_ITEM:
 			select_player_item(packet, client)
+		
+		Packets.ClientPacket.USE_CURSOR_ITEM:
+			use_player_cursor_item(packet, client)
 		
 		Packets.ClientPacket.CHANGE_SKIN:
 			change_player_skin(packet, client)

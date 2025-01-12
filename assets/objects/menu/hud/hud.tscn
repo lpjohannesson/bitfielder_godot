@@ -11,6 +11,14 @@ script = ExtResource("1_kns3o")
 item_bar = NodePath("ItemBar")
 
 [node name="ItemBar" parent="." instance=ExtResource("1_ppg0x")]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="TestIcons" type="TextureRect" parent="."]
 visible = false
@@ -20,3 +28,6 @@ offset_top = -23.0
 offset_right = 83.0
 offset_bottom = -11.0
 texture = ExtResource("2_7uup0")
+
+[connection signal="mouse_entered" from="ItemBar" to="." method="_on_item_bar_mouse_entered"]
+[connection signal="mouse_exited" from="ItemBar" to="." method="_on_item_bar_mouse_exited"]

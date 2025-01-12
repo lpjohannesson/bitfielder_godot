@@ -1,7 +1,7 @@
 extends CharacterBody2D
 class_name Player
 
-enum PlayerState { GROUND, MODIFYING_BLOCK, CLIMBING, SWIMMING }
+enum PlayerState { GROUND, MODIFYING_BUTTON_BLOCK, CLIMBING, SWIMMING }
 
 const GROUND_WALK_ACCELERATION := 400.0
 const GROUND_RUN_ACCELERATION := 450.0
@@ -14,14 +14,14 @@ const WATER_ACCELERATION := 200.0
 const WATER_SPEED := 75.0
 const WATER_GROUND_SPEED := 20.0
 
-const GRAVITY_ACCELERATION := 300.0
+const GRAVITY_ACCELERATION := 350.0
 const GRAVITY_SPEED := 300.0
 const WALL_GRAVITY_SPEED := 70.0
 
 const WATER_GRAVITY_ACCELERATION := 100.0
 const WATER_GRAVITY_SPEED := 70.0
 
-const JUMP_VELOCITY := 170.0
+const JUMP_VELOCITY := 180.0
 const WATER_JUMP_VELOCITY := 100.0
 
 const JUMP_MIDSTOP := 0.5
@@ -29,6 +29,8 @@ const CLIMB_SPEED := 50.0
 const CLIMB_JUMP_SPEED := 50.0
 const GROUND_VOLUME := -12.0
 const MODIFY_BLOCK_TWEEN_TIME := 0.3
+
+const BLOCK_PLACE_EXTENTS := Vector2i(4, 4)
 
 @export var entity: GameEntity
 @export var username_display: UsernameDisplay
@@ -39,7 +41,8 @@ const MODIFY_BLOCK_TWEEN_TIME := 0.3
 
 @export var coyote_timer: Timer
 @export var jump_timer: Timer
-@export var modify_block_timer: Timer
+@export var modify_button_block_timer: Timer
+@export var modify_cursor_block_timer: Timer
 @export var slide_effect_timer: Timer
 @export var punch_timer: Timer
 @export var bubble_timer: Timer
@@ -69,6 +72,13 @@ var last_is_sliding := false
 
 var player_input := PlayerInput.new()
 var player_state := PlayerState.GROUND
+
+func is_block_in_range(block_position: Vector2i) -> bool:
+	var block_extents := Rect2i(
+		center_block_position - BLOCK_PLACE_EXTENTS,
+		BLOCK_PLACE_EXTENTS * 2 + Vector2i.ONE)
+	
+	return block_extents.has_point(block_position)
 
 func show_username(new_username: String) -> void:
 	username = new_username
@@ -117,7 +127,7 @@ func aim() -> void:
 				if move_just_pressed != 0.0:
 					entity.sprite.flip_h = move_just_pressed < 0.0
 	
-	if player_state != PlayerState.MODIFYING_BLOCK:
+	if player_state != PlayerState.MODIFYING_BUTTON_BLOCK:
 		block_place_direction = get_look_direction()
 
 func try_jump_down() -> bool:
@@ -184,14 +194,28 @@ func midstop_jump():
 	else:
 		midstopped = true
 
-func punch() -> void:
+func punch(look_direction: float) -> void:
 	if not punch_timer.is_stopped():
 		return
 	
-	play_punch_animation()
+	play_punch_animation(look_direction)
 	punch_timer.start()
 	
 	entity.play_sound("punch")
+
+func use_item(use_data: ItemUseData) -> void:
+	var item_slot := inventory.items[inventory.selected_index]
+	
+	if item_slot.item_id == 0:
+		modify_block_or_punch(0, use_data)
+		return
+	
+	var item := entity.get_game_world().items.item_types[item_slot.item_id]
+	
+	if item.properties == null:
+		return
+	
+	item.properties.use_item(use_data)
 
 func try_use_item() -> void:
 	if inventory == null:
@@ -216,27 +240,18 @@ func try_use_item() -> void:
 	just_pressed = player_input.is_action_just_pressed(pressed_action)
 	
 	var use_data := ItemUseData.new()
+	
 	use_data.player = self
 	use_data.on_front_layer = on_front_layer
 	use_data.just_pressed = just_pressed
 	
-	var item_slot := inventory.items[inventory.selected_index]
-	
-	if item_slot.item_id == 0:
-		modify_block_or_punch(0, use_data)
-		return
-	
-	var item := entity.get_game_world().items.item_types[item_slot.item_id]
-	
-	if item.properties == null:
-		return
-	
-	item.properties.use_item(use_data)
+	use_item(use_data)
 
-func play_punch_animation() -> void:
-	entity.animation_player.stop()
+func play_punch_animation(look_direction: float) -> void:
+	if player_state == PlayerState.CLIMBING:
+		return
 	
-	var look_direction := get_look_direction()
+	entity.animation_player.stop()
 	
 	if look_direction < 0.0:
 		entity.animation_player.play("punch_up")
@@ -244,6 +259,12 @@ func play_punch_animation() -> void:
 		entity.animation_player.play("punch_down")
 	else:
 		entity.animation_player.play("punch_forward")
+
+func aim_block_placement(block_position: Vector2i) -> void:
+	var block_distance := block_position - center_block_position
+	
+	if block_distance.x != 0:
+		entity.sprite.flip_h = block_distance.x < 0
 
 func animate() -> void:
 	if entity.animation_player.current_animation.begins_with("punch_"):
@@ -282,79 +303,6 @@ func animate() -> void:
 	
 	entity.animation_player.play(animation_name)
 
-func block_has_neighbors(block_position: Vector2i, on_front_layer: bool) -> bool:
-	var blocks := entity.get_game_world().blocks
-	
-	for offset in Direction.NEIGHBOR_OFFSETS_FOUR:
-		var neighbor_position := block_position + offset
-		var neighbor_address := blocks.get_block_address(neighbor_position)
-		
-		if neighbor_address == null:
-			continue
-		
-		var neighbor_front_id := \
-			neighbor_address.chunk.front_ids[neighbor_address.block_index]
-		
-		if is_block_attachable(neighbor_front_id):
-			return true
-		
-		if not on_front_layer:
-			var neighbor_back_id := \
-				neighbor_address.chunk.back_ids[neighbor_address.block_index]
-			
-			if is_block_attachable(neighbor_back_id):
-				return true
-	
-	return false
-
-func is_entity_above_block(block_position: Vector2i) -> bool:
-	var blocks := entity.get_game_world().blocks
-	
-	var shape_rid := PhysicsServer2D.rectangle_shape_create()
-	var shape_extents := blocks.scale * 0.5
-	PhysicsServer2D.shape_set_data(shape_rid, shape_extents)
-	
-	var params := PhysicsShapeQueryParameters2D.new()
-	params.shape_rid = shape_rid
-	params.transform = Transform2D(0.0, blocks.block_to_world(block_position, true))
-	params.collision_mask = 1
-	
-	var space_state := get_world_2d().direct_space_state
-	var collisions := space_state.intersect_shape(params)
-	
-	PhysicsServer2D.free_rid(shape_rid)
-	
-	for collision in collisions:
-		var collider: Node = collision["collider"]
-		
-		if collider == self:
-			continue
-		
-		return true
-	
-	return false
-
-func is_block_attachable(block_id: int) -> bool:
-	return block_id != 0
-
-func is_front_block_placeable(address: BlockAddress, block_position: Vector2i) -> bool:
-	if is_entity_above_block(block_position):
-		return false
-	
-	if is_block_attachable(address.chunk.back_ids[address.block_index]):
-		return true
-	
-	if block_has_neighbors(block_position, true):
-		return true
-	
-	return false
-
-func is_back_block_placeable(block_position: Vector2i) -> bool:
-	if block_has_neighbors(block_position, false):
-		return true
-	
-	return false
-
 func change_player_state(new_state: PlayerState) -> void:
 	if new_state != PlayerState.GROUND:
 		running = false
@@ -362,14 +310,14 @@ func change_player_state(new_state: PlayerState) -> void:
 	
 	player_state = new_state
 
-func end_modify_block_tween() -> void:
+func end_modify_button_block_tween() -> void:
 	modify_block_tween = null
 	entity.collider.disabled = false
 
-func end_modify_block() -> void:
+func end_modify_button_block() -> void:
 	change_player_state(PlayerState.GROUND)
 
-func modify_block(
+func modify_button_block(
 		address: BlockAddress,
 		block_specifier: BlockSpecifier,
 		blocks: BlockWorld,
@@ -388,30 +336,15 @@ func modify_block(
 		blocks.block_to_world(next_block_position, true),
 		MODIFY_BLOCK_TWEEN_TIME)
 	
-	modify_block_tween.finished.connect(end_modify_block_tween)
+	modify_block_tween.finished.connect(end_modify_button_block_tween)
 	
-	play_punch_animation()
-	entity.animation_player.queue("fall")
+	change_player_state(PlayerState.MODIFYING_BUTTON_BLOCK)
 	
-	modify_block_timer.start()
+	modify_button_block_timer.start()
 	entity.collider.disabled = true
-	
-	change_player_state(PlayerState.MODIFYING_BLOCK)
 	
 	# Update block
 	entity.update_block(block_specifier, address)
-
-func is_block_passable(
-		address: BlockAddress,
-		blocks: BlockWorld) -> bool:
-	
-	if address == null:
-		return true
-	
-	var front_id := address.chunk.front_ids[address.block_index]
-	var front_block := blocks.block_types[front_id]
-	
-	return not front_block.is_solid or front_block.is_one_way
 
 func cast_block(look_offset: Vector2) -> BlockCollider:
 	var space_state := get_world_2d().direct_space_state
@@ -432,7 +365,7 @@ func cast_block(look_offset: Vector2) -> BlockCollider:
 	
 	return collider
 
-func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
+func try_modify_button_block(block_id: int, on_front_layer: bool) -> bool:
 	if modify_block_tween != null:
 		return false
 	
@@ -457,7 +390,7 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	# Check center
 	var center_address := blocks.get_block_address(center_block_position)
 	
-	if not is_block_passable(center_address, blocks):
+	if not blocks.is_block_address_passable(center_address):
 		if not on_front_layer:
 			return false
 		
@@ -472,7 +405,7 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 		
 		var cast_address := blocks.get_block_address(cast_position)
 		
-		modify_block(
+		modify_button_block(
 			cast_address,
 			block_specifier,
 			blocks,
@@ -484,14 +417,14 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	var forward_block_position := center_block_position + look_offset
 	var forward_address := blocks.get_block_address(forward_block_position)
 	
-	if not is_block_passable(forward_address, blocks):
+	if not blocks.is_block_address_passable(forward_address):
 		if not on_front_layer:
 			return false
 		
 		# Break forward
 		block_specifier.block_position = forward_block_position
 		
-		modify_block(
+		modify_button_block(
 			forward_address,
 			block_specifier,
 			blocks,
@@ -503,32 +436,21 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	if center_address == null:
 		return false
 	
+	# Place or break center
+	block_specifier.block_position = center_block_position
+	
 	# Check if on air
 	if block_specifier.read_address(center_address) == 0:
-		# Skip if not placing
 		if block_id == 0:
 			return false
 		
-		# Skip if can't place block
-		if on_front_layer:
-			if not is_front_block_placeable(
-					center_address,
-					center_block_position):
-				
-				return false
-		else:
-			if not is_back_block_placeable(
-					center_block_position):
-				
-				return false
+		if not blocks.is_block_placeable(center_address, block_specifier, self):
+			return false
 		
 		# Set placing block
 		block_specifier.block_id = block_id
 	
-	# Place or break center
-	block_specifier.block_position = center_block_position
-	
-	modify_block(
+	modify_button_block(
 		center_address,
 		block_specifier,
 		blocks,
@@ -536,11 +458,84 @@ func try_modify_block(block_id: int, on_front_layer: bool) -> bool:
 	
 	return true
 
-func modify_block_or_punch(block_id: int, use_data: ItemUseData) -> void:
-	var modify_success := try_modify_block(block_id, use_data.on_front_layer)
+func try_modify_cursor_block(block_id: int, use_data: ItemUseData) -> bool:
+	if player_state == PlayerState.MODIFYING_BUTTON_BLOCK:
+		return false
 	
-	if not modify_success and use_data.just_pressed:
-		punch()
+	if not modify_cursor_block_timer.is_stopped():
+		return false
+	
+	var blocks := entity.get_game_world().blocks
+	var address := blocks.get_block_address(use_data.block_position)
+	
+	if address == null:
+		return false
+	
+	# Check if back block is covered
+	if not use_data.on_front_layer:
+		var front_id := address.chunk.front_ids[address.block_index]
+		
+		if not blocks.is_block_passable(front_id):
+			return false
+	
+	var block_specifier := BlockSpecifier.new()
+	
+	block_specifier.block_position = use_data.block_position
+	block_specifier.on_front_layer = use_data.on_front_layer
+	
+	var layer := address.chunk.get_layer(use_data.on_front_layer)
+	var old_block_id := layer[address.block_index]
+	
+	if old_block_id == 0:
+		if use_data.breaking:
+			return false
+		
+		if block_id == 0:
+			return false
+		
+		block_specifier.block_id = block_id
+		
+		if not blocks.is_block_placeable(
+				address,
+				block_specifier,
+				null):
+			
+			return false
+	else:
+		if not use_data.breaking:
+			return false
+		
+		block_specifier.block_id = 0
+	
+	entity.update_block(block_specifier, address)
+	
+	if not entity.on_server:
+		var packet := GamePacket.create_packet(
+			Packets.ClientPacket.USE_CURSOR_ITEM,
+			[use_data.block_position, use_data.on_front_layer, use_data.just_pressed]
+		)
+		
+		GameScene.instance.server.send_packet(packet)
+	
+	modify_cursor_block_timer.start()
+	
+	return true
+
+func modify_block_or_punch(block_id: int, use_data: ItemUseData) -> void:
+	if use_data.clicked:
+		aim_block_placement(use_data.block_position)
+		
+		if try_modify_cursor_block(block_id, use_data):
+			play_punch_animation(get_look_direction())
+			return
+	else:
+		if try_modify_button_block(block_id, use_data.on_front_layer):
+			play_punch_animation(get_look_direction())
+			entity.animation_player.queue("fall")
+			return
+	
+	if use_data.just_pressed:
+		punch(get_look_direction())
 
 func show_wall_effects() -> void:
 	if is_on_floor():
@@ -843,18 +838,18 @@ func try_wall_jump() -> void:
 	
 	jump(JUMP_VELOCITY)
 
-func update_modify_block() -> void:
+func update_modify_button_block() -> void:
 	if modify_block_tween != null:
 		return
 	
 	# Jump midair after block
 	if player_input.is_action_pressed("jump"):
 		jump(JUMP_VELOCITY)
-		end_modify_block()
+		end_modify_button_block()
 		return
 	
-	if modify_block_timer.is_stopped():
-		end_modify_block()
+	if modify_button_block_timer.is_stopped():
+		end_modify_button_block()
 		return
 	
 	# Check if climbing
@@ -901,8 +896,8 @@ func controls(delta: float) -> void:
 			
 			animate()
 		
-		PlayerState.MODIFYING_BLOCK:
-			update_modify_block()
+		PlayerState.MODIFYING_BUTTON_BLOCK:
+			update_modify_button_block()
 		
 		PlayerState.CLIMBING:
 			climb()
@@ -945,7 +940,7 @@ func show_run_effects() -> void:
 func player_teleported() -> void:
 	if modify_block_tween != null:
 		modify_block_tween.kill()
-		end_modify_block_tween()
+		end_modify_button_block_tween()
 
 func _ready() -> void:
 	entity.position_changed.connect(player_teleported)

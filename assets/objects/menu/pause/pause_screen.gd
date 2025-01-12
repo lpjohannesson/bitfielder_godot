@@ -15,6 +15,7 @@ func pause_game() -> void:
 	if scene.paused:
 		starting_button.grab_focus()
 		scene.input_manager.reset_inputs()
+		Input.set_custom_mouse_cursor(scene.cursor_image)
 
 func _on_continue_button_pressed() -> void:
 	continue_selected.emit()

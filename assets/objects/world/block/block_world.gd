@@ -165,6 +165,102 @@ func get_block_id(block_name: String) -> int:
 func set_block_name(block: BlockType, block_name: String) -> void:
 	block.block_name = block_name
 
+func block_has_neighbors(block_position: Vector2i, on_front_layer: bool) -> bool:
+	for offset in Direction.NEIGHBOR_OFFSETS_FOUR:
+		var neighbor_position := block_position + offset
+		var neighbor_address := get_block_address(neighbor_position)
+		
+		if neighbor_address == null:
+			continue
+		
+		var neighbor_front_id := \
+			neighbor_address.chunk.front_ids[neighbor_address.block_index]
+		
+		if is_block_attachable(neighbor_front_id):
+			return true
+		
+		if not on_front_layer:
+			var neighbor_back_id := \
+				neighbor_address.chunk.back_ids[neighbor_address.block_index]
+			
+			if is_block_attachable(neighbor_back_id):
+				return true
+	
+	return false
+
+func is_entity_above_block(block_position: Vector2i, skip_entity: Node) -> bool:
+	var shape_rid := PhysicsServer2D.rectangle_shape_create()
+	var shape_extents := scale * 0.5
+	PhysicsServer2D.shape_set_data(shape_rid, shape_extents)
+	
+	var params := PhysicsShapeQueryParameters2D.new()
+	params.shape_rid = shape_rid
+	params.transform = Transform2D(0.0, block_to_world(block_position, true))
+	params.collision_mask = 1
+	
+	var space_state := get_world_2d().direct_space_state
+	var collisions := space_state.intersect_shape(params)
+	
+	PhysicsServer2D.free_rid(shape_rid)
+	
+	for collision in collisions:
+		var collider: Node = collision["collider"]
+		
+		if collider == skip_entity:
+			continue
+		
+		return true
+	
+	return false
+
+func is_block_attachable(block_id: int) -> bool:
+	return block_id != 0
+
+func is_block_passable(block_id: int) -> bool:
+	var front_block := block_types[block_id]
+	
+	return not front_block.is_solid or front_block.is_one_way
+
+func is_block_address_passable(address: BlockAddress) -> bool:
+	if address == null:
+		return true
+	
+	var front_id := address.chunk.front_ids[address.block_index]
+	return is_block_passable(front_id)
+
+func is_front_block_placeable(
+		address: BlockAddress,
+		block_specifier: BlockSpecifier,
+		skip_entity: Node) -> bool:
+	
+	if not is_block_passable(block_specifier.block_id):
+		if is_entity_above_block(block_specifier.block_position, skip_entity):
+			return false
+	
+	if is_block_attachable(address.chunk.back_ids[address.block_index]):
+		return true 
+	
+	if block_has_neighbors(block_specifier.block_position, true):
+		return true
+	
+	return false
+
+func is_back_block_placeable(block_position: Vector2i) -> bool:
+	if block_has_neighbors(block_position, false):
+		return true
+	
+	return false
+
+func is_block_placeable(
+		address: BlockAddress,
+		block_specifier: BlockSpecifier,
+		modifying_entity: Node) -> bool:
+	
+	if block_specifier.on_front_layer:
+		return is_front_block_placeable(address, block_specifier, modifying_entity)
+	else:
+		return is_back_block_placeable(block_specifier.block_position)
+
 func _ready() -> void:
 	GameResourceLoader.load_resources(
 		BLOCKS_FOLDER,

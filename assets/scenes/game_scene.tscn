@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=33 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="2_d1sjh"]
@@ -14,7 +14,9 @@
 [ext_resource type="AudioStream" uid="uid://dvbsibgabi3ju" path="res://assets/sounds/select_page.wav" id="7_4wp1w"]
 [ext_resource type="Script" path="res://assets/objects/world/block/render/block_world_renderer.gd" id="7_ddnpg"]
 [ext_resource type="Texture2D" uid="uid://cdugor2xiwl1w" path="res://assets/textures/backgrounds/cloud_big.png" id="7_yfnxb"]
+[ext_resource type="Texture2D" uid="uid://cp72tkpjo3i8g" path="res://assets/textures/menu/cursor/cursor.png" id="8_eu242"]
 [ext_resource type="PackedScene" uid="uid://qnuf5qyuxwxp" path="res://assets/objects/world/block/render/block_particle.tscn" id="8_in2xm"]
+[ext_resource type="Texture2D" uid="uid://gf2qt8h32r84" path="res://assets/textures/menu/cursor/cursor_disabled.png" id="9_abmcf"]
 [ext_resource type="Shader" path="res://assets/shaders/lighting_display.gdshader" id="9_owgvs"]
 [ext_resource type="PackedScene" uid="uid://c587sy0idbcjt" path="res://assets/objects/menu/hud/hud.tscn" id="10_0vvsh"]
 [ext_resource type="Script" path="res://assets/objects/world/lighting_display.gd" id="10_5ifsx"]
@@ -85,6 +87,8 @@ select_item_sound = NodePath("Sounds/SelectItem")
 select_page_sound = NodePath("Sounds/SelectPage")
 select_item_sound_timer = NodePath("SelectItemSoundTimer")
 sounds = Array[ExtResource("6_vw555")]([SubResource("Resource_3wuox")])
+cursor_image = ExtResource("8_eu242")
+cursor_disabled_image = ExtResource("9_abmcf")
 
 [node name="SelectItemSoundTimer" type="Timer" parent="."]
 wait_time = 0.03
@@ -99,11 +103,6 @@ volume_db = -10.0
 [node name="SelectPage" type="AudioStreamPlayer" parent="Sounds"]
 stream = SubResource("AudioStreamRandomizer_4mcqp")
 volume_db = -5.0
-
-[node name="GameInputManager" type="Node" parent="." node_paths=PackedStringArray("scene")]
-process_mode = 3
-script = ExtResource("6_ly1vx")
-scene = NodePath("..")
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
@@ -202,6 +201,11 @@ script = ExtResource("7_ddnpg")
 world = NodePath("../GameWorld")
 particle_scene = ExtResource("8_in2xm")
 
+[node name="GameInputManager" type="Node" parent="." node_paths=PackedStringArray("scene")]
+process_mode = 3
+script = ExtResource("6_ly1vx")
+scene = NodePath("..")
+
 [node name="GamePacketManager" type="Node" parent="." node_paths=PackedStringArray("scene")]
 script = ExtResource("10_wvv0v")
 scene = NodePath("..")
@@ -245,8 +249,8 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_top = -50.0
-offset_bottom = -50.0
+offset_top = -40.0
+offset_bottom = -40.0
 grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(3, 3)
