@@ -64,7 +64,6 @@ func get_update_block_packet(
 func update_above_block_layer(
 		above_address: BlockAddress,
 		above_position: Vector2i,
-		address: BlockAddress,
 		on_front_layer: bool) -> void:
 	
 	var above_layer := above_address.chunk.get_layer(on_front_layer)
@@ -89,7 +88,7 @@ func update_above_block_layer(
 
 func update_above_blocks(block_specifier: BlockSpecifier, address: BlockAddress) -> void:
 	# Check front layer
-	if world.blocks.is_block_attachable(address.chunk.front_ids[address.block_index]):
+	if world.blocks.is_block_ground(address.chunk.front_ids[address.block_index]):
 		return
 	
 	var above_position := block_specifier.block_position + Vector2i.UP
@@ -98,13 +97,13 @@ func update_above_blocks(block_specifier: BlockSpecifier, address: BlockAddress)
 	if above_address == null:
 		return
 	
-	update_above_block_layer(above_address, above_position, address, true)
+	update_above_block_layer(above_address, above_position, true)
 	
 	# Check back layer after front
-	if world.blocks.is_block_attachable(address.chunk.back_ids[address.block_index]):
+	if world.blocks.is_block_ground(address.chunk.back_ids[address.block_index]):
 		return
 	
-	update_above_block_layer(above_address, above_position, address, false)
+	update_above_block_layer(above_address, above_position, false)
 
 func update_block(
 		block_specifier: BlockSpecifier,

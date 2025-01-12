@@ -255,17 +255,14 @@ func is_back_block_placeable(block_position: Vector2i) -> bool:
 	
 	return false
 
-func is_block_valid_ground(address: BlockAddress, on_front_layer: bool) -> bool:
-	if is_block_attachable(address.chunk.front_ids[address.block_index]):
-		return true
+func is_block_ground(block_id: int) -> bool:
+	if block_id == 0:
+		return false
 	
-	if not on_front_layer:
-		if is_block_attachable(address.chunk.back_ids[address.block_index]):
-			return true
-	
-	return false
+	var block := block_types[block_id]
+	return not block.needs_ground and block.is_ground
 
-func is_block_grounded(block_specifier: BlockSpecifier) -> bool:
+func is_block_specifier_grounded(block_specifier: BlockSpecifier) -> bool:
 	var block := block_types[block_specifier.block_id]
 	
 	if not block.needs_ground:
@@ -276,16 +273,21 @@ func is_block_grounded(block_specifier: BlockSpecifier) -> bool:
 	if below_address == null:
 		return false
 	
-	return is_block_valid_ground(
-		below_address,
-		block_specifier.on_front_layer)
+	if is_block_ground(below_address.chunk.front_ids[below_address.block_index]):
+		return true
+	
+	if not block_specifier.on_front_layer:
+		if is_block_ground(below_address.chunk.back_ids[below_address.block_index]):
+			return true
+	
+	return false
 
 func is_block_placeable(
 		address: BlockAddress,
 		block_specifier: BlockSpecifier,
 		modifying_entity: Node) -> bool:
 	
-	if not is_block_grounded(block_specifier):
+	if not is_block_specifier_grounded(block_specifier):
 		return false
 	
 	if block_specifier.on_front_layer:
