@@ -3,7 +3,7 @@ class_name SpringBlockProperties
 
 @export var spring_sound: AudioStream
 
-const SPRING_VELOCITY = 230.0
+const SPRING_VELOCITY = 270.0
 
 func block_entity_collision(entity: GameEntity, collision: KinematicCollision2D) -> void:
 	if entity.player != null and entity.player.player_state == Player.PlayerState.CLIMBING:

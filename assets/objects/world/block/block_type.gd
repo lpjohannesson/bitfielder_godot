@@ -12,6 +12,7 @@ class_name BlockType
 @export var is_one_way := false
 @export var is_climbable := false
 @export var is_swimmable := false
+@export var needs_ground := false
 
 @export var draws_above_entities := false
 @export var is_partial := false

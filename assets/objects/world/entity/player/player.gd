@@ -444,11 +444,10 @@ func try_modify_button_block(block_id: int, on_front_layer: bool) -> bool:
 		if block_id == 0:
 			return false
 		
+		block_specifier.block_id = block_id
+		
 		if not blocks.is_block_placeable(center_address, block_specifier, self):
 			return false
-		
-		# Set placing block
-		block_specifier.block_id = block_id
 	
 	modify_button_block(
 		center_address,

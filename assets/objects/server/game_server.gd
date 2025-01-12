@@ -61,10 +61,56 @@ func get_update_block_packet(
 		[block_specifier.to_data(world.blocks), show_effects]
 	)
 
+func update_above_block_layer(
+		above_address: BlockAddress,
+		above_position: Vector2i,
+		address: BlockAddress,
+		on_front_layer: bool) -> void:
+	
+	var above_layer := above_address.chunk.get_layer(on_front_layer)
+	var above_id := above_layer[above_address.block_index]
+	
+	if above_id == 0:
+		return
+	
+	var above_block := world.blocks.block_types[above_id]
+	
+	if not above_block.needs_ground:
+		return
+	
+	# Break above block
+	var above_specifier := BlockSpecifier.new()
+	
+	above_specifier.block_position = above_position
+	above_specifier.on_front_layer = on_front_layer
+	above_specifier.block_id = 0
+	
+	update_block(above_specifier, above_address, true, true)
+
+func update_above_blocks(block_specifier: BlockSpecifier, address: BlockAddress) -> void:
+	# Check front layer
+	if world.blocks.is_block_attachable(address.chunk.front_ids[address.block_index]):
+		return
+	
+	var above_position := block_specifier.block_position + Vector2i.UP
+	var above_address := world.blocks.get_block_address(above_position)
+	
+	if above_address == null:
+		return
+	
+	update_above_block_layer(above_address, above_position, address, true)
+	
+	# Check back layer after front
+	if world.blocks.is_block_attachable(address.chunk.back_ids[address.block_index]):
+		return
+	
+	update_above_block_layer(above_address, above_position, address, false)
+
 func update_block(
 		block_specifier: BlockSpecifier,
 		address: BlockAddress,
-		show_effects: bool) -> void:
+		show_effects: bool,
+		is_neighbor := false) -> void:
 	
 	# Ensure entities are updated before block update
 	send_entity_states()
@@ -78,6 +124,9 @@ func update_block(
 	
 	for client in clients:
 		client.send_packet(packet)
+	
+	if not is_neighbor:
+		update_above_blocks(block_specifier, address)
 
 func get_light_heightmap_packet(heightmap: BlockHeightmap, chunk_x: int) -> GamePacket:
 	return GamePacket.create_packet(
