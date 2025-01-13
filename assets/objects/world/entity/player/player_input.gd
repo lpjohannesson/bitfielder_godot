@@ -6,8 +6,8 @@ const PLAYER_ACTIONS := [
 	"look_up",
 	"look_down",
 	"jump",
-	"use_front",
-	"use_back",
+	"use_button_front",
+	"use_button_back",
 	"interact"
 ]
 
@@ -22,6 +22,9 @@ func is_action_just_pressed(action: String) -> bool:
 
 func get_axis(action1: String, action2: String) -> float:
 	return float(input_map[action2]) - float(input_map[action1])
+
+func get_just_pressed_axis(action1: String, action2: String) -> float:
+	return float(is_action_just_pressed(action2)) - float(is_action_just_pressed(action1))
 
 func update_inputs() -> void:
 	for action in PLAYER_ACTIONS:

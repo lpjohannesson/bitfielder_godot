@@ -226,13 +226,13 @@ func try_use_item() -> void:
 	var pressed_action: String
 	var just_pressed: bool
 	
-	if player_input.is_action_pressed("use_front"):
+	if player_input.is_action_pressed("use_button_front"):
 		on_front_layer = true
-		pressed_action = "use_front"
+		pressed_action = "use_button_front"
 	
-	elif player_input.is_action_pressed("use_back"):
+	elif player_input.is_action_pressed("use_button_back"):
 		on_front_layer = false
-		pressed_action = "use_back"
+		pressed_action = "use_button_back"
 	
 	else:
 		return
@@ -259,12 +259,6 @@ func play_punch_animation(look_direction: float) -> void:
 		entity.animation_player.play("punch_down")
 	else:
 		entity.animation_player.play("punch_forward")
-
-func aim_block_placement(block_position: Vector2i) -> void:
-	var block_distance := block_position - center_block_position
-	
-	if block_distance.x != 0:
-		entity.sprite.flip_h = block_distance.x < 0
 
 func animate() -> void:
 	if entity.animation_player.current_animation.begins_with("punch_"):
@@ -325,8 +319,8 @@ func modify_button_block(
 	
 	velocity = Vector2.ZERO
 	
-	if next_block_position.x != center_block_position.x:
-		entity.sprite.flip_h = next_block_position.x < center_block_position.x
+	if move_direction != 0.0:
+		entity.sprite.flip_h = move_direction < 0.0
 	
 	modify_block_tween = create_tween()\
 		.set_ease(Tween.EASE_OUT)\
@@ -375,11 +369,11 @@ func try_modify_button_block(block_id: int, on_front_layer: bool) -> bool:
 	
 	if look_direction == 0.0:
 		if move_direction == 0.0:
-			look_offset.x = get_facing_sign()
+			look_offset.x = int(get_facing_sign())
 		else:
-			look_offset.x = move_direction
+			look_offset.x = int(move_direction)
 	else:
-		look_offset.y = look_direction
+		look_offset.y = int(look_direction)
 	
 	# Create block info
 	var blocks := entity.get_game_world().blocks
@@ -521,20 +515,30 @@ func try_modify_cursor_block(block_id: int, use_data: ItemUseData) -> bool:
 	return true
 
 func modify_block_or_punch(block_id: int, use_data: ItemUseData) -> void:
+	var look_direction: float
+	
 	if use_data.clicked:
-		aim_block_placement(use_data.block_position)
+		var block_distance := use_data.block_position - center_block_position
+	
+		if block_distance.x != 0:
+			entity.sprite.flip_h = block_distance.x < 0
+		
+		if abs(block_distance.x) < abs(block_distance.y):
+			look_direction = sign(block_distance.y)
 		
 		if try_modify_cursor_block(block_id, use_data):
-			play_punch_animation(get_look_direction())
+			play_punch_animation(look_direction)
 			return
 	else:
+		look_direction = get_look_direction()
+		
 		if try_modify_button_block(block_id, use_data.on_front_layer):
-			play_punch_animation(get_look_direction())
+			play_punch_animation(look_direction)
 			entity.animation_player.queue("fall")
 			return
 	
 	if use_data.just_pressed:
-		punch(get_look_direction())
+		punch(look_direction)
 
 func show_wall_effects() -> void:
 	if is_on_floor():
@@ -795,9 +799,7 @@ func fall(fall_speed: float, fall_acceleration: float, delta: float) -> void:
 		fall_acceleration * delta)
 
 func get_move_just_pressed() -> float:
-	return \
-		float(player_input.is_action_just_pressed("move_right")) - \
-		float(player_input.is_action_just_pressed("move_left"))
+	return player_input.get_just_pressed_axis("move_left", "move_right")
 
 func try_running() -> void:
 	if is_on_wall() or move_direction == 0.0 or get_is_sliding():

@@ -8,12 +8,13 @@ static var instance: GameScene
 
 @export var world: GameWorld
 @export var blocks_renderer: BlockWorldRenderer
-@export var packet_manager: GamePacketManager
 @export var hud: HUD
 @export var player_camera: PlayerCamera
 @export var lighting_display: LightingDisplay
+
+@export var packet_manager: GamePacketManager
 @export var input_manager: GameInputManager
-@export var item_page_timer: Timer
+@export var cursor_manager: CursorManager
 
 @export var particles: Node2D
 @export var shadow_viewport: SubViewport
@@ -24,14 +25,7 @@ static var instance: GameScene
 @export var break_sound: AudioStream
 @export var place_sound: AudioStream
 
-@export var select_item_sound: AudioStreamPlayer
-@export var select_page_sound: AudioStreamPlayer
-@export var select_item_sound_timer: Timer
-
 @export var sounds: Array[WorldSound]
-
-@export var cursor_image: Texture2D
-@export var cursor_disabled_image: Texture2D
 
 @onready var viewport := get_viewport()
 
@@ -41,11 +35,6 @@ var player: Player
 var paused := false
 
 var sound_map := {}
-
-var can_use_cursor_item := false
-
-var using_cursor_item := false
-var cursor_use_data := ItemUseData.new()
 
 func return_to_menu() -> void:
 	get_tree().change_scene_to_file("res://assets/scenes/menu_scene.tscn")
@@ -129,103 +118,6 @@ func update_block(
 	blocks.heightmaps.update_height(block_specifier, false)
 	lighting_display.show_lightmap()
 
-func send_item_selection() -> void:
-	var packet := GamePacket.create_packet(
-		Packets.ClientPacket.SELECT_ITEM,
-		player.inventory.selected_index)
-	
-	server.send_packet(packet)
-
-func can_update_items() -> bool:
-	return player != null and player.inventory != null
-
-func update_page_item() -> void:
-	send_item_selection()
-	
-	var page_item_index := player.inventory.get_page_item_index()
-	hud.item_bar.show_item_arrow(page_item_index)
-	
-	if select_item_sound_timer.is_stopped():
-		select_item_sound_timer.start()
-		select_item_sound.play()
-
-func select_page_item(item_index: int) -> void:
-	if not can_update_items():
-		return
-	
-	player.inventory.select_page_item(item_index)
-	update_page_item()
-
-func move_page_item(direction: int) -> void:
-	if not can_update_items():
-		return
-	
-	player.inventory.move_page_item(direction)
-	update_page_item()
-
-func move_item_page(direction: int) -> void:
-	if not can_update_items():
-		return
-	
-	player.inventory.move_item_page(direction)
-	send_item_selection()
-	
-	hud.item_bar.show_inventory(player.inventory)
-	select_page_sound.play()
-
-func get_pressed_select_direction() -> int:
-	return \
-		int(Input.is_action_pressed("select_right")) - \
-		int(Input.is_action_pressed("select_left"))
-
-func try_select_items() -> void:
-	if paused:
-		return
-	
-	var page_direction := \
-		int(Input.is_action_just_pressed("item_page_right")) - \
-		int(Input.is_action_just_pressed("item_page_left"))
-	
-	if page_direction != 0:
-		move_item_page(page_direction)
-	
-	var select_direction := \
-		int(Input.is_action_just_pressed("select_right")) - \
-		int(Input.is_action_just_pressed("select_left"))
-	
-	if select_direction != 0:
-		move_page_item(select_direction)
-	
-	if get_pressed_select_direction() == 0:
-		item_page_timer.stop()
-	else:
-		if item_page_timer.is_stopped():
-			item_page_timer.start()
-
-func use_cursor_item() -> void:
-	if not can_use_cursor_item:
-		return
-	
-	if not using_cursor_item:
-		return
-	
-	player.use_item(cursor_use_data)
-	
-	cursor_use_data.just_pressed = false
-
-func start_use_cursor_item() -> void:
-	var address := world.blocks.get_block_address(cursor_use_data.block_position)
-	
-	if address != null:
-		var block_id := address.chunk.get_layer(cursor_use_data.on_front_layer)[address.block_index]
-		cursor_use_data.breaking = block_id != 0
-	
-	cursor_use_data.player = player
-	cursor_use_data.just_pressed = true
-	cursor_use_data.clicked = true
-	
-	using_cursor_item = true
-
 func resize() -> void:
 	shadow_viewport.size = viewport.get_visible_rect().size
 	
@@ -245,67 +137,10 @@ func _ready() -> void:
 	for sound in sounds:
 		sound_map[sound.sound_name] = sound.sound_stream
 
-func _exit_tree() -> void:
-	Input.set_custom_mouse_cursor(cursor_image)
-
 func _process(_delta: float) -> void:
 	shadow_viewport.canvas_transform = \
 		viewport.canvas_transform * SHADOW_TRANSFORM
-	
-	try_select_items()
-	
-	if player != null:
-		cursor_use_data.block_position = world.blocks.world_to_block(get_global_mouse_position())
-		can_use_cursor_item = player.is_block_in_range(cursor_use_data.block_position)
-		
-		if hud.hud_focused or can_use_cursor_item:
-			Input.set_custom_mouse_cursor(cursor_image)
-		else:
-			Input.set_custom_mouse_cursor(cursor_disabled_image)
-		
-		use_cursor_item()
 
 func _on_player_position_timer_timeout() -> void:
 	if player != null:
 		packet_manager.send_check_player_position()
-
-func _unhandled_input(event: InputEvent) -> void:
-	if not event is InputEventMouseButton:
-		return
-	
-	var action: String
-	
-	match event.button_index:
-		MOUSE_BUTTON_LEFT:
-			if event.pressed and can_use_cursor_item:
-				cursor_use_data.on_front_layer = true
-				start_use_cursor_item()
-				return
-			else:
-				action = "use_front"
-				using_cursor_item = false
-			
-		MOUSE_BUTTON_RIGHT:
-			if event.pressed and can_use_cursor_item:
-				cursor_use_data.on_front_layer = false
-				start_use_cursor_item()
-				return
-			else:
-				action = "use_back"
-				using_cursor_item = false
-		
-		MOUSE_BUTTON_WHEEL_UP:
-			action = "select_left"
-		
-		MOUSE_BUTTON_WHEEL_DOWN:
-			action = "select_right"
-		_:
-			return
-	
-	if event.pressed:
-		Input.action_press(action)
-	else:
-		Input.action_release(action)
-
-func _on_item_page_timer_timeout() -> void:
-	move_item_page(get_pressed_select_direction())

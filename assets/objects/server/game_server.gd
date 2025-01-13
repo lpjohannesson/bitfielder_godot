@@ -277,7 +277,6 @@ func use_player_cursor_item(packet: GamePacket, client: ClientConnection) -> voi
 	use_data.clicked = true
 	use_data.block_position = block_position
 	
-	client.player.aim_block_placement(block_position)
 	client.player.use_item(use_data)
 
 func get_change_player_skin_packet(client: ClientConnection) -> GamePacket:

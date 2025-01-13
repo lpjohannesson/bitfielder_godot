@@ -1,0 +1,55 @@
+[gd_scene load_steps=5 format=3 uid="uid://cxb4wscykm2ga"]
+
+[ext_resource type="Texture2D" uid="uid://bbkg64jq3b85c" path="res://assets/textures/menu/cursor/block_cursor.png" id="1_wov5l"]
+
+[sub_resource type="Animation" id="Animation_4dnpo"]
+resource_name = "idle"
+length = 0.6
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [0, 1]
+}
+
+[sub_resource type="Animation" id="Animation_wfcwi"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [1]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_4is0r"]
+_data = {
+"RESET": SubResource("Animation_wfcwi"),
+"idle": SubResource("Animation_4dnpo")
+}
+
+[node name="ButtonCursor" type="Node2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_wov5l")
+hframes = 2
+frame = 1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_4is0r")
+}
+autoplay = "idle"

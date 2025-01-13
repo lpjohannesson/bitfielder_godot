@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=36 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Shader" path="res://assets/shaders/shadow.gdshader" id="2_d1sjh"]
@@ -22,7 +22,10 @@
 [ext_resource type="Script" path="res://assets/objects/world/lighting_display.gd" id="10_5ifsx"]
 [ext_resource type="Shader" path="res://assets/shaders/light_canvas.gdshader" id="10_nih1y"]
 [ext_resource type="Script" path="res://assets/objects/game_packet_manager.gd" id="10_wvv0v"]
+[ext_resource type="Script" path="res://assets/objects/world/item_select_manager.gd" id="22_3doeq"]
+[ext_resource type="PackedScene" uid="uid://cxb4wscykm2ga" path="res://assets/objects/menu/button_cursor.tscn" id="24_21t63"]
 [ext_resource type="Script" path="res://assets/objects/world/entity/player/player_camera.gd" id="24_vgm8j"]
+[ext_resource type="Script" path="res://assets/objects/world/cursor_manager.gd" id="25_0oamt"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_hm8g0"]
 shader = ExtResource("2_d1sjh")
@@ -58,7 +61,7 @@ blend_mode = 1
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_k8a25"]
 shader = ExtResource("9_owgvs")
-shader_parameter/sample_round = 1.0
+shader_parameter/sample_round = 0.25
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_qaax0"]
 shader = ExtResource("10_nih1y")
@@ -67,42 +70,84 @@ shader_parameter/block_light_range = 16
 shader_parameter/heightmap = PackedInt32Array()
 shader_parameter/top_height = -1
 
-[node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "blocks_renderer", "packet_manager", "hud", "player_camera", "lighting_display", "input_manager", "item_page_timer", "particles", "shadow_viewport", "select_item_sound", "select_page_sound", "select_item_sound_timer")]
+[node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "blocks_renderer", "hud", "player_camera", "lighting_display", "packet_manager", "input_manager", "cursor_manager", "particles", "shadow_viewport")]
 script = ExtResource("1_jdhth")
 world = NodePath("GameWorld")
 blocks_renderer = NodePath("BlockWorldRenderer")
-packet_manager = NodePath("GamePacketManager")
 hud = NodePath("CanvasLayer/HUD")
 player_camera = NodePath("PlayerCamera")
 lighting_display = NodePath("LightingDisplay")
-input_manager = NodePath("GameInputManager")
-item_page_timer = NodePath("ItemPageTimer")
+packet_manager = NodePath("Managers/GamePacketManager")
+input_manager = NodePath("Managers/GameInputManager")
+cursor_manager = NodePath("Managers/CursorManager")
 particles = NodePath("Particles")
 shadow_viewport = NodePath("ShadowViewport")
 shadow_shader = SubResource("ShaderMaterial_hm8g0")
 effect_sprite_scene = ExtResource("3_k32od")
 break_sound = ExtResource("4_0vcd0")
 place_sound = ExtResource("5_tjk8f")
+sounds = Array[ExtResource("6_vw555")]([SubResource("Resource_3wuox")])
+
+[node name="Managers" type="Node" parent="."]
+
+[node name="GameInputManager" type="Node" parent="Managers" node_paths=PackedStringArray("scene")]
+process_mode = 3
+script = ExtResource("6_ly1vx")
+scene = NodePath("../..")
+
+[node name="GamePacketManager" type="Node" parent="Managers" node_paths=PackedStringArray("scene")]
+script = ExtResource("10_wvv0v")
+scene = NodePath("../..")
+
+[node name="ItemSelectManager" type="Node" parent="Managers" node_paths=PackedStringArray("scene", "select_item_sound", "select_page_sound", "page_timer", "sound_timer")]
+script = ExtResource("22_3doeq")
+scene = NodePath("../..")
 select_item_sound = NodePath("Sounds/SelectItem")
 select_page_sound = NodePath("Sounds/SelectPage")
-select_item_sound_timer = NodePath("SelectItemSoundTimer")
-sounds = Array[ExtResource("6_vw555")]([SubResource("Resource_3wuox")])
-cursor_image = ExtResource("8_eu242")
-cursor_disabled_image = ExtResource("9_abmcf")
+page_timer = NodePath("PageTimer")
+sound_timer = NodePath("SoundTimer")
 
-[node name="SelectItemSoundTimer" type="Timer" parent="."]
+[node name="PageTimer" type="Timer" parent="Managers/ItemSelectManager"]
+wait_time = 0.4
+one_shot = true
+
+[node name="SoundTimer" type="Timer" parent="Managers/ItemSelectManager"]
 wait_time = 0.03
 one_shot = true
 
-[node name="Sounds" type="Node" parent="."]
+[node name="Sounds" type="Node" parent="Managers/ItemSelectManager"]
 
-[node name="SelectItem" type="AudioStreamPlayer" parent="Sounds"]
+[node name="SelectItem" type="AudioStreamPlayer" parent="Managers/ItemSelectManager/Sounds"]
 stream = SubResource("AudioStreamRandomizer_jutqc")
 volume_db = -10.0
 
-[node name="SelectPage" type="AudioStreamPlayer" parent="Sounds"]
+[node name="SelectPage" type="AudioStreamPlayer" parent="Managers/ItemSelectManager/Sounds"]
 stream = SubResource("AudioStreamRandomizer_4mcqp")
 volume_db = -5.0
+
+[node name="CursorManager" type="Node2D" parent="Managers" node_paths=PackedStringArray("scene", "button_cursor", "move_timer", "reset_timer")]
+script = ExtResource("25_0oamt")
+scene = NodePath("../..")
+button_cursor = NodePath("ButtonCursor")
+cursor_image = ExtResource("8_eu242")
+cursor_disabled_image = ExtResource("9_abmcf")
+move_timer = NodePath("MoveTimer")
+reset_timer = NodePath("ResetTimer")
+
+[node name="ButtonCursor" parent="Managers/CursorManager" instance=ExtResource("24_21t63")]
+z_index = 2
+
+[node name="MoveTimer" type="Timer" parent="Managers/CursorManager"]
+wait_time = 0.2
+one_shot = true
+
+[node name="ResetTimer" type="Timer" parent="Managers/CursorManager"]
+wait_time = 2.0
+one_shot = true
+
+[node name="PlayerPositionTimer" type="Timer" parent="."]
+wait_time = 0.2
+autostart = true
 
 [node name="ParallaxBackground" type="ParallaxBackground" parent="."]
 
@@ -201,25 +246,12 @@ script = ExtResource("7_ddnpg")
 world = NodePath("../GameWorld")
 particle_scene = ExtResource("8_in2xm")
 
-[node name="GameInputManager" type="Node" parent="." node_paths=PackedStringArray("scene")]
-process_mode = 3
-script = ExtResource("6_ly1vx")
-scene = NodePath("..")
-
-[node name="GamePacketManager" type="Node" parent="." node_paths=PackedStringArray("scene")]
-script = ExtResource("10_wvv0v")
-scene = NodePath("..")
-
 [node name="ShadowViewport" type="SubViewport" parent="."]
 transparent_bg = true
 handle_input_locally = false
 canvas_item_default_texture_filter = 0
 size = Vector2i(40, 40)
 render_target_update_mode = 4
-
-[node name="PlayerPositionTimer" type="Timer" parent="."]
-wait_time = 0.2
-autostart = true
 
 [node name="LightingDisplay" type="ColorRect" parent="." node_paths=PackedStringArray("world", "light_viewport", "light_canvas")]
 z_index = 1
@@ -255,9 +287,6 @@ grow_horizontal = 2
 grow_vertical = 0
 scale = Vector2(3, 3)
 
-[node name="ItemPageTimer" type="Timer" parent="."]
-wait_time = 0.4
-one_shot = true
-
+[connection signal="timeout" from="Managers/ItemSelectManager/PageTimer" to="Managers/ItemSelectManager" method="_on_item_page_timer_timeout"]
+[connection signal="timeout" from="Managers/CursorManager/ResetTimer" to="Managers/CursorManager" method="_on_reset_timer_timeout"]
 [connection signal="timeout" from="PlayerPositionTimer" to="." method="_on_player_position_timer_timeout"]
-[connection signal="timeout" from="ItemPageTimer" to="." method="_on_item_page_timer_timeout"]
