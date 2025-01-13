@@ -178,6 +178,9 @@ func _unhandled_input(event: InputEvent) -> void:
 					
 				MOUSE_BUTTON_RIGHT:
 					start_use_cursor_item(mouse_block_position, false)
+				
+				_:
+					return
 			
 			cursor_state = CursorState.MOUSE
 			
