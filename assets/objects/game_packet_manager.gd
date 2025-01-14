@@ -3,8 +3,6 @@ class_name GamePacketManager
 
 @export var scene: GameScene
 
-var last_chunk_index: Vector2i
-
 func create_block_chunk(packet: GamePacket) -> void:
 	var blocks := scene.world.blocks
 	var chunk := blocks.serializer.create_chunk_from_data(packet.data)
@@ -26,10 +24,10 @@ func load_player_chunk_index(packet: GamePacket) -> void:
 		if chunk_x < load_zone.position.x or chunk_x >= load_zone.end.x:
 			blocks.heightmaps.destroy_heightmap(chunk_x)
 	
-	last_chunk_index = player_chunk_index
+	scene.light_viewport.chunk_index = player_chunk_index
+	scene.light_viewport.show_lightmap()
 	
-	scene.lighting_display.chunk_index = player_chunk_index
-	scene.lighting_display.show_lightmap()
+	scene.screen_display.move_display()
 
 func update_block(packet: GamePacket) -> void:
 	var blocks := scene.world.blocks

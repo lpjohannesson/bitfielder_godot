@@ -22,4 +22,4 @@ func _on_texture_display_gui_input(event: InputEvent) -> void:
 	if not event.button_index == MOUSE_BUTTON_LEFT:
 		return
 	
-	GameScene.instance.select_page_item(get_index())
+	GameScene.instance.item_select_manager.select_page_item(get_index())

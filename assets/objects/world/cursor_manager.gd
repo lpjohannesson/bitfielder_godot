@@ -205,6 +205,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			
 			MOUSE_BUTTON_RIGHT:
 				action = "use_button_back"
+			
+			_:
+				return
 		
 		if event.pressed:
 			Input.action_press(action)

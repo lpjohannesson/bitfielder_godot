@@ -138,14 +138,14 @@ func redraw_chunk(chunk: BlockChunk) -> void:
 	call_deferred("redraw_chunk_deferred", chunk)
 
 func start_chunk(chunk: BlockChunk) -> void:
-	# Create shadow
-	chunk.back_layer.material = GameScene.instance.shadow_shader
+	# Set materials
+	chunk.back_layer.material = GameScene.instance.back_layer_shader
 	
+	# Create shadow
 	chunk.shadow_layer = Node2D.new()
 	GameScene.instance.shadow_viewport.add_child(chunk.shadow_layer)
 	
 	chunk.shadow_layer.global_transform = chunk.global_transform
-	
 	chunk.tree_exited.connect(chunk.shadow_layer.queue_free)
 	
 	# Draw chunks

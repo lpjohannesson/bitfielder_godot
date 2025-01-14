@@ -1,29 +1,27 @@
-extends Control
-class_name LightingDisplay
+extends SubViewport
+class_name LightViewport
 
 const VIEWPORT_SIZE := GameServer.CHUNK_LOAD_EXTENTS * BlockChunk.CHUNK_SIZE * 2
 
-@export var world: GameWorld
-@export var light_viewport: SubViewport
+@export var scene: GameScene
 @export var light_canvas: ColorRect
 
+var top_left_position: Vector2
 var chunk_index: Vector2i
 var shader_heightmap: PackedInt32Array
 var block_lightmap: Image
 
 func get_block_light(block_id: int) -> BlockLight:
-	var block := world.blocks.block_types[block_id]
+	var block := scene.world.blocks.block_types[block_id]
 	return block.block_light
 
 func show_lightmap() -> void:
 	var load_zone := GameServer.get_chunk_load_zone(chunk_index)
-	var top_left_position := load_zone.position * BlockChunk.CHUNK_SIZE
-	
-	global_position = Vector2(top_left_position) * scale
+	top_left_position = load_zone.position * BlockChunk.CHUNK_SIZE
 	
 	# Pass heightmap to shader for sunlight
 	for chunk_x in range(load_zone.position.x, load_zone.end.x):
-		var heightmap = world.blocks.heightmaps.get_heightmap(chunk_x)
+		var heightmap = scene.world.blocks.heightmaps.get_heightmap(chunk_x)
 		
 		if heightmap == null:
 			continue
@@ -42,7 +40,7 @@ func show_lightmap() -> void:
 	for chunk_x in range(load_zone.position.x, load_zone.end.x):
 		for chunk_y in range(load_zone.position.y, load_zone.end.y):
 			var load_chunk_index := Vector2i(chunk_x, chunk_y)
-			var load_chunk := world.blocks.get_chunk(load_chunk_index)
+			var load_chunk := scene.world.blocks.get_chunk(load_chunk_index)
 			
 			if load_chunk == null:
 				continue
@@ -69,14 +67,8 @@ func show_lightmap() -> void:
 	light_canvas.material.set_shader_parameter("block_lightmap", block_lightmap_texture)
 
 func _ready():
-	scale = world.blocks.scale
-	
 	size = VIEWPORT_SIZE
-	light_viewport.size = VIEWPORT_SIZE
 	light_canvas.size = VIEWPORT_SIZE
-	
-	material.set_shader_parameter(
-		"viewport_texture", light_viewport.get_texture())
 	
 	shader_heightmap.resize(VIEWPORT_SIZE.x)
 	block_lightmap = Image.create(VIEWPORT_SIZE.x, VIEWPORT_SIZE.y, false, Image.FORMAT_RGBA8)

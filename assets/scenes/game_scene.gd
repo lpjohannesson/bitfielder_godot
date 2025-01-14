@@ -10,15 +10,21 @@ static var instance: GameScene
 @export var blocks_renderer: BlockWorldRenderer
 @export var hud: HUD
 @export var player_camera: PlayerCamera
-@export var lighting_display: LightingDisplay
+
+@export var light_viewport: LightViewport
+@export var screen_display: ScreenDisplay
 
 @export var packet_manager: GamePacketManager
 @export var input_manager: GameInputManager
+@export var item_select_manager: ItemSelectManager
 @export var cursor_manager: CursorManager
 
 @export var particles: Node2D
+
+@export var foreground_viewport: SubViewport
 @export var shadow_viewport: SubViewport
-@export var shadow_shader: ShaderMaterial
+
+@export var back_layer_shader: ShaderMaterial
 
 @export var effect_sprite_scene: PackedScene
 
@@ -27,7 +33,7 @@ static var instance: GameScene
 
 @export var sounds: Array[WorldSound]
 
-@onready var viewport := get_viewport()
+@onready var screen_viewport := get_viewport()
 
 var server: ServerConnection
 var player: Player
@@ -116,10 +122,12 @@ func update_block(
 		blocks_renderer.redraw_chunk(chunk)
 	
 	blocks.heightmaps.update_height(block_specifier, false)
-	lighting_display.show_lightmap()
+	light_viewport.show_lightmap()
 
 func resize() -> void:
-	shadow_viewport.size = viewport.get_visible_rect().size
+	var viewport_size := screen_viewport.get_visible_rect().size
+	foreground_viewport.size = viewport_size
+	shadow_viewport.size = viewport_size
 	
 	for chunk in world.blocks.chunk_map.values():
 		blocks_renderer.redraw_chunk(chunk)
@@ -128,18 +136,21 @@ func _init() -> void:
 	instance = self
 
 func _ready() -> void:
-	shadow_shader.set_shader_parameter(
-		"shadow_viewport", shadow_viewport.get_texture())
+	back_layer_shader.set_shader_parameter(
+		"shadow_viewport", shadow_viewport.get_texture()
+	)
 	
 	resize()
-	viewport.size_changed.connect(resize)
+	screen_viewport.size_changed.connect(resize)
 	
 	for sound in sounds:
 		sound_map[sound.sound_name] = sound.sound_stream
 
 func _process(_delta: float) -> void:
+	screen_viewport.canvas_transform = foreground_viewport.canvas_transform
+	
 	shadow_viewport.canvas_transform = \
-		viewport.canvas_transform * SHADOW_TRANSFORM
+		foreground_viewport.canvas_transform * SHADOW_TRANSFORM
 
 func _on_player_position_timer_timeout() -> void:
 	if player != null:

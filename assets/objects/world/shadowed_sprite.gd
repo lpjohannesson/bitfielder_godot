@@ -9,7 +9,7 @@ func _ready() -> void:
 		return
 	
 	# Check shadow is on main viewport
-	if get_viewport() != get_tree().get_root().get_viewport():
+	if get_viewport() != GameScene.instance.foreground_viewport:
 		return
 	
 	shadow = Sprite2D.new()

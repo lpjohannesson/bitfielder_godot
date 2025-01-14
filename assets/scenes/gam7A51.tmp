@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=32 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Shader" path="res://assets/shaders/back_layer.gdshader" id="2_d1sjh"]
@@ -14,7 +14,6 @@
 [ext_resource type="Script" path="res://assets/objects/world/block/render/block_world_renderer.gd" id="7_ddnpg"]
 [ext_resource type="Texture2D" uid="uid://cp72tkpjo3i8g" path="res://assets/textures/menu/cursor/cursor.png" id="8_eu242"]
 [ext_resource type="PackedScene" uid="uid://qnuf5qyuxwxp" path="res://assets/objects/world/block/render/block_particle.tscn" id="8_in2xm"]
-[ext_resource type="Script" path="res://assets/objects/game_parallax.gd" id="8_iq1gn"]
 [ext_resource type="Texture2D" uid="uid://gf2qt8h32r84" path="res://assets/textures/menu/cursor/cursor_disabled.png" id="9_abmcf"]
 [ext_resource type="Shader" path="res://assets/shaders/screen_display.gdshader" id="9_owgvs"]
 [ext_resource type="PackedScene" uid="uid://c587sy0idbcjt" path="res://assets/objects/menu/hud/hud.tscn" id="10_0vvsh"]
@@ -37,15 +36,6 @@ script = ExtResource("6_vw555")
 sound_name = "spring"
 sound_stream = ExtResource("7_4iqqu")
 
-[sub_resource type="Gradient" id="Gradient_p272a"]
-offsets = PackedFloat32Array(0, 0.333, 0.667, 1)
-colors = PackedColorArray(0.13583, 0.0257736, 0.20906, 1, 0.18053, 0.321128, 0.573004, 1, 0, 0.705882, 0.811765, 1, 0.6, 1, 0.966667, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_rhksf"]
-gradient = SubResource("Gradient_p272a")
-fill_from = Vector2(0, 1)
-fill_to = Vector2(0, 0)
-
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_jutqc"]
 streams_count = 1
 stream_0/stream = ExtResource("6_hvwkn")
@@ -66,39 +56,26 @@ shader_parameter/top_height = -1
 shader = ExtResource("9_owgvs")
 shader_parameter/sample_round = 0.25
 
-[node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "blocks_renderer", "hud", "player_camera", "light_viewport", "screen_display", "packet_manager", "input_manager", "item_select_manager", "cursor_manager", "particles", "foreground_viewport", "shadow_viewport")]
+[node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "blocks_renderer", "hud", "player_camera", "light_viewport", "lighting_display", "packet_manager", "input_manager", "item_select_manager", "cursor_manager", "particles", "main_viewport", "shadow_viewport")]
 script = ExtResource("1_jdhth")
-world = NodePath("ForegroundViewport/GameWorld")
-blocks_renderer = NodePath("ForegroundViewport/BlockWorldRenderer")
+world = NodePath("MainLayer/GameWorld")
+blocks_renderer = NodePath("MainLayer/BlockWorldRenderer")
 hud = NodePath("UILayer/HUD")
-player_camera = NodePath("ForegroundViewport/PlayerCamera")
+player_camera = NodePath("MainLayer/PlayerCamera")
 light_viewport = NodePath("LightViewport")
-screen_display = NodePath("ScreenDisplay")
+lighting_display = NodePath("ScreenDisplay")
 packet_manager = NodePath("Managers/GamePacketManager")
 input_manager = NodePath("Managers/GameInputManager")
 item_select_manager = NodePath("Managers/ItemSelectManager")
-cursor_manager = NodePath("Managers/CursorManager")
-particles = NodePath("ForegroundViewport/Particles")
-foreground_viewport = NodePath("ForegroundViewport")
-shadow_viewport = NodePath("ForegroundViewport/ShadowViewport")
+cursor_manager = NodePath("CursorManager")
+particles = NodePath("MainLayer/Particles")
+main_viewport = NodePath("MainLayer")
+shadow_viewport = NodePath("MainLayer/ShadowViewport")
 back_layer_shader = SubResource("ShaderMaterial_7e7ej")
 effect_sprite_scene = ExtResource("3_k32od")
 break_sound = ExtResource("4_0vcd0")
 place_sound = ExtResource("5_tjk8f")
 sounds = Array[ExtResource("6_vw555")]([SubResource("Resource_3wuox")])
-
-[node name="BackgroundLayer" type="CanvasLayer" parent="."]
-layer = -1
-
-[node name="Sky" type="Node2D" parent="BackgroundLayer"]
-script = ExtResource("8_iq1gn")
-parallax_factor = Vector2(0, 0.5)
-
-[node name="TextureRect" type="TextureRect" parent="BackgroundLayer/Sky"]
-offset_top = -128.0
-offset_right = 1024.0
-offset_bottom = 896.0
-texture = SubResource("GradientTexture2D_rhksf")
 
 [node name="Managers" type="Node" parent="."]
 
@@ -137,24 +114,24 @@ volume_db = -10.0
 stream = SubResource("AudioStreamRandomizer_4mcqp")
 volume_db = -5.0
 
-[node name="CursorManager" type="Node2D" parent="Managers" node_paths=PackedStringArray("scene", "button_cursor", "move_timer", "reset_timer")]
+[node name="CursorManager" type="Node2D" parent="." node_paths=PackedStringArray("scene", "button_cursor", "move_timer", "reset_timer")]
 script = ExtResource("25_0oamt")
-scene = NodePath("../..")
+scene = NodePath("..")
 button_cursor = NodePath("ButtonCursor")
 cursor_image = ExtResource("8_eu242")
 cursor_disabled_image = ExtResource("9_abmcf")
 move_timer = NodePath("MoveTimer")
 reset_timer = NodePath("ResetTimer")
 
-[node name="MoveTimer" type="Timer" parent="Managers/CursorManager"]
+[node name="MoveTimer" type="Timer" parent="CursorManager"]
 wait_time = 0.2
 one_shot = true
 
-[node name="ResetTimer" type="Timer" parent="Managers/CursorManager"]
+[node name="ResetTimer" type="Timer" parent="CursorManager"]
 wait_time = 2.0
 one_shot = true
 
-[node name="ButtonCursor" parent="Managers/CursorManager" instance=ExtResource("24_21t63")]
+[node name="ButtonCursor" parent="CursorManager" instance=ExtResource("24_21t63")]
 z_index = 2
 
 [node name="LightViewport" type="SubViewport" parent="." node_paths=PackedStringArray("scene", "light_canvas")]
@@ -168,52 +145,52 @@ light_canvas = NodePath("LightCanvas")
 [node name="LightCanvas" type="ColorRect" parent="LightViewport"]
 material = SubResource("ShaderMaterial_qaax0")
 
-[node name="ForegroundViewport" type="SubViewport" parent="."]
+[node name="MainLayer" type="SubViewport" parent="."]
 transparent_bg = true
 handle_input_locally = false
 canvas_item_default_texture_filter = 0
 render_target_update_mode = 4
 
-[node name="PlayerPositionTimer" type="Timer" parent="ForegroundViewport"]
+[node name="PlayerPositionTimer" type="Timer" parent="MainLayer"]
 wait_time = 0.2
 autostart = true
 
-[node name="GameWorld" parent="ForegroundViewport" instance=ExtResource("4_3hdty")]
+[node name="GameWorld" parent="MainLayer" instance=ExtResource("4_3hdty")]
 
-[node name="Particles" type="Node2D" parent="ForegroundViewport"]
+[node name="Particles" type="Node2D" parent="MainLayer"]
 
-[node name="PlayerCamera" type="Camera2D" parent="ForegroundViewport" node_paths=PackedStringArray("pan_timer")]
+[node name="PlayerCamera" type="Camera2D" parent="MainLayer" node_paths=PackedStringArray("pan_timer")]
 zoom = Vector2(3, 3)
 process_callback = 0
 position_smoothing_enabled = true
 script = ExtResource("24_vgm8j")
 pan_timer = NodePath("PanTimer")
 
-[node name="PanTimer" type="Timer" parent="ForegroundViewport/PlayerCamera"]
+[node name="PanTimer" type="Timer" parent="MainLayer/PlayerCamera"]
 process_callback = 0
 wait_time = 0.5
 one_shot = true
 
-[node name="BlockWorldRenderer" type="Node" parent="ForegroundViewport" node_paths=PackedStringArray("world")]
+[node name="BlockWorldRenderer" type="Node" parent="MainLayer" node_paths=PackedStringArray("world")]
 script = ExtResource("7_ddnpg")
 world = NodePath("../GameWorld")
 particle_scene = ExtResource("8_in2xm")
 
-[node name="ShadowViewport" type="SubViewport" parent="ForegroundViewport"]
+[node name="ShadowViewport" type="SubViewport" parent="MainLayer"]
 transparent_bg = true
 handle_input_locally = false
 canvas_item_default_texture_filter = 0
 render_target_update_mode = 4
 
-[node name="ScreenDisplay" type="ColorRect" parent="." node_paths=PackedStringArray("foreground_viewport", "light_viewport", "world")]
+[node name="ScreenDisplay" type="ColorRect" parent="." node_paths=PackedStringArray("main_viewport", "light_viewport", "world")]
 material = SubResource("ShaderMaterial_llwcc")
 offset_right = 40.0
 offset_bottom = 40.0
 mouse_filter = 2
 script = ExtResource("10_5ifsx")
-foreground_viewport = NodePath("../ForegroundViewport")
+main_viewport = NodePath("../MainLayer")
 light_viewport = NodePath("../LightViewport")
-world = NodePath("../ForegroundViewport/GameWorld")
+world = NodePath("../MainLayer/GameWorld")
 metadata/_edit_use_anchors_ = true
 
 [node name="UILayer" type="CanvasLayer" parent="."]
@@ -231,5 +208,5 @@ grow_vertical = 0
 scale = Vector2(3, 3)
 
 [connection signal="timeout" from="Managers/ItemSelectManager/PageTimer" to="Managers/ItemSelectManager" method="_on_item_page_timer_timeout"]
-[connection signal="timeout" from="Managers/CursorManager/ResetTimer" to="Managers/CursorManager" method="_on_reset_timer_timeout"]
-[connection signal="timeout" from="ForegroundViewport/PlayerPositionTimer" to="." method="_on_player_position_timer_timeout"]
+[connection signal="timeout" from="CursorManager/ResetTimer" to="CursorManager" method="_on_reset_timer_timeout"]
+[connection signal="timeout" from="MainLayer/PlayerPositionTimer" to="." method="_on_player_position_timer_timeout"]
