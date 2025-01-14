@@ -172,6 +172,7 @@ func rubberband_player(client: ClientConnection):
 	
 	entity_serializer.save_entity_position(request)
 	entity_serializer.save_entity_velocity(request)
+	entity_serializer.save_entity_flip_x(request)
 	
 	client.send_packet(get_entity_data_packet(entity_data))
 

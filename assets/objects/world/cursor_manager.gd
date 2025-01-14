@@ -111,6 +111,9 @@ func move_button_cursor() -> void:
 		Player.BLOCK_PLACE_EXTENTS
 	)
 	
+	Input.action_release("use_button_front")
+	Input.action_release("use_button_back")
+	
 	move_timer.start()
 	reset_timer.start()
 
@@ -139,9 +142,45 @@ func update_mouse_cursor() -> void:
 		reset_cursor()
 	else:
 		Input.set_custom_mouse_cursor(cursor_disabled_image)
+
+func get_mouse_action(event: InputEvent) -> String:
+	var action: String
 	
-	if not mouse_in_range and cursor_state == CursorState.MOUSE:
-		cursor_state = CursorState.NONE
+	match event.button_index:
+		MOUSE_BUTTON_LEFT:
+			return "use_button_front"
+		
+		MOUSE_BUTTON_RIGHT:
+			return "use_button_back"
+	
+	return ""
+
+func try_start_use_mouse(event: InputEvent) -> void:
+	match event.button_index:
+		MOUSE_BUTTON_LEFT:
+			start_use_cursor_item(mouse_block_position, true)
+			
+		MOUSE_BUTTON_RIGHT:
+			start_use_cursor_item(mouse_block_position, false)
+		
+		_:
+			return
+	
+	cursor_state = CursorState.MOUSE
+
+func try_stop_use_mouse(event: InputEvent) -> void:
+	match event.button_index:
+		MOUSE_BUTTON_LEFT:
+			if not use_data.on_front_layer:
+				return
+			
+			cursor_state = CursorState.NONE
+		
+		MOUSE_BUTTON_RIGHT:
+			if use_data.on_front_layer:
+				return
+			
+			cursor_state = CursorState.NONE
 
 func _physics_process(_delta: float) -> void:
 	if scene.paused:
@@ -161,58 +200,40 @@ func _physics_process(_delta: float) -> void:
 			use_button_cursor()
 		
 		CursorState.MOUSE:
+			if not mouse_in_range:
+				return
+			
 			use_cursor_item(mouse_block_position)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not event is InputEventMouseButton:
 		return
 	
-	if mouse_in_range:
-		if event.pressed:
-			if cursor_state != CursorState.NONE:
-				return
-			
-			match event.button_index:
-				MOUSE_BUTTON_LEFT:
-					start_use_cursor_item(mouse_block_position, true)
-					
-				MOUSE_BUTTON_RIGHT:
-					start_use_cursor_item(mouse_block_position, false)
-				
-				_:
-					return
-			
-			cursor_state = CursorState.MOUSE
-			
+	if event.pressed:
+		if cursor_state != CursorState.NONE:
+			return
+		
+		if mouse_in_range:
+			try_start_use_mouse(event)
 		else:
-			if cursor_state != CursorState.MOUSE:
+			var action := get_mouse_action(event)
+			
+			if action == "":
 				return
 			
-			match event.button_index:
-				MOUSE_BUTTON_LEFT:
-					if use_data.on_front_layer:
-						cursor_state = CursorState.NONE
-					
-				MOUSE_BUTTON_RIGHT:
-					if not use_data.on_front_layer:
-						cursor_state = CursorState.NONE
-	else:
-		var action: String
-		
-		match event.button_index:
-			MOUSE_BUTTON_LEFT:
-				action = "use_button_front"
-			
-			MOUSE_BUTTON_RIGHT:
-				action = "use_button_back"
-			
-			_:
-				return
-		
-		if event.pressed:
 			Input.action_press(action)
-		else:
-			Input.action_release(action)
+	else:
+		match cursor_state:
+			CursorState.NONE:
+				var action := get_mouse_action(event)
+				
+				if action == "":
+					return
+				
+				Input.action_release(action)
+			
+			CursorState.MOUSE:
+				try_stop_use_mouse(event)
 
 func reset_cursor() -> void:
 	Input.set_custom_mouse_cursor(cursor_image)

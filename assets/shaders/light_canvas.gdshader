@@ -1,4 +1,5 @@
 shader_type canvas_item;
+render_mode blend_disabled;
 
 uniform int sunlight_range = 8;
 uniform int block_light_range = 8;
@@ -34,7 +35,7 @@ void fragment() {
 			vec2 light_position = UV + offset * SCREEN_PIXEL_SIZE;
 			
 			vec3 light_sample = texture(block_lightmap, light_position).rgb;
-			vec3 light_amount = light_sample - length(offset) / float(block_light_range);
+			vec3 light_amount = light_sample - (length(offset) / float(block_light_range));
 			
 			block_light = max(block_light, light_amount);
 		}

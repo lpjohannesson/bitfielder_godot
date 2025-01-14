@@ -169,6 +169,9 @@ func update_jump_timer() -> void:
 		jump_timer.start()
 
 func try_jump() -> void:
+	if velocity.y < 0.0:
+		return
+	
 	if jump_timer.is_stopped() or coyote_timer.is_stopped():
 		return
 	
@@ -310,6 +313,7 @@ func end_modify_button_block_tween() -> void:
 
 func end_modify_button_block() -> void:
 	change_player_state(PlayerState.GROUND)
+	coyote_timer.start()
 
 func modify_button_block(
 		address: BlockAddress,
@@ -451,13 +455,16 @@ func try_modify_button_block(block_id: int, on_front_layer: bool) -> bool:
 	
 	return true
 
-func try_modify_cursor_block(block_id: int, use_data: ItemUseData) -> bool:
+func can_modify_cursor_block() -> bool:
 	if player_state == PlayerState.MODIFYING_BUTTON_BLOCK:
 		return false
 	
 	if not modify_cursor_block_timer.is_stopped():
 		return false
 	
+	return true
+
+func try_modify_cursor_block(block_id: int, use_data: ItemUseData) -> bool:
 	var blocks := entity.get_game_world().blocks
 	var address := blocks.get_block_address(use_data.block_position)
 	
@@ -518,8 +525,11 @@ func modify_block_or_punch(block_id: int, use_data: ItemUseData) -> void:
 	var look_direction: float
 	
 	if use_data.clicked:
+		if not can_modify_cursor_block():
+			return
+		
 		var block_distance := use_data.block_position - center_block_position
-	
+		
 		if block_distance.x != 0:
 			entity.sprite.flip_h = block_distance.x < 0
 		

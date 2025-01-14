@@ -45,18 +45,19 @@ func show_lightmap() -> void:
 			if load_chunk == null:
 				continue
 			
+			var pixel_start := (load_chunk_index - load_zone.position) * BlockChunk.CHUNK_SIZE
+			
 			for y in range(BlockChunk.CHUNK_SIZE.y):
 				for x in range(BlockChunk.CHUNK_SIZE.x):
 					var chunk_position := Vector2i(x, y)
-					var block_index := BlockChunk.get_block_index(chunk_position)
 					
+					var block_index := BlockChunk.get_block_index(chunk_position)
 					var front_light := get_block_light(load_chunk.front_ids[block_index])
 					
 					if front_light == null:
 						continue
 					
-					var pixel_position := \
-						(load_chunk_index - load_zone.position) * BlockChunk.CHUNK_SIZE + chunk_position
+					var pixel_position := pixel_start + chunk_position
 					
 					block_lightmap.set_pixel(
 						pixel_position.x,

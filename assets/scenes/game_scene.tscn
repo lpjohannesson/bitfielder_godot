@@ -65,6 +65,7 @@ shader_parameter/top_height = -1
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_llwcc"]
 shader = ExtResource("9_owgvs")
 shader_parameter/sample_round = 0.25
+shader_parameter/light_overflow = 0.25
 
 [node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "blocks_renderer", "hud", "player_camera", "light_viewport", "screen_display", "packet_manager", "input_manager", "item_select_manager", "cursor_manager", "particles", "foreground_viewport", "shadow_viewport")]
 script = ExtResource("1_jdhth")
