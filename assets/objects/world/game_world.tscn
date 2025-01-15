@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://celyk57ifua4f"]
+[gd_scene load_steps=17 format=3 uid="uid://celyk57ifua4f"]
 
 [ext_resource type="Script" path="res://assets/objects/world/game_world.gd" id="1_waysh"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_world.gd" id="2_3pcni"]
@@ -9,6 +9,12 @@
 [ext_resource type="Script" path="res://assets/objects/world/entity/entity_serializer.gd" id="8_gdq6u"]
 [ext_resource type="Script" path="res://assets/objects/world/block/block_serializer.gd" id="8_r3ein"]
 [ext_resource type="Script" path="res://assets/objects/world/item/item_serializer.gd" id="9_j762g"]
+[ext_resource type="Texture2D" uid="uid://5q4f04jsn6ly" path="res://assets/textures/entities/ball.png" id="11_yepep"]
+[ext_resource type="Script" path="res://assets/objects/world/shadowed_sprite.gd" id="12_bmvwb"]
+[ext_resource type="Texture2D" uid="uid://ddvctt0o648u7" path="res://assets/textures/entities/bug.png" id="13_ephru"]
+[ext_resource type="Texture2D" uid="uid://be2moohu7q4b7" path="res://assets/textures/entities/radish.png" id="14_pd7o5"]
+[ext_resource type="Texture2D" uid="uid://c8vig637x68js" path="res://assets/textures/entities/slime.png" id="15_onirh"]
+[ext_resource type="Texture2D" uid="uid://devud8a45uj6m" path="res://assets/textures/entities/woodguy.png" id="16_trogb"]
 [ext_resource type="PackedScene" uid="uid://omkj7o5gbs7m" path="res://assets/objects/world/block/block_chunk.tscn" id="19_qsv6g"]
 
 [node name="GameWorld" type="Node2D" node_paths=PackedStringArray("blocks", "items", "entities")]
@@ -52,3 +58,30 @@ serializer = NodePath("EntitySerializer")
 script = ExtResource("8_gdq6u")
 entities = NodePath("..")
 player_scene = ExtResource("4_hgqgm")
+
+[node name="Node2D" type="Node2D" parent="."]
+position = Vector2(266, 801)
+
+[node name="ShadowedSprite" type="Sprite2D" parent="Node2D"]
+position = Vector2(83, 11)
+texture = ExtResource("11_yepep")
+script = ExtResource("12_bmvwb")
+
+[node name="ShadowedSprite2" type="Sprite2D" parent="Node2D"]
+position = Vector2(71, -34)
+texture = ExtResource("13_ephru")
+script = ExtResource("12_bmvwb")
+
+[node name="ShadowedSprite3" type="Sprite2D" parent="Node2D"]
+position = Vector2(-37, 12)
+texture = ExtResource("14_pd7o5")
+script = ExtResource("12_bmvwb")
+
+[node name="ShadowedSprite4" type="Sprite2D" parent="Node2D"]
+position = Vector2(-28, -36)
+texture = ExtResource("15_onirh")
+script = ExtResource("12_bmvwb")
+
+[node name="ShadowedSprite5" type="Sprite2D" parent="Node2D"]
+texture = ExtResource("16_trogb")
+script = ExtResource("12_bmvwb")

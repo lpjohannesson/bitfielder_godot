@@ -20,6 +20,7 @@ is_one_way = false
 is_climbable = false
 is_swimmable = false
 needs_ground = true
+is_ground = true
 draws_above_entities = false
 is_partial = true
 is_transparent = false

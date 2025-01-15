@@ -11,7 +11,7 @@ static func get_chunk_x(block_x: int) -> int:
 	return floor(float(block_x) / float(BlockChunk.CHUNK_SIZE.x))
 
 static func is_block_opaque(block: BlockType) -> bool:
-	return not block.is_partial or not block.is_transparent
+	return not block.is_transparent and not block.needs_ground
 
 static func is_block_solid(block: BlockType) -> bool:
 	return block.is_solid

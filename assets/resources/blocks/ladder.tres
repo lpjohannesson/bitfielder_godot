@@ -23,5 +23,5 @@ needs_ground = false
 is_ground = false
 draws_above_entities = false
 is_partial = true
-is_transparent = false
+is_transparent = true
 casts_shadow = true

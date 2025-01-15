@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bsvrr5o1bqqyo"
-path="res://.godot/imported/overlay.png-0194899d529d11667b3cec6fb765ae0a.ctex"
+uid="uid://c8vig637x68js"
+path="res://.godot/imported/slime.png-e36c206a91307062106dfbaa051ccd12.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/textures/player/overlay.png"
-dest_files=["res://.godot/imported/overlay.png-0194899d529d11667b3cec6fb765ae0a.ctex"]
+source_file="res://assets/textures/entities/slime.png"
+dest_files=["res://.godot/imported/slime.png-e36c206a91307062106dfbaa051ccd12.ctex"]
 
 [params]
 
