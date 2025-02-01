@@ -10,7 +10,7 @@ uniform int top_height;
 uniform sampler2D block_lightmap : filter_nearest;
 
 float get_final_channel(float value) {
-	return 1.0 - (1.0 - (1.0 - value) * (1.0 - value));
+	return 1.0 - (1.0 - value) * (1.0 - value);
 }
 
 float get_sunlight(ivec2 block_position, int offset_x) {

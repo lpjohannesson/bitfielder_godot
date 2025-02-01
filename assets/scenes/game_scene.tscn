@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://dofu8ik7dtua1"]
+[gd_scene load_steps=38 format=3 uid="uid://dofu8ik7dtua1"]
 
 [ext_resource type="Script" path="res://assets/scenes/game_scene.gd" id="1_jdhth"]
 [ext_resource type="Shader" path="res://assets/shaders/back_layer.gdshader" id="2_d1sjh"]
@@ -38,13 +38,76 @@ sound_name = "spring"
 sound_stream = ExtResource("7_4iqqu")
 
 [sub_resource type="Gradient" id="Gradient_p272a"]
-offsets = PackedFloat32Array(0, 0.333, 0.667, 1)
+offsets = PackedFloat32Array(0, 0.5, 1, 0)
 colors = PackedColorArray(0.13583, 0.0257736, 0.20906, 1, 0.18053, 0.321128, 0.573004, 1, 0, 0.705882, 0.811765, 1, 0.6, 1, 0.966667, 1)
 
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_rhksf"]
 gradient = SubResource("Gradient_p272a")
 fill_from = Vector2(0, 1)
 fill_to = Vector2(0, 0)
+
+[sub_resource type="Animation" id="Animation_ma17v"]
+resource_name = "new_animation"
+length = 1.5
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TextureRect:texture:gradient:colors")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(-2, -2, -2),
+"update": 0,
+"values": [PackedColorArray(0.0767, 0.290575, 0.59, 1, 0, 0.705882, 0.811765, 1, 0.6, 1, 0.966667, 1), PackedColorArray(0.55, 0, 0.201667, 1, 0.78, 0.27222, 0.0546, 1, 1, 0.7165, 0.19, 1), PackedColorArray(0, 0, 0, 1, 0.0257308, 0.0114208, 0.0956682, 1, 0.0887279, 0.0823582, 0.25183, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../../ScreenDisplay:material:shader_parameter/sunlight_shade")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5, 1),
+"transitions": PackedFloat32Array(-2, -2, -2),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0.89, 0.654002, 0.5073, 1), Color(0.2373, 0.189, 0.35, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_b7pq7"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("TextureRect:texture:gradient:colors")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [PackedColorArray(0.13583, 0.0257736, 0.20906, 1, 0.18053, 0.321128, 0.573004, 1, 0, 0.705882, 0.811765, 1, 0.6, 1, 0.966667, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../../ScreenDisplay:material:shader_parameter/sunlight_shade")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2hr1k"]
+_data = {
+"RESET": SubResource("Animation_b7pq7"),
+"new_animation": SubResource("Animation_ma17v")
+}
 
 [sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_jutqc"]
 streams_count = 1
@@ -66,6 +129,7 @@ shader_parameter/top_height = -1
 shader = ExtResource("9_owgvs")
 shader_parameter/sample_round = 0.25
 shader_parameter/light_overflow = 0.25
+shader_parameter/sunlight_shade = Color(1, 1, 1, 1)
 
 [node name="GameScene" type="Node2D" node_paths=PackedStringArray("world", "blocks_renderer", "hud", "player_camera", "light_viewport", "screen_display", "packet_manager", "input_manager", "item_select_manager", "cursor_manager", "particles", "foreground_viewport", "shadow_viewport")]
 script = ExtResource("1_jdhth")
@@ -100,6 +164,13 @@ offset_top = -128.0
 offset_right = 1024.0
 offset_bottom = 896.0
 texture = SubResource("GradientTexture2D_rhksf")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="BackgroundLayer/Sky"]
+libraries = {
+"": SubResource("AnimationLibrary_2hr1k")
+}
+autoplay = "new_animation"
+speed_scale = 0.01
 
 [node name="Managers" type="Node" parent="."]
 
